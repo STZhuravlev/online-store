@@ -1,0 +1,7 @@
+venv/
+.idea/
+.git/
+.vagrant/
+vagrant/
+Vagrantfile
+README.md
