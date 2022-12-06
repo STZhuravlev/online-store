@@ -24,9 +24,10 @@ cache:
 before_script:
   - python -V  # Print out python version for debugging
   # Uncomment next line if your Django app needs a JS runtime:
-  # - apt-get update -q && apt-get install nodejs -yqq
+  - apt-get update -q && apt-get install libaio-dev libpq-dev -y
   - pip install -r requirements/production.txt
-
+  - pip install flake8
+  
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
 #
@@ -44,7 +45,6 @@ before_script:
 # and then adding `--settings app.settings.ci` (or similar) to the test command
 
 flake8:
-  image: registry.gitlab.com/pipeline-components/flake8:latest
   script:
     - flake8 --verbose .
 
