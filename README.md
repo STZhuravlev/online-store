@@ -60,6 +60,18 @@ Run Browser http://localhost:8181/
 2. Настроить SSH: host 127.0.0.1, port 2222, путь до приватного ключа `<папка вашего проекта>\.vagrant\machines\default\virtualbox\private_key`
 3. Подключиться к БД: host 127.0.0.1, port 5432,user/password/database - skillbox/skillbox/marketplace
 > Возможны проблемы с подключением к БД с примерным сообщением "пользователь не прошёл проверку подлинности по паролю". В этом случае нужно воспользоваться [решением](https://translated.turbopages.org/proxy_u/en-ru.ru.2e0a6176-638b626b-35745e68-74722d776562/https/stackoverflow.com/questions/55038942/fatal-password-authentication-failed-for-user-postgres-postgresql-11-with-pg)
+## Запуск проекта в docker-compose
+> Запуск проекта производится с хостовой операционной системы  
+
+В файле .env расположены "секреты" для доступа к базе данных. В переменной *POSTGRES_PORT* указывает порт проброса из контейнера в хостовую операционную систему  
+**Сборка проекта**
+```commandline
+docker-compose build
+```
+**Запуск проекта**
+```commandline
+docker-compose up -d
+```
 ## Участники проекта
 Участник | Часовой пояс
 ---- | -----
