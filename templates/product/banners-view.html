@@ -1,0 +1,14 @@
+<h1>Random Banners</h1>
+
+<ul>
+{% if banners|length %}
+    {% for banner in banners %}
+        <li><p>{{ banner.title }}</p>
+            <p>{{ banner.brief }}</p>
+            <p>{{ banner.icon }}</p>
+        </li>
+    {% endfor %}
+{% else %}
+    <li>Sorry, no active banners.</li>
+{% endif %}
+</ul>
