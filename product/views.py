@@ -2,7 +2,6 @@ from random import sample
 from django.shortcuts import render  # noqa F401
 from django.views import generic
 from django.core.cache import cache
-from django.contrib.auth import get_user_model
 from product.models import Banner, Product
 
 
@@ -27,7 +26,7 @@ class BannersView(generic.TemplateView):
     def get_context_data(self, qty: int = 3, **kwargs):
         """ Добавляет в контекст список баннеров. Список кэшируется. """
         context = super().get_context_data(**kwargs)
-        #TODO заменить в ключе имя на емейл
+        # TODO заменить в ключе имя на емейл
         offers_cache_key = f'offers:{self.request.user.username}'
         # Получаем список баннеров и кэшируем его
         banner_list = self.get_banners(qty=qty)
@@ -35,8 +34,8 @@ class BannersView(generic.TemplateView):
         context['banners'] = cached_data
         return context
 
+
 class ProductDetailView(generic.DetailView):
     model = Product
     template_name = 'product/product-detail.html'
     context_object_name = 'product'
-
