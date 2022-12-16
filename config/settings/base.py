@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'product',
-    'shop'
+    'shop',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # пустая папка, сю�
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+LOGIN_REDIRECT_URL = '/' # Перенаправление после входа в учетную запись
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
