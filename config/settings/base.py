@@ -142,5 +142,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-LOGIN_REDIRECT_URL = '/' # Перенаправление после входа в учетную запись
+LOGIN_REDIRECT_URL = '/'
+
 SESSION_COOKIE_AGE = 30 * 24 * 60 * 60

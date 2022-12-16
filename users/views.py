@@ -1,11 +1,7 @@
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from django.contrib.auth.views import LoginView, LogoutView
-
+from django.contrib.auth.views import LogoutView
 from .forms import CustomUserCreationForm
-
-
 
 
 class SignUp(CreateView):
