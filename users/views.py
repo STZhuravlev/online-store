@@ -14,8 +14,5 @@ class SignUp(CreateView):
     template_name = 'user/signup.html'
 
 
-class LoginUser(LoginView):
-    template_name = 'user/login.html'
-
 class LogoutUser(LogoutView):
     next_page = '/'
