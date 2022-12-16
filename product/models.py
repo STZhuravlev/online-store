@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -6,6 +7,13 @@ class Product(models.Model):
     """Продукт"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        """ Возвращает урл на продукт """
+        return reverse('product-detail', args=[str(self.id)])
 
 
 class Property(models.Model):
@@ -18,3 +26,20 @@ class ProductProperty(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     property = models.ForeignKey(Property, on_delete=models.PROTECT)
     value = models.CharField(max_length=128, verbose_name=_("значение"))
+
+
+class Banner(models.Model):
+    """ Баннеры. """
+    title = models.CharField(max_length=128, verbose_name=_('заголовок'))
+    brief = models.CharField(max_length=512, verbose_name=_('краткое описание'))
+    icon = models.ImageField(upload_to='files/', verbose_name=_('изображение'))
+    added_at = models.DateTimeField(auto_created=True, auto_now=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners')
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        """ Возвращает урл на продукт """
+        return self.product.get_absolute_url()
