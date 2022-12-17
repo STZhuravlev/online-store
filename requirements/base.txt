@@ -8,3 +8,5 @@ environs==9.3.0
 psycopg2==2.9.3
 django-timestampable==1.0.3
 dj_database_url==1.0.0
+django-mptt==0.14.0
+
