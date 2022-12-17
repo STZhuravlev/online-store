@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Product(models.Model):
@@ -43,3 +44,23 @@ class Banner(models.Model):
     def get_absolute_url(self):
         """ Возвращает урл на продукт """
         return self.product.get_absolute_url()
+
+
+class Category(MPTTModel):
+    """Категория продукта"""
+    STATUS_CHOICE = [
+        (True, _("Активна")),
+        (False, _("Не активна")),
+    ]
+
+    category = models.CharField(max_length=100, verbose_name=_("категория"))
+    icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
+    active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
+
+    def __str__(self):
+        return self.category
+
+    class Meta:
+        verbose_name = _("категория")
+        verbose_name_plural = _("категории")
