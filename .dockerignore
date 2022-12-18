@@ -3,5 +3,7 @@ venv/
 .git/
 .vagrant/
 vagrant/
+staticfiles/
+mediafiles/
 Vagrantfile
 README.md
