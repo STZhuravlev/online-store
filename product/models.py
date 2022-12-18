@@ -64,3 +64,18 @@ class Category(MPTTModel):
     class Meta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
+
+
+class Price(models.Model):
+    """Цена"""
+    price = models.IntegerField(verbose_name=_('цена'))
+    discount_price = models.IntegerField(default=None, verbose_name=_('цена со скидкой'))
+
+
+class Goods(models.Model):
+    """Товар"""
+    name = models.CharField(max_length=512, verbose_name=_("наименование"))
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    image = models.ImageField(upload_to='images/goods_pictures', verbose_name=_('изображение'))
+    description = models.TextField(max_length=2048, verbose_name=_('описание'))
+    price = models.ForeignKey(Price, verbose_name=_('цена'), on_delete=models.PROTECT)
