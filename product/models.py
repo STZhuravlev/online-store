@@ -69,7 +69,7 @@ class Category(MPTTModel):
 class Price(models.Model):
     """Цена"""
     price = models.IntegerField(verbose_name=_('цена'))
-    discount_price = models.IntegerField(default=None, verbose_name=_('цена со скидкой'))
+    discount_price = models.IntegerField(verbose_name=_('цена со скидкой'))
 
 
 class Goods(models.Model):
