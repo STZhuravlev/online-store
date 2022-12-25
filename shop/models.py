@@ -18,7 +18,6 @@ class Seller(models.Model):
     number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
                                  verbose_name=_('номер телефона'))
 
-
     class Meta:
         verbose_name = 'продавец'
         verbose_name_plural = 'продавцы'
@@ -29,7 +28,8 @@ class Seller(models.Model):
 
 class SellerLogo(models.Model):
     """Логотип продавца"""
-    seller = models.OneToOneField(Seller, verbose_name=_('продавец'), on_delete=models.CASCADE, related_name='sellerlogo')
+    seller = models.OneToOneField(Seller, verbose_name=_('продавец'),
+                                  on_delete=models.CASCADE, related_name='sellerlogo')
     image = models.ImageField(upload_to='images/')
 
     class Meta:
