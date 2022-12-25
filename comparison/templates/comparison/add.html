@@ -1,0 +1,6 @@
+<form action="{% url 'comparison:add' id=id %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="{{ type }}">
+    <input type="hidden" name="url_from" value="{{ request.path }}">
+    <button type="submit">add to comparce</button>
+</form>
