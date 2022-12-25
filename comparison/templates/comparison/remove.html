@@ -1,7 +1,7 @@
 {% if request.session.comparison %}
     {% for item in request.session.comparison %}
         {% if item.id == id|stringformat:'i' and item.type == type %}
-            <form action="{% url 'comparison:remove' id=id %}" method="post">
+            <form action="{% url 'comparison:comparison-remove' id=id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="type" value="{{ type }}">
                 <input type="hidden" name="url_from" value="{{ request.path }}">

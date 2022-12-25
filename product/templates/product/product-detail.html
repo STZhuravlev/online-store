@@ -4,7 +4,7 @@
 {{ product.name }}
 
 
-<form action="{% url 'comparison:delete' %}" method="post">
+<form action="{% url 'comparison:comparison-delete' %}" method="post">
     {% csrf_token %}
     <button type="submit">Удалить данные сравнения</button>
 </form>

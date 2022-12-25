@@ -6,9 +6,9 @@ app_name = 'comparison'
 urlpatterns = [
     path('comparison/', include([
         path('disp', comparce, name='comparison'),
-        path('<id>/add/', add, name='add'),
-        path('<id>/remove', remove_comparison, name='remove'),
-        path('delete/', delete_comparison, name='delete')
+        path('<id>/add/', add, name='comparison-add'),
+        path('<id>/remove', remove_comparison, name='comparison-remove'),
+        path('delete/', delete_comparison, name='comparison-delete')
 
     ])),
 ]
