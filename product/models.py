@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
+from shop.models import Seller
 
 
 class Product(models.Model):
@@ -76,6 +77,14 @@ class Goods(models.Model):
     """Товар"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/goods_pictures', verbose_name=_('изображение'))
     description = models.TextField(max_length=2048, verbose_name=_('описание'))
     price = models.ForeignKey(Price, verbose_name=_('цена'), on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("товар")
+        verbose_name_plural = _("товары")
