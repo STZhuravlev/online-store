@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'mptt',
     'product',
     'shop',
-    'users'
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +135,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, сюда будет собирать статику collectstatic
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
