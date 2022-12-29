@@ -3,8 +3,6 @@ from product.models import Product
 from django.views import View
 
 
-
-
 class Comparison(View):
 
     def get(self, request):
@@ -47,8 +45,9 @@ class ComparisonRemove(View):
         request.session.modified = True
         return redirect('/')
 
+
 class ComparisonDelete(View):
-    def post(self,request):
+    def post(self, request):
         if request.session.get('comparison'):
             del request.session['comparison']
         return redirect('/')

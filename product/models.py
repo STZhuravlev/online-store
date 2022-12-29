@@ -72,7 +72,7 @@ class Price(models.Model):
     discount_price = models.IntegerField(verbose_name=_('цена со скидкой'))
 
 
-class Goods(models.Model): # оффер
+class Goods(models.Model):
     """Товар"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
