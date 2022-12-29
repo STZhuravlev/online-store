@@ -1,14 +1,14 @@
 from django.urls import path, include
-from .views import comparce, add, remove_comparison, delete_comparison
+from .views import Comparison, ComparisonAdd, ComparisonRemove, ComparisonDelete
 
 app_name = 'comparison'
 
 urlpatterns = [
-    path('comparison/', include([
-        path('disp', comparce, name='comparison'),
-        path('<id>/add/', add, name='comparison-add'),
-        path('<id>/remove', remove_comparison, name='comparison-remove'),
-        path('delete/', delete_comparison, name='comparison-delete')
+    path('', include([
+        path('disp', Comparison.as_view(), name='comparison'),
+        path('<id>/add/', ComparisonAdd.as_view(), name='comparison-add'),
+        path('<id>/remove', ComparisonRemove.as_view(), name='comparison-remove'),
+        path('delete/', ComparisonDelete.as_view(), name='comparison-delete')
 
     ])),
 ]
