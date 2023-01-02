@@ -4,11 +4,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import CustomUser
 
 
-class Shop(models.Model):
-    """Магазин"""
-    name = models.CharField(max_length=512, verbose_name=_("название"))
-
-
 class Seller(models.Model):
     """Продавец"""
     user = models.OneToOneField(CustomUser, verbose_name=_('пользователь'), on_delete=models.CASCADE)
@@ -19,8 +14,8 @@ class Seller(models.Model):
                                  verbose_name=_('номер телефона'))
 
     class Meta:
-        verbose_name = 'продавец'
-        verbose_name_plural = 'продавцы'
+        verbose_name = _('продавец')
+        verbose_name_plural = _('продавцы')
 
     def __str__(self):
         return self.name
@@ -29,7 +24,7 @@ class Seller(models.Model):
 class SellerLogo(models.Model):
     """Логотип продавца"""
     seller = models.OneToOneField(Seller, verbose_name=_('продавец'),
-                                  on_delete=models.CASCADE, related_name='sellerlogo')
+                                  on_delete=models.CASCADE, related_name='logo')
     image = models.ImageField(upload_to='images/')
 
     class Meta:
