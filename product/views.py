@@ -2,7 +2,7 @@ from random import sample
 from django.shortcuts import render  # noqa F401
 from django.views import generic
 from django.core.cache import cache
-from product.models import Banner, Product, Goods
+from product.models import Banner, Product, Offer
 
 
 class BannersView(generic.TemplateView):
@@ -41,12 +41,12 @@ class ProductDetailView(generic.DetailView):
     context_object_name = 'product'
 
 
-class GoodsDetailView(generic.DetailView):
-    model = Goods
-    template_name = 'product/goods-detail.html'
-    context_object_name = 'goods'
+class OfferDetailView(generic.DetailView):
+    model = Offer
+    template_name = 'product/offer-detail.html'
+    context_object_name = 'offer'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['goods_sellers'] = Goods.objects.filter(product=Goods.objects.get(id=self.kwargs['pk']).product)
+        context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context

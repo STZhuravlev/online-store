@@ -7,8 +7,11 @@ from shop.models import Seller
 
 class Product(models.Model):
     """Продукт"""
-    name = models.CharField(max_length=512, verbose_name=_("наименование"))
+    name = models.CharField(max_length=128, verbose_name=_("наименование"))
+    description = models.CharField(max_length=1024, verbose_name=_("описание"))
+    seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
+    category = TreeForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
 
     def __str__(self):
         return self.name
@@ -67,24 +70,29 @@ class Category(MPTTModel):
         verbose_name_plural = _("категории")
 
 
-class Price(models.Model):
-    """Цена"""
-    price = models.IntegerField(verbose_name=_('цена'))
-    discount_price = models.IntegerField(verbose_name=_('цена со скидкой'))
-
-
-class Goods(models.Model):
+class Offer(models.Model):
     """Товар"""
-    name = models.CharField(max_length=512, verbose_name=_("наименование"))
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/goods_pictures', verbose_name=_('изображение'))
-    description = models.TextField(max_length=2048, verbose_name=_('описание'))
-    price = models.ForeignKey(Price, verbose_name=_('цена'), on_delete=models.PROTECT)
+    product = models.ForeignKey("Product", on_delete=models.PROTECT)
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
+    price = models.IntegerField(verbose_name=_('цена'))
 
     def __str__(self):
-        return self.name
+        return self.product.name
 
     class Meta:
         verbose_name = _("товар")
         verbose_name_plural = _("товары")
+
+
+class ProductImage(models.Model):
+    """Логотип продукта"""
+    product = models.OneToOneField(Product, verbose_name=_('продукт'),
+                                  on_delete=models.CASCADE, related_name='productimage')
+    image = models.ImageField(upload_to='images/')
+
+    class Meta:
+        verbose_name = 'логотип продукта'
+        verbose_name_plural = 'логотипы продуктов'
+
+    def __str__(self):
+        return self.product.name
