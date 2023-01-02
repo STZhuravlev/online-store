@@ -1,7 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from product.models import Product, ProductProperty, Property, Goods, Banner
+from product.models import Product, ProductProperty, Property, Banner
 from django.contrib.auth.models import User
 from pathlib import Path, PurePath
 
@@ -79,7 +79,7 @@ class EntryTest(TestCase):
     def test_one(self):
         response = self.client.get('/product/banners/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'product/banners-view.html')
+        self.assertIn('product/banners-view.html', response.template_name)
 
 
 

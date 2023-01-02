@@ -11,7 +11,7 @@ class Product(models.Model):
     description = models.CharField(max_length=1024, verbose_name=_("описание"))
     seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
-    category = TreeForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
 
     def __str__(self):
         return self.name
@@ -53,11 +53,11 @@ class Banner(models.Model):
 class Category(MPTTModel):
     """Категория продукта"""
     STATUS_CHOICE = [
-        (True, _("Активна")),
-        (False, _("Не активна")),
+        (True, _("активна")),
+        (False, _("не активна")),
     ]
 
-    category = models.CharField(max_length=100, verbose_name=_("категория"))
+    name = models.CharField(max_length=100, verbose_name=_("категория"))
     icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
@@ -74,7 +74,7 @@ class Offer(models.Model):
     """Товар"""
     product = models.ForeignKey("Product", on_delete=models.PROTECT)
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
-    price = models.IntegerField(verbose_name=_('цена'))
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
 
     def __str__(self):
         return self.product.name
@@ -85,14 +85,14 @@ class Offer(models.Model):
 
 
 class ProductImage(models.Model):
-    """Логотип продукта"""
-    product = models.OneToOneField(Product, verbose_name=_('продукт'),
-                                  on_delete=models.CASCADE, related_name='productimage')
+    """Фотографии продукта"""
+    product = models.ForeignKey(Product, verbose_name=_('продукт'),
+                                  on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='images/')
 
     class Meta:
-        verbose_name = 'логотип продукта'
-        verbose_name_plural = 'логотипы продуктов'
+        verbose_name = _('изображение продукта')
+        verbose_name_plural = _('изображения продуктов')
 
     def __str__(self):
         return self.product.name
