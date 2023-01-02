@@ -7,51 +7,27 @@ from product.models import Product, Banner, Category, Offer, Property, ProductPr
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name']
 
-    class Meta:
-        verbose_name = _('товар')
-        verbose_name_plural = _('товары')
-
 
 class BannerAdmin(admin.ModelAdmin):
     list_display = ['title', 'added_at', 'is_active']
     list_editable = ['is_active']
 
-    class Meta:
-        verbose_name = _('баннер')
-        verbose_name_plural = _('баннеры')
-
 
 class CategoryAdmin(MPTTModelAdmin):
     mptt_level_indent = 2
-    list_display = ['category', 'active', 'parent']
-
-    class Meta:
-        verbose_name = _('категория')
-        verbose_name_plural = _('категории')
+    list_display = ['name', 'active', 'parent']
 
 
 class OfferAdmin(admin.ModelAdmin):
     list_display = ['product', 'seller', 'price']
 
-    class Meta:
-        verbose_name = _('товар')
-        verbose_name_plural = _('товары')
-
 
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ['name', ]
 
-    class Meta:
-        verbose_name = _('свойство продукта')
-        verbose_name_plural = _('свойства продуктов')
-
 
 class ProductPropertyAdmin(admin.ModelAdmin):
     list_display = ['product', 'property', 'value']
-
-    class Meta:
-        verbose_name = _('значение свойства продукта')
-        verbose_name_plural = _('значение свойств продуктов')
 
 
 admin.site.register(Product, ProductAdmin)
