@@ -31,7 +31,7 @@ before_script:
   - apt-get update -q && apt-get install libaio-dev libpq-dev -y
   - pip install -r requirements/production.txt
   - pip install flake8
-  
+
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
 #
