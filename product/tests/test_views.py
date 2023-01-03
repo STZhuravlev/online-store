@@ -1,9 +1,17 @@
-from django.test import TestCase, RequestFactory
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from product.models import Product, ProductProperty, Property, Banner
-from django.contrib.auth.models import User
-from pathlib import Path, PurePath
+from django.test import (
+    TestCase,
+    # RequestFactory,
+)
+# from django.core.files.uploadedfile import SimpleUploadedFile
+# from django.urls import reverse
+from product.models import (
+    # Product,
+    # ProductProperty,
+    Property,
+    # Banner,
+)
+# from django.contrib.auth.models import User
+# from pathlib import Path, PurePath
 
 NUMBER_OF_ITEMS = 10
 #
@@ -43,26 +51,26 @@ NUMBER_OF_ITEMS = 10
 
 
 # class DetailContextTest(TestCase):
-    # def setUp(self) -> None:
-    #     data = {
-    #         'email': 'passwordTest123@bk.ru',
-    #         'password1': 'passwordTest123',
-    #         'password2': 'passwordTest123',
-    #     }
-    #     response = self.client.post('/user/register/', data)
-    #     response = self.client.post('/login/', {'username': 'test123', 'password': 'passwordTest123'}, follow=True)
-
-    # def test_context(self):
-    #     data = {
-    #         'email': 'passwordTest123@bk.ru',
-    #         'password1': 'passwordTest123',
-    #         'password2': 'passwordTest123',
-    #     }
-    #     response = self.client.post('/user/register/', data)
-    #     # self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.context['user'].first_name, 'test123_new')
-    #     self.assertEqual(response.context['user'].profile.number, 5555555)
-    #     self.assertEqual(response.context['user'].profile.city, 'New')
+#     def setUp(self) -> None:
+#         data = {
+#             'email': 'passwordTest123@bk.ru',
+#             'password1': 'passwordTest123',
+#             'password2': 'passwordTest123',
+#         }
+#         response = self.client.post('/user/register/', data)
+#         response = self.client.post('/login/', {'username': 'test123', 'password': 'passwordTest123'}, follow=True)
+#
+#     def test_context(self):
+#         data = {
+#             'email': 'passwordTest123@bk.ru',
+#             'password1': 'passwordTest123',
+#             'password2': 'passwordTest123',
+#         }
+#         response = self.client.post('/user/register/', data)
+#         # self.assertEqual(response.status_code, 200)
+#         self.assertEqual(response.context['user'].first_name, 'test123_new')
+#         self.assertEqual(response.context['user'].profile.number, 5555555)
+#         self.assertEqual(response.context['user'].profile.city, 'New')
 
 
 class EntryTest(TestCase):
@@ -80,8 +88,6 @@ class EntryTest(TestCase):
         response = self.client.get('/product/banners/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/banners-view.html', response.template_name)
-
-
 
 #     def test_exist_entry_list(self):
 #         response = self.client.get('/entres/')
@@ -102,13 +108,17 @@ class EntryTest(TestCase):
 #
 # class UploadTest(TestCase):
 #     def setUp(self) -> None:
-#         user = User.objects.create_user(username='test123', email='passwordTest123@bk.ru', password='passwordTest123')
+#         user = User.objects.create_user(
+#             username='test123', email='passwordTest123@bk.ru', password='passwordTest123'
+#         )
 #         response = self.client.post('/login/', {'username': 'test123', 'password': 'passwordTest123'}, follow=True)
 #
 #     def test_upload_entry(self):
 #         cwd = Path.cwd()
 #         image_jpg = open(PurePath.joinpath(cwd, 'app_media', 'tests', 'tests_file', 'image.jpg'), "rb")
 #         image = SimpleUploadedFile(image_jpg.name, image_jpg.read())
-#         response = self.client.post('/upload_entry/', {'name': 'Запись', 'description': 'Описание', 'images': image}, follow=True)
+#         response = self.client.post(
+#             '/upload_entry/', {'name': 'Запись', 'description': 'Описание', 'images': image}, follow=True
+#         )
 #         self.assertEqual(response.status_code, 200)
 #         self.assertEqual(EntryImage.objects.all().count(), 1)

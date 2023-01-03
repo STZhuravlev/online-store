@@ -1,5 +1,4 @@
 from django.contrib import admin  # noqa F401
-from django.utils.translation import gettext_lazy as _
 from mptt.admin import MPTTModelAdmin
 from product.models import Product, Banner, Category, Offer, Property, ProductProperty
 

@@ -2,7 +2,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
-from shop.models import Seller
 
 
 class Product(models.Model):
@@ -86,8 +85,7 @@ class Offer(models.Model):
 
 class ProductImage(models.Model):
     """Фотографии продукта"""
-    product = models.ForeignKey(Product, verbose_name=_('продукт'),
-                                  on_delete=models.CASCADE, related_name='images')
+    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='images/')
 
     class Meta:
