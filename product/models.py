@@ -6,8 +6,11 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 class Product(models.Model):
     """Продукт"""
-    name = models.CharField(max_length=512, verbose_name=_("наименование"))
+    name = models.CharField(max_length=128, verbose_name=_("наименование"))
+    description = models.CharField(max_length=1024, verbose_name=_("описание"))
+    seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
 
     def __str__(self):
         return self.name
@@ -49,11 +52,11 @@ class Banner(models.Model):
 class Category(MPTTModel):
     """Категория продукта"""
     STATUS_CHOICE = [
-        (True, _("Активна")),
-        (False, _("Не активна")),
+        (True, _("активна")),
+        (False, _("не активна")),
     ]
 
-    category = models.CharField(max_length=100, verbose_name=_("категория"))
+    name = models.CharField(max_length=100, verbose_name=_("категория"))
     icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
@@ -66,16 +69,28 @@ class Category(MPTTModel):
         verbose_name_plural = _("категории")
 
 
-class Price(models.Model):
-    """Цена"""
-    price = models.IntegerField(verbose_name=_('цена'))
-    discount_price = models.IntegerField(verbose_name=_('цена со скидкой'))
-
-
-class Goods(models.Model):
+class Offer(models.Model):
     """Товар"""
-    name = models.CharField(max_length=512, verbose_name=_("наименование"))
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    image = models.ImageField(upload_to='images/goods_pictures', verbose_name=_('изображение'))
-    description = models.TextField(max_length=2048, verbose_name=_('описание'))
-    price = models.ForeignKey(Price, verbose_name=_('цена'), on_delete=models.PROTECT)
+    product = models.ForeignKey("Product", on_delete=models.PROTECT)
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
+
+    def __str__(self):
+        return self.product.name
+
+    class Meta:
+        verbose_name = _("товар")
+        verbose_name_plural = _("товары")
+
+
+class ProductImage(models.Model):
+    """Фотографии продукта"""
+    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='images/')
+
+    class Meta:
+        verbose_name = _('изображение продукта')
+        verbose_name_plural = _('изображения продуктов')
+
+    def __str__(self):
+        return self.product.name

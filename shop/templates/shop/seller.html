@@ -1,0 +1,13 @@
+{% extends 'product/base.html' %}
+{% load i18n %}
+
+
+{% block content %}
+    <h2>{% trans "Продавец" %}: {{ seller.name }}</h2>
+    <p>{% trans "Почта" %}: {{ seller.user.email }}</p>
+    <p>{% trans "Адрес" %}: {{ seller.address }}</p>
+    <p>{% trans "Описание" %}: {{ seller.description }}</p>
+    <p>{% trans "Логотип" %}: <img src={{ seller.sellerlogo.image }} width="500"></p>
+    <p>{% trans "Номер телефона" %}: {{ seller.number }}</p>
+    <hr>
+{% endblock %}

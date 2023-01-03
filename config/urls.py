@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('users.urls')),
     path('change/', include('django.contrib.auth.urls')),
-    path('product/', include('product.urls'))
+    path('product/', include('product.urls')),
+    path('shop/', include('shop.urls'))
 
 ]
