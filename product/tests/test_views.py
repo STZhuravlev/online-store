@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.test import (
     TestCase,
     # RequestFactory,
@@ -31,18 +32,18 @@ class EntryTest(TestCase):
         Offer.objects.create(product=product, seller=seller, price=10.10)
 
     def test_one(self):
-        response = self.client.get('/product/banners/')
+        response = self.client.get(reverse('banners'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/banners-view.html', response.template_name)
 
     def test_two(self):
-        response = self.client.get('/product/offer/1/')
+        response = self.client.get(reverse('offer-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/offer-detail.html', response.template_name)
         self.assertContains(response, 'test')
 
     def test_three(self):
-        response = self.client.get('/product/1/')
+        response = self.client.get(reverse('product-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/product-detail.html', response.template_name)
         self.assertContains(response, 'Product Detail')
