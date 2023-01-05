@@ -22,5 +22,6 @@ urlpatterns = [
     path('change/', include('django.contrib.auth.urls')),
     path('product/', include('product.urls')),
     path('comparison/', include('comparison.urls')),
+    path('cart/', include('cart.urls'))
 
 ]
