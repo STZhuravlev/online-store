@@ -15,7 +15,6 @@ from product.models import (
     Offer,
 )
 from shop.models import Seller
-from users.models import CustomUser
 # from django.contrib.auth.models import User
 # from pathlib import Path, PurePath
 
