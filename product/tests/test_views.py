@@ -10,6 +10,7 @@ from product.models import (
     Property,
     # Banner,
 )
+from django.urls import reverse
 # from django.contrib.auth.models import User
 # from pathlib import Path, PurePath
 
@@ -122,3 +123,11 @@ class EntryTest(TestCase):
 #         )
 #         self.assertEqual(response.status_code, 200)
 #         self.assertEqual(EntryImage.objects.all().count(), 1)
+
+
+class CategoryViewsTest(TestCase):
+    def test_category_page(self):
+        url = reverse('category')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'product/category-view.html')

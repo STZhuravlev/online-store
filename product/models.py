@@ -52,11 +52,11 @@ class Banner(models.Model):
 class Category(MPTTModel):
     """Категория продукта"""
     STATUS_CHOICE = [
-        (True, _("активна")),
-        (False, _("не активна")),
+        (True, _("Активна")),
+        (False, _("Не активна")),
     ]
 
-    name = models.CharField(max_length=100, verbose_name=_("категория"))
+    category = models.CharField(max_length=100, verbose_name=_("категория"))
     icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
