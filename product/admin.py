@@ -22,7 +22,7 @@ class BannerAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(MPTTModelAdmin):
-    list_display = ['category', 'active', 'parent']
+    list_display = ['name', 'active', 'parent']
 
     class Meta:
         verbose_name = _('категория')

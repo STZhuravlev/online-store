@@ -14,8 +14,10 @@ import os
 
 from pathlib import Path
 
+from django.conf import settings
 from config.settings_local import CACHE_STORAGE_TIME
 
+settings.configure(CACHE_STORAGE_TIME)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -154,5 +156,3 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
 
 MPTT_ADMIN_LEVEL_INDENT = 10
-
-CACHE_TIME = CACHE_STORAGE_TIME

@@ -5,7 +5,6 @@ from django.core.cache import cache
 
 from config.settings_local import CACHE_STORAGE_TIME
 from product.models import Banner, Product, Category, Offer
-# from django.conf import settings
 
 
 class BannersView(generic.TemplateView):

@@ -56,17 +56,22 @@ class Category(MPTTModel):
         (False, _("Не активна")),
     ]
 
-    category = models.CharField(max_length=100, verbose_name=_("категория"))
+    name = models.CharField(max_length=100, verbose_name=_("категория"))
     icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
 
     def __str__(self):
-        return self.category
+        return self.name
 
     class Meta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
+
+    def save(self, *args, **kwargs):
+        if self.parent.level == 2:
+            raise ValueError('Достигнута максимальная вложенность!')
+        super(Category, self).save(*args, **kwargs)
 
 
 class Offer(models.Model):
