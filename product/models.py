@@ -69,7 +69,9 @@ class Category(MPTTModel):
         verbose_name_plural = _("категории")
 
     def save(self, *args, **kwargs):
-        if self.parent.level == 2:
+        if not self.parent:
+            pass
+        elif self.parent.level >= 2:
             raise ValueError('Достигнута максимальная вложенность!')
         super(Category, self).save(*args, **kwargs)
 
