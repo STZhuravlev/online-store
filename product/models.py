@@ -62,7 +62,7 @@ class Category(MPTTModel):
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
 
     def __str__(self):
-        return self.category
+        return self.name
 
     class Meta:
         verbose_name = _("категория")
