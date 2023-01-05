@@ -22,7 +22,6 @@ class BannerAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(MPTTModelAdmin):
-    mptt_level_indent = 10
     list_display = ['category', 'active', 'parent']
 
     class Meta:
