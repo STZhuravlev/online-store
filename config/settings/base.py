@@ -14,6 +14,8 @@ import os
 
 from pathlib import Path
 
+from config.settings_local import CACHE_STORAGE_TIME
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -149,6 +151,8 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_REDIRECT_URL = '/'
 
-SESSION_COOKIE_AGE = 60*60*60
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
 
 MPTT_ADMIN_LEVEL_INDENT = 10
+
+CACHE_TIME = CACHE_STORAGE_TIME
