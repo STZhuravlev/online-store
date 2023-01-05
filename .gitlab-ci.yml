@@ -7,11 +7,15 @@
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 services:
-  - redis:latest
-  - postgres:latest
+  - name: redis:latest
+  - name: postgres:latest
+    alias: db
 
 variables:
   POSTGRES_DB: marketplace
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST_AUTH_METHOD: trust
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ee/ci/yaml/README.html#cache
@@ -27,7 +31,7 @@ before_script:
   - apt-get update -q && apt-get install libaio-dev libpq-dev -y
   - pip install -r requirements/production.txt
   - pip install flake8
-  
+
 # To get Django tests to work you may need to create a settings file using
 # the following DATABASES:
 #
@@ -50,7 +54,7 @@ flake8:
 
 test:
   variables:
-    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
+    DATABASE_URL: "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB"
   script:
     - python manage.py makemigrations
     - python manage.py test
