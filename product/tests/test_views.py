@@ -1,3 +1,5 @@
+from django.urls import reverse
+from django.contrib.auth import get_user_model
 from django.test import (
     TestCase,
     # RequestFactory,
@@ -5,88 +7,34 @@ from django.test import (
 # from django.core.files.uploadedfile import SimpleUploadedFile
 # from django.urls import reverse
 from product.models import (
-    # Product,
+    Product,
     # ProductProperty,
-    Property,
+    # Property,
     # Banner,
+    Category,
+    Offer,
 )
 from django.urls import reverse
+from shop.models import Seller
 # from django.contrib.auth.models import User
 # from pathlib import Path, PurePath
 
 NUMBER_OF_ITEMS = 10
-#
-# class MainUpdateTest(TestCase):
-#     def setUp(self) -> None:
-#         data = {
-#             'username': 'test123',
-#             'email': 'passwordTest123@bk.ru',
-#             'password1': 'passwordTest123',
-#             'password2': 'passwordTest123',
-#             'number': 891234567,
-#             'city': 'Moskow'
-#         }
-#         response = self.client.post('/register/', data)
-#
-#     def test_update(self):
-#         user_id = 1
-#         user = User.objects.get(id=user_id)
-#         data_2 = {
-#             'first_name': 'test123_new',
-#             'last_name': 'test_new',
-#             'email': 'passwordTest123_new@bk.ru',
-#             'number': 5555555,
-#             'city': 'New'
-#         }
-#         response = self.client.post(f'/update/{user_id}', data_2, follow=True)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTrue(response.context['user'].is_active)
-#         self.assertEqual(response.context['user'].email, 'passwordTest123_new@bk.ru')
-#         self.assertEqual(response.context['user'].profile.city, 'New')
-#
-#
-#     def test_main(self):
-#         response = self.client.get('/main/')
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'app_media/main.html')
-
-
-# class DetailContextTest(TestCase):
-#     def setUp(self) -> None:
-#         data = {
-#             'email': 'passwordTest123@bk.ru',
-#             'password1': 'passwordTest123',
-#             'password2': 'passwordTest123',
-#         }
-#         response = self.client.post('/user/register/', data)
-#         response = self.client.post('/login/', {'username': 'test123', 'password': 'passwordTest123'}, follow=True)
-#
-#     def test_context(self):
-#         data = {
-#             'email': 'passwordTest123@bk.ru',
-#             'password1': 'passwordTest123',
-#             'password2': 'passwordTest123',
-#         }
-#         response = self.client.post('/user/register/', data)
-#         # self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.context['user'].first_name, 'test123_new')
-#         self.assertEqual(response.context['user'].profile.number, 5555555)
-#         self.assertEqual(response.context['user'].profile.city, 'New')
 
 
 class EntryTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        for item_index in range(NUMBER_OF_ITEMS):
-            Property.objects.create(name=f'Свойство {item_index}')
-    # @classmethod
-    # def setUpTestData(cls):
-    #     for item_index in range(NUMBER_OF_ITEMS):
-    #         Banner.objects.create(title=f'Запись {item_index}', brief=f'Описание записи {item_index}', icon=)
-#
+        user = get_user_model().objects.create_user(password='test1234', email='test1@test.ru')
+        seller = Seller.objects.create(user=user, name='test1', description='test1',
+                                       address='test', number=1234567)
+        category = Category.objects.create(name='test')
+        product = Product.objects.create(name='test', description='test', category=category)
+        Offer.objects.create(product=product, seller=seller, price=10.10)
 
     def test_one(self):
-        response = self.client.get('/product/banners/')
+        url = reverse('banners')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/banners-view.html', response.template_name)
 
@@ -123,6 +71,20 @@ class EntryTest(TestCase):
 #         )
 #         self.assertEqual(response.status_code, 200)
 #         self.assertEqual(EntryImage.objects.all().count(), 1)
+
+    def test_two(self):
+        url = reverse('offer-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('product/offer-detail.html', response.template_name)
+        self.assertContains(response, 'test')
+
+    def test_three(self):
+        url = reverse('product-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('product/product-detail.html', response.template_name)
+        self.assertContains(response, 'Product Detail')
 
 
 class CategoryViewsTest(TestCase):
