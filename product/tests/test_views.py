@@ -1,4 +1,3 @@
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.test import (
     TestCase,
@@ -14,6 +13,7 @@ from product.models import (
     Category,
     Offer,
 )
+
 from django.urls import reverse
 from shop.models import Seller
 # from django.contrib.auth.models import User
