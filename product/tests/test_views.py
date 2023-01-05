@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 from django.test import (
     TestCase,
     # RequestFactory,
@@ -24,7 +25,7 @@ NUMBER_OF_ITEMS = 10
 class EntryTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = CustomUser.objects.create(password='test1234', email='test1@test.ru')
+        user = get_user_model().objects.create_user(password='test1234', email='test1@test.ru')
         seller = Seller.objects.create(user=user, name='test1', description='test1',
                                        address='test', number=1234567)
         category = Category.objects.create(name='test')
