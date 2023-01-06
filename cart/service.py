@@ -3,7 +3,7 @@ from product.models import Offer
 from decimal import Decimal
 
 
-class Cart(object):
+class Cart:
 
     def __init__(self, request):
         """

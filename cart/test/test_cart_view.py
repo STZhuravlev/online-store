@@ -5,10 +5,12 @@ from users.models import CustomUser
 
 class TestCart(TestCase):
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = CustomUser.objects.create_user(email='test@test.ru', password='12345')
+        cls.user.save()
 
-        self.user = CustomUser.objects.create_user(email='test@test.ru', password='12345')
-        self.user.save()
+    def setUp(self) -> None:
         self.session = self.client.session
         self.session[settings.CART_SESSION_ID] = []
         self.client.login(email=self.user.email, password=self.user.password)
