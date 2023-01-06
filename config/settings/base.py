@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'shop',
     'users',
     'comparison',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'cart.contex_processor.Cart'
             ],
         },
     },
@@ -156,3 +158,5 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
 
 MPTT_ADMIN_LEVEL_INDENT = 10
+
+CART_SESSION_ID = 'cart'

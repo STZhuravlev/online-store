@@ -14,6 +14,7 @@
         {% for off in offer_sellers %}
             <p><a href="/shop/seller/{{ off.seller.id }}">Продавец {{ off.seller }}</a></p>
         {% endfor %}
+
     {% endblock %}
-    <hr>
+{%  include 'cart/add.html' with id=offer.product.id %}
 {% endblock %}
