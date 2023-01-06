@@ -8,7 +8,6 @@ class TestCart(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = CustomUser.objects.create_user(email='test@test.ru', password='12345')
-        cls.user.save()
 
     def setUp(self) -> None:
         self.session = self.client.session
