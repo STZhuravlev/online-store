@@ -3,7 +3,7 @@ from django.shortcuts import render  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 
-from config.settings_local import CACHE_STORAGE_TIME
+from django.conf import settings
 from product.models import Banner, Product, Category, Offer
 
 
@@ -52,7 +52,7 @@ class CategoryView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         categories_list = Category.objects.all()
-        cached_data = cache.get_or_set("categories", categories_list, CACHE_STORAGE_TIME)
+        cached_data = cache.get_or_set("categories", categories_list, settings.CACHE_STORAGE_TIME)
         context['categories'] = cached_data
         return context
 
