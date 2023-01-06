@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+</head>
+<body>
+{% for item in cart %}
+    {% with product=item.product.product %}
+        {{ product.name}}
+        {{ item.price }}
+        {{ item.quantity }}
+        {{ item.total_price }}
+        {%  include 'cart/remove.html' with id=product.id %}
+    {% endwith %}
+{% endfor %}
+ <form action="{% url 'cart:cart-delete' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Удалить корзину</button>
+</form>
+</body>
+</html>

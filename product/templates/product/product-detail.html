@@ -2,7 +2,7 @@
 
 {{ product.id }}
 {{ product.name }}
-
+{{ product.price }}
 
 <form action="{% url 'comparison:comparison-delete' %}" method="post">
     {% csrf_token %}
