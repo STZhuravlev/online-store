@@ -15,5 +15,14 @@
         {% endfor %}
 
     {% endblock %}
+    <form action="{% url 'comparison:comparison-delete' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Удалить данные сравнения</button>
+</form>
+
+{% include 'comparison/add.html' with type='product' id=offer.product.id  %}
+{% include 'comparison/remove.html' with type='product' id=offer.product.id %}
+
+
 {%  include 'cart/add.html' with id=offer.product.id %}
 {% endblock %}
