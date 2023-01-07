@@ -7,7 +7,7 @@
     <p>{% trans "Продавец" %}: {{ offer.seller }}</p>
     <p>{% trans "Логотип товара" %} <img src={{ offer.image }} width="500"></p>
     <p>{% trans "Описание" %}: {{ offer.description }}</p>
-    <p>{% trans "Цена" %}: {{ offer.price.price }}</p>
+    <p>{% trans "Цена" %}: {{ offer.price }}</p>
     {% block offer_sellers %}
         <h2>Продавцы у которых доступен данный товар</h2>
         {% for off in offer_sellers %}
