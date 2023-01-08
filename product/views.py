@@ -2,7 +2,9 @@ from random import sample
 from django.shortcuts import render  # noqa F401
 from django.views import generic
 from django.core.cache import cache
-from product.models import Banner, Product, Offer
+
+from django.conf import settings
+from product.models import Banner, Product, Category, Offer
 
 
 class BannersView(generic.TemplateView):
@@ -39,6 +41,20 @@ class ProductDetailView(generic.DetailView):
     model = Product
     template_name = 'product/product-detail.html'
     context_object_name = 'product'
+
+
+class CategoryView(generic.ListView):
+    """Тест. Отображение категорий каталога"""
+    template_name = 'product/category-view.html'
+    model = Category
+    context_object_name = 'category_list'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories_list = Category.objects.all()
+        cached_data = cache.get_or_set("categories", categories_list, settings.CACHE_STORAGE_TIME)
+        context['categories'] = cached_data
+        return context
 
 
 class OfferDetailView(generic.DetailView):

@@ -14,6 +14,10 @@ import os
 
 from pathlib import Path
 
+from django.conf import settings
+from config.settings_local import CACHE_STORAGE_TIME
+
+settings.configure(CACHE_STORAGE_TIME)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -140,6 +144,9 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, сюда будет собирать статику collectstatic
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -150,5 +157,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = '/'
 
 SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
+
+MPTT_ADMIN_LEVEL_INDENT = 10
 
 CART_SESSION_ID = 'cart'

@@ -52,8 +52,8 @@ class Banner(models.Model):
 class Category(MPTTModel):
     """Категория продукта"""
     STATUS_CHOICE = [
-        (True, _("активна")),
-        (False, _("не активна")),
+        (True, _("Активна")),
+        (False, _("Не активна")),
     ]
 
     name = models.CharField(max_length=100, verbose_name=_("категория"))
@@ -67,6 +67,13 @@ class Category(MPTTModel):
     class Meta:
         verbose_name = _("категория")
         verbose_name_plural = _("категории")
+
+    def save(self, *args, **kwargs):
+        if not self.parent:
+            pass
+        elif self.parent.level >= 2:
+            raise ValueError('Достигнута максимальная вложенность!')
+        super(Category, self).save(*args, **kwargs)
 
 
 class Offer(models.Model):
