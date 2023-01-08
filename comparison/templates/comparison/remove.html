@@ -1,6 +1,6 @@
 {% if request.session.comparison %}
-    {% for item in request.session.comparison %}
-        {% if item.id == id|stringformat:'i' and item.type == type %}
+{#    {% for item in request.session.comparison %}#}
+{#        {% if item.id == id|stringformat:'i' and item.type == type %}#}
             <form action="{% url 'comparison:comparison-remove' id=id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="type" value="{{ type }}">
@@ -8,5 +8,5 @@
                 <button type="submit">Удалить из сравнения</button>
             </form>
 {% endif %}
-{% endfor %}
-{% endif %}
+{#{% endfor %}#}
+{#{% endif %}#}

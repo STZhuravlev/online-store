@@ -1,14 +1,13 @@
 {% extends 'product/base.html' %}
 {% load i18n %}
 
-
 {% block content %}
     <h2>{% trans "Название товара" %}: {{ offer.name }}</h2>
     <p>{% trans "Продукт" %}: {{ offer.product }}</p>
     <p>{% trans "Продавец" %}: {{ offer.seller }}</p>
     <p>{% trans "Логотип товара" %} <img src={{ offer.image }} width="500"></p>
     <p>{% trans "Описание" %}: {{ offer.description }}</p>
-    <p>{% trans "Цена" %}: {{ offer.price.price }}</p>
+    <p>{% trans "Цена" %}: {{ offer.price }}</p>
     {% block offer_sellers %}
         <h2>Продавцы у которых доступен данный товар</h2>
         {% for off in offer_sellers %}
@@ -16,5 +15,14 @@
         {% endfor %}
 
     {% endblock %}
+    <form action="{% url 'comparison:comparison-delete' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Удалить данные сравнения</button>
+</form>
+
+{% include 'comparison/add.html' with type='product' id=offer.product.id  %}
+{% include 'comparison/remove.html' with type='product' id=offer.product.id %}
+
+
 {%  include 'cart/add.html' with id=offer.product.id %}
 {% endblock %}
