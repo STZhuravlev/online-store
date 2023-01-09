@@ -4,7 +4,7 @@ from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer
+from product.models import Banner, Product, Category, Offer, ProductImage
 
 
 class BannersView(generic.TemplateView):
@@ -66,3 +66,22 @@ class OfferDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context
+
+
+class CatalogListView(generic.ListView):
+    model = Product
+    context_object_name = 'catalog'
+    #template_name = 'product/catalog-view.html'
+    template_name = 'product/base-template-2.html'
+    paginate_by = 6
+
+    def get_queryset(self, *args, **kwargs):
+        print(self.kwargs)
+        queryset = Product.objects.all()
+        return queryset
+
+class HomeView(generic.TemplateView):
+    template_name = 'product/base-template-1.html'
+
+class CatalogView(generic.TemplateView):
+    template_name = 'product/base-template-2.html'
