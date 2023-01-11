@@ -1134,7 +1134,8 @@ label.toggle {
   border-left-width: 6px;
   border-bottom-width: 0;
   z-index: 0;
-  transform: Rotate(-110deg);
+  -webkit-transform: Rotate(-110deg);
+          transform: Rotate(-110deg);
 }
 .label_danger {
   background: #f26d7d;
@@ -1308,12 +1309,14 @@ label.toggle {
   position: absolute;
   top: 31%;
   margin-top: 0px;
-  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
   box-shadow: none;
   transition: all 0.3s;
 }
 .menuTrigger_OPEN span + span {
-  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
   margin-top: 0;
 }
 .menuTrigger_OPEN span:last-child {
@@ -1468,12 +1471,14 @@ label.toggle {
   display: block;
 }
 .menu_img .menu-item a img {
-  transform: scale(0.82);
+  -webkit-transform: scale(0.82);
+          transform: scale(0.82);
   transition: all 100ms;
 }
 @media screen and (min-width: 990px) {
   .menu_img .menu-item a:hover img {
-    transform: none;
+    -webkit-transform: none;
+            transform: none;
     transition: all 100ms;
   }
 }
@@ -1507,11 +1512,13 @@ label.toggle {
   justify-content: center;
 }
 .menu_smallImg .menu-item a img {
-  transform: scale(1);
+  -webkit-transform: scale(1);
+          transform: scale(1);
 }
 @media screen and (min-width: 990px) {
   .menu_smallImg .menu-item a:hover img {
-    transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+            transform: scale(1.5);
   }
 }
 .menu_main {
@@ -1599,7 +1606,8 @@ label.toggle {
   position: absolute;
   bottom: 10px;
   left: 50%;
-  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
 }
 .menu_main .menu-item_ACTIVE a {
   color: #fff;
