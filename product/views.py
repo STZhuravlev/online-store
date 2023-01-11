@@ -75,6 +75,12 @@ class CatalogListView(generic.ListView):
     template_name = 'product/base-template-2.html'
     paginate_by = 6
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories_list = Category.objects.all()
+        context['categories'] = categories_list
+        return context
+
     def get_queryset(self, *args, **kwargs):
         print(self.kwargs)
         queryset = Product.objects.all()
