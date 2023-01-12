@@ -11,9 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import dj_database_url
 import os
-
 from pathlib import Path
-
 from django.conf import settings
 from config.settings_local import CACHE_STORAGE_TIME
 
@@ -49,6 +47,7 @@ INSTALLED_APPS = [
     'users',
     'comparison',
     'cart',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
