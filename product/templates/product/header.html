@@ -60,14 +60,14 @@
             <div class="CategoriesButton-title">
               <div class="CategoriesButton-icon">
                   <img src="{% static "assets/img/icons/allDep.svg" %}" alt="allDep.svg"/>
-              </div><span class="CategoriesButton-text">All Departments</span>
+              </div><span class="CategoriesButton-text">Категории товаров</span>
               <div class="CategoriesButton-arrow">
               </div>
             </div>
             <div class="CategoriesButton-content">
               {% recursetree categories %}
                 <div class="CategoriesButton-link">
-                  <a href="#">
+                  <a href="{% url 'catalog-view' %}?categoty={{ node.id }}">
                     <div class="CategoriesButton-icon">
                       <img src="{% static "assets/img/icons/departments/3.svg" %}" alt="3.svg"/>
                     </div>
@@ -75,16 +75,10 @@
                   </a>
 
                   {% if not node.is_leaf_node %}
-                    <a class="CategoriesButton-arrow" href="#">
-
-                    <div class="CategoriesButton-submenu">
-                      <a class="CategoriesButton-link" href="#">
-                        <div class="CategoriesButton-icon">
-                          <img src="{% static "assets/img/icons/departments/1.svg" %}" alt="1.svg"/>
+                    <a class="CategoriesButton-arrow" href="#"></a>
+                      <div class="CategoriesButton-submenu">
+                        {{ children }}
                         </div>
-                        <span class="CategoriesButton-text">{{ children }}</span>
-                      </a>
-                    </div>
                       </a>
                   {% endif %}
                 </div>
