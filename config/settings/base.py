@@ -160,3 +160,5 @@ SESSION_COOKIE_AGE = 30 * 24 * 60 * 60
 MPTT_ADMIN_LEVEL_INDENT = 10
 
 CART_SESSION_ID = 'cart'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
