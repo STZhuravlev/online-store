@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load mptt_tags %}
+{% load products_custom_tags %}
 
 {% block content %}
 <div class="Middle Middle_top">
@@ -18,7 +19,7 @@
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
             <li class="breadcrumbs-item">
-                <a href="{% url "home" %}">home</a>
+                <a href="#">home</a>
             </li>
             <li class="breadcrumbs-item breadcrumbs-item_current">
              <span>
@@ -173,11 +174,15 @@
               <div class="Pagination">
                 <div class="Pagination-ins">
                   {% if page_obj.has_previous %}
+{#                      <a class="Pagination-element Pagination-element_prev"#}
+{#                         href="?page={{ page_obj.previous_page_number }}">#}
                       <a class="Pagination-element Pagination-element_prev"
-                         href="?page={{ page_obj.previous_page_number }}">
+                        href="?{% add_query_params request page=page_obj.previous_page_number %}">
                       <img src="{% static "assets/img/icons/prevPagination.svg" %}" alt="prevPagination.svg"/>
                     </a>
-                      <a class="Pagination-element" href="?page={{ page_obj.previous_page_number }}">
+{#                      <a class="Pagination-element" href="?page={{ page_obj.previous_page_number }}">#}
+                      <a class="Pagination-element"
+                         href="?{% add_query_params request page=page_obj.previous_page_number %}">
                       <span class="Pagination-text">{{ page_obj.previous_page_number }}</span>
                     </a>
                   {% else %}
@@ -191,10 +196,13 @@
                   </a>
 
                   {% if page_obj.has_next %}
-                    <a class="Pagination-element" href="?page={{ page_obj.next_page_number }}">
+{#                    <a class="Pagination-element" href="?page={{ page_obj.next_page_number }}">#}
+                    <a class="Pagination-element"
+                       href="?{% add_query_params request page=page_obj.next_page_number %}">
                       <span class="Pagination-text">{{ page_obj.next_page_number }}</span>
                     </a>
-                    <a class="Pagination-element Pagination-element_prev" href="?page={{ page_obj.next_page_number }}">
+                    <a class="Pagination-element Pagination-element_prev"
+                       href="?{% add_query_params request page=page_obj.next_page_number %}">
                       <img src="{% static "assets/img/icons/nextPagination.svg" %}" alt="nextPagination.svg"/>
                     </a>
                   {% else %}

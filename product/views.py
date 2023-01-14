@@ -5,6 +5,7 @@ from django.core.cache import cache
 
 from django.conf import settings
 from product.models import Banner, Product, Category, Offer, ProductImage
+from product.services import get_category
 
 
 class BannersView(generic.TemplateView):
@@ -68,26 +69,41 @@ class OfferDetailView(generic.DetailView):
         return context
 
 
-class CatalogListView(generic.ListView):
+class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
-    #template_name = 'product/catalog-view.html'
     template_name = 'product/base-template-2.html'
     paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        categories_list = Category.objects.all()
-        context['categories'] = categories_list
+        context['categories'] = get_category()
+        context['url_query'] = self.request.GET.copy()
         return context
 
-    def get_queryset(self, *args, **kwargs):
-        print(self.kwargs)
-        queryset = Product.objects.all()
-        return queryset
+    def get_queryset(self):
+        print(self.request.GET)
+        category_id = self.request.GET.get('category')
+        cache_key = f'products:{category_id}'
+        if category_id:   # if category is passed in query
+            category = Category.objects.get(id=category_id)
+            parent = category.parent
+            if parent is None:  # if root select products of this category
+                queryset = Product.objects. \
+                    select_related('category').prefetch_related('seller'). \
+                    filter(category__tree_id=category.tree_id)
+            else:  # if child select products of this category
+                queryset = Product.objects.\
+                    select_related('category').\
+                    filter(category=category_id)
+        else:  # if category isn't passed in query
+            queryset = Product.objects.prefetch_related('seller')
+            # qs2 = Offer.objects.select_related('product').\
+            #     prefetch_related('seller').only('id',
+            #                                     'product__name',
+            #                                     'price')
+            # qs2.aggregate(average_price, Avg('price'))
+        # cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
+        cached_data = cache.get_or_set(cache_key, queryset, 1)
+        return cached_data
 
-class HomeView(generic.TemplateView):
-    template_name = 'product/base-template-1.html'
-
-class CatalogView(generic.TemplateView):
-    template_name = 'product/base-template-2.html'
