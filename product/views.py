@@ -1,10 +1,11 @@
 from random import sample
-from django.shortcuts import render  # noqa F401
+from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer
+
+from product.models import Banner, Product, Category, Offer, HistoryView
 
 
 class BannersView(generic.TemplateView):
@@ -44,7 +45,7 @@ class ProductDetailView(generic.DetailView):
 
 
 class CategoryView(generic.ListView):
-    """Тест. Отображение категорий каталога"""
+    """Отображение категорий каталога"""
     template_name = 'product/category-view.html'
     model = Category
     context_object_name = 'category_list'
@@ -56,6 +57,17 @@ class CategoryView(generic.ListView):
         context['categories'] = cached_data
         return context
 
+    def post(self, request):
+        history_id = request.POST["history_id"]
+        x = HistoryView.objects.filter(name_id=history_id)
+        if x:
+            y = HistoryView.objects.get(name_id=history_id)
+            y.save(update_fields=['view_at'])
+        else:
+            history = HistoryView(name_id=history_id)
+            history.save()
+        return redirect(f"/product/category/{history_id}")
+
 
 class OfferDetailView(generic.DetailView):
     model = Offer
@@ -65,4 +77,19 @@ class OfferDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        return context
+
+
+class CategoryDetailView(generic.DetailView):
+    model = Category
+
+
+class HistoryViewsView(generic.ListView):
+    template_name = 'product/history-view.html'
+    model = HistoryView
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        history_list = HistoryView.objects.all()[:5]
+        context['history_list'] = history_list
         return context

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Истории просмотров</title>
+</head>
+<body>
+{% for history in history_list %}
+    <div>
+    {{ history.name }}
+    {{ history.name.id }}
+    {{ history.history_id }}
+    </div>
+{% endfor %}
+</body>
+</html>
