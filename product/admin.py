@@ -56,4 +56,3 @@ admin.site.register(Offer, OfferAdmin)
 admin.site.register(ProductProperty, ProductPropertyAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
-
