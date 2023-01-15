@@ -57,14 +57,14 @@ class CategoryView(generic.ListView):
         context['categories'] = cached_data
         return context
 
-    def post(self, request):
+    def history_views(self, request):
         history_id = request.POST["history_id"]
-        x = HistoryView.objects.filter(name_id=history_id)
+        x = HistoryView.objects.filter(category_id=history_id)
         if x:
-            y = HistoryView.objects.get(name_id=history_id)
+            y = HistoryView.objects.get(category_id=history_id)
             y.save(update_fields=['view_at'])
         else:
-            history = HistoryView(name_id=history_id)
+            history = HistoryView(category_id=history_id)
             history.save()
         return redirect(f"/product/category/{history_id}")
 

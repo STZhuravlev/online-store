@@ -2,7 +2,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
+
 # from users.models import CustomUser
+
+from django.contrib.auth import get_user_model
 
 
 class Product(models.Model):
@@ -108,7 +111,7 @@ class HistoryView(models.Model):
     """ТЕСТ истории просмотра"""
     # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
-    name = models.ForeignKey(Category, verbose_name=_('категория'), on_delete=models.CASCADE, related_name='views')
+    category = models.ForeignKey(Category, verbose_name=_('категория'), on_delete=models.CASCADE, related_name='views')
 
     class Meta:
         ordering = ('-view_at',)
@@ -117,3 +120,12 @@ class HistoryView(models.Model):
 
     def __str__(self):
         return self.name.name
+
+
+class Feedback(models.Model):
+    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
+    author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
+    publication_date = models.DateTimeField(auto_now=True)
+    rating = models.IntegerField(verbose_name=_('рейтинг'))
+    description = models.TextField(max_length=2048, verbose_name=_('описание'))
+    image = models.ImageField(upload_to='feedback_images/')

@@ -1,7 +1,7 @@
 from django.contrib import admin  # noqa F401
 from django.utils.translation import gettext_lazy as _
 from mptt.admin import MPTTModelAdmin
-from product.models import Product, Banner, Category, Offer, Property, ProductProperty, HistoryView
+from product.models import Product, Banner, Category, Offer, Property, ProductProperty, Feedback, HistoryView
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -47,11 +47,15 @@ class ProductPropertyAdmin(admin.ModelAdmin):
 
 class HistoryViewAdmin(admin.ModelAdmin):
     """ТЕСТ истории просмотра"""
-    list_display = ['name', 'view_at']
+    list_display = ['category', 'view_at']
 
     class Meta:
         verbose_name = _('история просмотров')
         verbose_name_plural = _('истории просмотров')
+
+
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ['product', 'author', 'publication_date', 'rating', 'description', 'image']
 
 
 admin.site.register(Product, ProductAdmin)
@@ -61,3 +65,4 @@ admin.site.register(Offer, OfferAdmin)
 admin.site.register(ProductProperty, ProductPropertyAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(HistoryView, HistoryViewAdmin)
+admin.site.register(Feedback, FeedbackAdmin)
