@@ -45,14 +45,12 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        history_id = context['object'].id
-        print(history_id)
-        histiry_view_list = HistoryView.objects.filter(product_id=history_id)
+        histiry_view_list = HistoryView.objects.filter(product=self.object)
         if histiry_view_list:
-            history_old = HistoryView.objects.get(product_id=history_id)
+            history_old = HistoryView.objects.get(product=self.object)
             history_old.save(update_fields=['view_at'])
         else:
-            history_new = HistoryView(product_id=history_id)
+            history_new = HistoryView(product=self.object)
             history_new.save()
         return context
 
