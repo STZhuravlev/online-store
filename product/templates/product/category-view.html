@@ -13,15 +13,13 @@
 
             <li>
 {#            {% if user.is_autentificated %}#}
-            <form method="POST"> {% csrf_token %}
                 <input type="hidden" name="name" value="{{ node.name }}">
                 <input type="hidden" name="history_id" value="{{ node.id }}">
-                <a href="/product/category/{{ node.id }}"><button>{{ node.name }}</button></a>
+                <a href="/product/category/{{ node.id }}">{{ node.name }}</a>
                 {% if node.icon %}
                     <img style="width: 20px; height: 20px;" src="{{ MEDIA_URL }}{{ node.icon.url }} "
                          alt=" a photo "/>
 {#                {% endif %}#}
-            </form >
 {#            {% else %}#}
 {#                <a href="/product/category/{{ node.id }}">{{ node.name }}</a>#}
 {#                {% if node.icon %}#}

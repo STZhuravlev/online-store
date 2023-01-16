@@ -5,7 +5,7 @@ from product.models import Product, Banner, Category, Offer, Property, ProductPr
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name', 'id']
 
     class Meta:
         verbose_name = _('товар')
@@ -47,7 +47,7 @@ class ProductPropertyAdmin(admin.ModelAdmin):
 
 class HistoryViewAdmin(admin.ModelAdmin):
     """ТЕСТ истории просмотра"""
-    list_display = ['category', 'view_at']
+    list_display = ['product', 'view_at']
 
     class Meta:
         verbose_name = _('история просмотров')

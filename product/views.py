@@ -43,6 +43,19 @@ class ProductDetailView(generic.DetailView):
     template_name = 'product/product-detail.html'
     context_object_name = 'product'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        history_id = context['object'].id
+        print(history_id)
+        histiry_view_list = HistoryView.objects.filter(product_id=history_id)
+        if histiry_view_list:
+            history_old = HistoryView.objects.get(product_id=history_id)
+            history_old.save(update_fields=['view_at'])
+        else:
+            history_new = HistoryView(product_id=history_id)
+            history_new.save()
+        return context
+
 
 class CategoryView(generic.ListView):
     """Отображение категорий каталога"""
@@ -57,17 +70,6 @@ class CategoryView(generic.ListView):
         context['categories'] = cached_data
         return context
 
-    def history_views(self, request):
-        history_id = request.POST["history_id"]
-        x = HistoryView.objects.filter(category_id=history_id)
-        if x:
-            y = HistoryView.objects.get(category_id=history_id)
-            y.save(update_fields=['view_at'])
-        else:
-            history = HistoryView(category_id=history_id)
-            history.save()
-        return redirect(f"/product/category/{history_id}")
-
 
 class OfferDetailView(generic.DetailView):
     model = Offer
@@ -78,10 +80,6 @@ class OfferDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context
-
-
-class CategoryDetailView(generic.DetailView):
-    model = Category
 
 
 class HistoryViewsView(generic.ListView):
