@@ -2,6 +2,9 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
+
+# from users.models import CustomUser
+
 from django.contrib.auth import get_user_model
 
 
@@ -99,6 +102,21 @@ class ProductImage(models.Model):
     class Meta:
         verbose_name = _('изображение продукта')
         verbose_name_plural = _('изображения продуктов')
+
+    def __str__(self):
+        return self.product.name
+
+
+class HistoryView(models.Model):
+    """История просмотра товаров"""
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
+    product = models.ForeignKey(Product, verbose_name=_('товар'), on_delete=models.CASCADE, related_name='views')
+
+    class Meta:
+        ordering = ('-view_at',)
+        verbose_name = _("история просмотров")
+        verbose_name_plural = _("истории просмотров")
 
     def __str__(self):
         return self.product.name

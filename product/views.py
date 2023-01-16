@@ -1,10 +1,11 @@
 from random import sample
-from django.shortcuts import render  # noqa F401
+from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer
+
+from product.models import Banner, Product, Category, Offer, HistoryView
 
 
 class BannersView(generic.TemplateView):
@@ -42,9 +43,20 @@ class ProductDetailView(generic.DetailView):
     template_name = 'product/product-detail.html'
     context_object_name = 'product'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        histiry_view_list = HistoryView.objects.filter(product=self.object)
+        if histiry_view_list:
+            history_old = HistoryView.objects.get(product=self.object)
+            history_old.save(update_fields=['view_at'])
+        else:
+            history_new = HistoryView(product=self.object)
+            history_new.save()
+        return context
+
 
 class CategoryView(generic.ListView):
-    """Тест. Отображение категорий каталога"""
+    """Отображение категорий каталога"""
     template_name = 'product/category-view.html'
     model = Category
     context_object_name = 'category_list'
@@ -65,4 +77,15 @@ class OfferDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        return context
+
+
+class HistoryViewsView(generic.ListView):
+    template_name = 'product/history-view.html'
+    model = HistoryView
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        history_list = HistoryView.objects.all()[:5]
+        context['history_list'] = history_list
         return context
