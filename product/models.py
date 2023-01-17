@@ -78,7 +78,7 @@ class Category(MPTTModel):
 
 class Offer(models.Model):
     """Товар"""
-    product = models.ForeignKey("Product", on_delete=models.PROTECT)
+    product = models.ForeignKey("Product", on_delete=models.PROTECT, related_name='offers')
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
 
