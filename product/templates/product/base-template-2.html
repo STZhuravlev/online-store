@@ -27,6 +27,7 @@
                {% block content_pagename %}
                  Catalog
                {% endblock content_pagename %}
+             <p>{{ form.input.price }}</p>
              </span>
             </li>
           </ul>
@@ -50,12 +51,14 @@
               </strong>
             </header>
             <div class="Section-columnContent">
-              <form class="form" action="#" method="post">
+              <form class="form"
+                    action="{% url 'catalog-view' %}?category={{ request.GET.get.category }}"
+                    method="get">
                 <div class="form-group">
                   <div class="range Section-columnRange">
                     <input class="range-line" id="price" name="price" type="text"
-                           data-type="double" data-min="7" data-max="50" data-from="7" data-to="27"/>
-                    <div class="range-price">Price:&#32;
+                           data-type="double" data-min="50" data-max="500000" data-from="1000" data-to="100000"/>
+                    <div class="range-price">Цена:&#32;
                       <div class="rangePrice">
                       </div>
                     </div>
@@ -67,30 +70,38 @@
                 </div>
                 <div class="form-group">
                   <!-- - var options = setOptions(items, ['value', 'selected', 'disabled']);-->
-                  <select class="form-select">
+                  <select class="form-select" name="seller">
                     <option value="seller" selected="selected" disabled="disabled">Продавец
                     </option>
-                    <option value="kkk">Kkkk
-                    </option>
-                    <option value="sdfsdf">sdfsdf
-                    </option>
+                    {% for seller in sellers %}
+                      <option value="{{ seller.name }}">{{ seller.name }}
+                      </option>
+                    {% empty %}
+                    {% endfor %}
+{#                    <option value="sdfsdf">sdfsdf#}
+{#                    </option>#}
                   </select>
                 </div>
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox"/><span class="toggle-box"></span>
+                    <input type="checkbox" name="stock"/><span class="toggle-box"></span>
                       <span class="toggle-text">Только товары в наличии</span>
                   </label>
                 </div>
                 <div class="form-group">
                   <label class="toggle">
-                    <input type="checkbox"/><span class="toggle-box"></span>
+                    <input type="checkbox" name="deliv"/><span class="toggle-box"></span>
                       <span class="toggle-text">С бесплатной доставкой</span>
                   </label>
                 </div>
                 <div class="form-group">
-                  <div class="buttons"><a class="btn btn_square btn_dark btn_narrow" href="#">Filter</a>
-                  </div>
+                  <br>
+                  <button class="buttons btn btn_square btn_dark btn_narrow"
+                          type="submit">
+                          Применить фильтры</button>
+{#                  <div class="buttons"><a class="btn btn_square btn_dark btn_narrow"#}
+{#                                          href="#" type="submit">Filter</a>#}
+{#                  </div>#}
                 </div>
               </form>
             </div>
@@ -144,7 +155,7 @@
                   <div class="Card-description">
                     <div class="Card-cost">
                       <span class="Card-priceOld">$115.00</span>
-                      <span class="Card-price">$85.00</span>
+                      <span class="Card-price">{{ item.offers.first.price }} ₽</span>
                     </div>
                     <div class="Card-category">
                         Games / xbox
