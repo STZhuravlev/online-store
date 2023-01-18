@@ -28,6 +28,7 @@ class Property(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductProperty(models.Model):
     """Значение свойства продукта"""
     product = models.ForeignKey(Product, on_delete=models.PROTECT)

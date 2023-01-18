@@ -9,9 +9,8 @@ class ProductInLine(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name',]
-    inlines = [ProductInLine,]
-
+    list_display = ['name', ]
+    inlines = [ProductInLine, ]
 
     class Meta:
         verbose_name = _('товар')
@@ -47,15 +46,12 @@ class PropertyAdmin(admin.ModelAdmin):
     list_display = ['name', ]
 
 
-
 class ProductPropertyAdmin(admin.ModelAdmin):
     list_display = ['product', 'property', 'value']
 
 
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ['product', 'author', 'publication_date', 'rating', 'description', 'image']
-
-
 
 
 admin.site.register(Product, ProductAdmin)
