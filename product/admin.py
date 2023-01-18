@@ -4,8 +4,14 @@ from mptt.admin import MPTTModelAdmin
 from product.models import Product, Banner, Category, Offer, Property, ProductProperty, Feedback
 
 
+class ProductInLine(admin.TabularInline):
+    model = Product.property.through
+
+
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name',]
+    inlines = [ProductInLine,]
+
 
     class Meta:
         verbose_name = _('товар')
@@ -41,12 +47,15 @@ class PropertyAdmin(admin.ModelAdmin):
     list_display = ['name', ]
 
 
+
 class ProductPropertyAdmin(admin.ModelAdmin):
     list_display = ['product', 'property', 'value']
 
 
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ['product', 'author', 'publication_date', 'rating', 'description', 'image']
+
+
 
 
 admin.site.register(Product, ProductAdmin)

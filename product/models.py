@@ -25,11 +25,13 @@ class Property(models.Model):
     """Свойство продукта"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
 
+    def __str__(self):
+        return self.name
 
 class ProductProperty(models.Model):
     """Значение свойства продукта"""
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    property = models.ForeignKey(Property, on_delete=models.PROTECT)
+    property = models.ForeignKey(Property, on_delete=models.PROTECT, related_name='prod')
     value = models.CharField(max_length=128, verbose_name=_("значение"))
 
 
