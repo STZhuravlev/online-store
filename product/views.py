@@ -89,3 +89,7 @@ class HistoryViewsView(generic.ListView):
         history_list = HistoryView.objects.all()[:5]
         context['history_list'] = history_list
         return context
+
+
+class MainPageView(generic.TemplateView):
+    template_name = 'product/main-page.html'
