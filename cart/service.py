@@ -74,3 +74,17 @@ class Cart:
         """
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
+
+    def add_quantity(self, offer):
+        product_id = str(offer.product.id)
+        quantity = 1
+        self.cart[product_id]['quantity'] += quantity
+        self.save()
+
+    def remove_quantity(self, offer):
+        product_id = str(offer.product.id)
+        quantity = 1
+        self.cart[product_id]['quantity'] -= quantity
+        if self.cart[product_id]['quantity'] == 0:
+            del self.cart[product_id]
+        self.save()

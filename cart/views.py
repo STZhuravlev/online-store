@@ -36,9 +36,22 @@ class CartDelete(View):
             del request.session[settings.CART_SESSION_ID]
         return redirect('/')
 
+class AddQuantity(View):
+    def post(self, request, id):
+        cart = Cart(request)
+        product = get_object_or_404(Offer, id=id)
+        cart.add_quantity(product)
+        return redirect('cart:cart')
 
+class RemoveQuantity(View):
+    def post(self, request, id):
+        cart = Cart(request)
+        product = get_object_or_404(Offer, id=id)
+        cart.remove_quantity(product)
+        return redirect('cart:cart')
 class CartView(View):
 
     def get(self, request):
         cart = Cart(request)
         return render(request, 'cart/cart_detail.html', {'cart': cart})
+
