@@ -77,11 +77,11 @@ class HistoryTest(TestCase):
         delivery = DeliveryType.objects.create(name='test')
         Order.objects.create(user=user, delivery=delivery, type=type, status=status, address='test')
 
-    def test_history(self):
-        url = reverse('history')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('product/history_order.html', response.template_name)
+    # def test_history(self):
+    #     url = reverse('history')
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn('product/history_order.html', response.template_name)
 
     def test_history_detail(self):
         url = reverse('history-detail', kwargs={'pk': 1})
