@@ -4,7 +4,7 @@ from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer
+from product.models import Banner, Product, Category, Offer, Order
 
 
 class BannersView(generic.TemplateView):
@@ -66,3 +66,23 @@ class OfferDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context
+
+
+class HistoryOrderView(generic.ListView):
+    model = Order
+    template_name = 'product/history_order.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['orders'] = Order.objects.filter(user=self.request.user)
+        return context
+
+
+class HistoryOrderDetailView(generic.DetailView):
+    model = Order
+    template_name = 'product/history_order_detail.html'
+    context_object_name = 'order'
+
+
+class NewOrderView(generic.TemplateView):
+    pass
