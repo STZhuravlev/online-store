@@ -4,8 +4,12 @@ from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-
 from product.models import Banner, Product, Category, Offer, HistoryView
+from product.services import get_category
+
+# Количество товаров из каталога, которые будут отображаться на странице
+# CATALOG_PRODUCT_PER_PAGE = 6 для отображения страницы в стандартном десктопном браузере
+CATALOG_PRODUCT_PER_PAGE = 6
 
 
 class BannersView(generic.TemplateView):
@@ -77,7 +81,24 @@ class OfferDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['categories'] = get_category()
         return context
+
+
+class CatalogListView(generic.ListView):
+    model = Product
+    context_object_name = 'catalog'
+    template_name = 'product/base-template-2.html'
+    paginate_by = CATALOG_PRODUCT_PER_PAGE
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = get_category()
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = Product.objects.all()
+        return queryset
 
 
 class HistoryViewsView(generic.ListView):

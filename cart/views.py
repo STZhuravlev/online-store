@@ -4,6 +4,7 @@ from product.models import Offer
 from .service import Cart
 from .forms import CartAddProductForm
 from django.conf import settings
+from product.services import get_category
 
 
 class CartAdd(View):
@@ -57,4 +58,9 @@ class CartView(View):
 
     def get(self, request):
         cart = Cart(request)
-        return render(request, 'cart/cart_detail.html', {'cart': cart})
+        categories = get_category()
+        context = {
+            'cart': cart,
+            'categories': categories
+        }
+        return render(request, 'cart/cart_detail.html', context)
