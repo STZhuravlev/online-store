@@ -110,13 +110,13 @@ class ProductCatalogView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
-        # context['url_query'] = self.request.GET.copy()
+        context['current_category'] = self.request.GET.get('category', '')
         context['sellers'] = Seller.objects.all()
         return context
 
     def get_queryset(self):
         print(self.request.GET)
-        category_id = self.request.GET.get('category')
+        category_id = self.request.GET.get('category', '')
         cache_key = f'products:{category_id}'
 
         # get queryset for selected category

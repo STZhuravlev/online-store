@@ -27,7 +27,7 @@ def get_queryset_for_category(request: HttpRequest) -> QuerySet:
     :param request: HTTP request, в query-string которого содержится название категории товара
     :return: QuerySet
     """
-    category_id = request.GET.get('category')
+    category_id = request.GET.get('category', '')
     if category_id:  # if category is passed in query-string
         category = Category.objects.get(id=category_id)
         parent = category.parent

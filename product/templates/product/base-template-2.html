@@ -53,12 +53,13 @@
             </header>
             <div class="Section-columnContent">
               <form class="form"
-                    action="{% url 'catalog-view' %}?category={{ request.GET.get.category }}"
+                    action="{% url 'catalog-view' %}"
                     method="get">
                 <div class="form-group">
                   <div class="range Section-columnRange">
+                      <input type="hidden" name="category" value="{{ current_category }}">
                     <input class="range-line" id="price" name="price" type="text"
-                           data-type="double" data-min="50" data-max="500000" data-from="1000" data-to="100000"/>
+                           data-type="double" data-min="50" data-max="500000" data-from="0" data-to="100000"/>
                     <div class="range-price">Цена:&#32;
                       <div class="rangePrice">
                       </div>
