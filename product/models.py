@@ -41,7 +41,7 @@ class Banner(models.Model):
     """ Баннеры. """
     title = models.CharField(max_length=128, verbose_name=_('заголовок'))
     brief = models.CharField(max_length=512, verbose_name=_('краткое описание'))
-    icon = models.ImageField(upload_to='files/', verbose_name=_('изображение'))
+    icon = models.ImageField(upload_to='images/banners/', verbose_name=_('изображение'))
     added_at = models.DateTimeField(auto_created=True, auto_now=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners')
     is_active = models.BooleanField(default=False)

@@ -1,8 +1,10 @@
+from typing import List
+from random import sample
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest
-from product.models import Category, Product
+from product.models import Category, Product, Banner
 
 
 def get_category(cache_key: str = None,
@@ -80,3 +82,24 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
         pass
 
     return queryset
+
+
+def get_banners(qty: int = 3) -> List['Banners']:
+    """
+    Возвращает список из qty активных баннеров, баннеры выбираются случайным образом.
+    :param qty: Количество возвращаемых баннеров. По-умолчанию, 3
+    :return: Список из qty экземпляров модели Banners
+    """
+    banners = Banner.objects.filter(is_active=True)
+    result = []
+    if banners.exists():  # делаем выборку
+        # проверка, что кол-во баннеров в пределах от 1 до 3
+        if qty < 1 or qty > 3:
+            qty = 3
+            # если в модели Banners меньше экземпляров, чем qty
+        if banners.count() < qty:
+            qty = banners.count()
+        banners = list(banners)
+        result = sample(banners, k=qty)
+
+    return result
