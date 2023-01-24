@@ -1,10 +1,10 @@
 from random import sample
-from django.shortcuts import render  # noqa F401
+from django.shortcuts import render, reverse, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer, Order
+from product.models import Banner, Product, Category, Offer
 
 
 class BannersView(generic.TemplateView):
@@ -66,23 +66,3 @@ class OfferDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context
-
-
-class HistoryOrderView(generic.ListView):
-    model = Order
-    template_name = 'product/history_order.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['orders'] = Order.objects.filter(user=self.request.user)
-        return context
-
-
-class HistoryOrderDetailView(generic.DetailView):
-    model = Order
-    template_name = 'product/history_order_detail.html'
-    context_object_name = 'order'
-
-
-class NewOrderView(generic.TemplateView):
-    pass

@@ -1,0 +1,53 @@
+from random import sample
+from django.shortcuts import render, reverse, redirect  # noqa F401
+from django.views import generic
+from django.core.cache import cache
+
+from django.conf import settings
+from orders.models import Order
+
+
+class HistoryOrderView(generic.ListView):
+    model = Order
+    template_name = 'orders/history_order.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['orders'] = Order.objects.filter(user=self.request.user)
+        return context
+
+
+class HistoryOrderDetailView(generic.DetailView):
+    model = Order
+    template_name = 'orders/history_order_detail.html'
+    context_object_name = 'order'
+
+
+from django.shortcuts import render
+from .models import OrderItem
+from .forms import OrderCreateForm
+from cart.service import Cart
+
+
+def order_create(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        form = OrderCreateForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            for item in cart:
+                OrderItem.objects.create(order=order,
+                                         offer=item['offer'],
+                                         price=item['price'],
+                                         quantity=item['quantity'],
+                                         delivery=item['delivery'],
+                                         payment=item['payment'],
+                                         )
+            # очистка корзины
+            cart.clear()
+            return render(request, 'orders/created.html',
+                          {'order': order})
+    else:
+        form = OrderCreateForm
+    return render(request, 'orders/new-order.html',
+                  {'cart': cart, 'form': form})

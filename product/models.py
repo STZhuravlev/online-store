@@ -4,6 +4,22 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+STATUS_CHOICES = (
+    ('W', _('ожидание ответа от продавца')),
+    ('A', _('продавец принял заказ')),
+    ('M', _('упаковка на складе')),
+    ('S', _('в пути')),
+    ('F', _('прибыл в пункт выдачи')),
+)
+DELIVERY_CHOICES = (
+    ('D', _('обычная доставка')),
+    ('A', _('самовывоз')),
+)
+TYPE_CHOICES = (
+    ('C', _('оплата картой')),
+)
+
+
 class Product(models.Model):
     """Продукт"""
     name = models.CharField(max_length=128, verbose_name=_("наименование"))
@@ -101,55 +117,3 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return self.product.name
-
-
-class Order(models.Model):
-    """Заказ"""
-    user = models.ForeignKey('users.CustomUser', verbose_name=_('пользователь'), on_delete=models.CASCADE)
-    offer = models.ManyToManyField(Offer, through="NumberOffers", verbose_name=_('товар'))
-    date = models.DateField(auto_now_add=True, verbose_name=_('время оформления заказа'))
-    delivery = models.ForeignKey('DeliveryType', verbose_name=_('тип доставки'), on_delete=models.PROTECT)
-    type = models.ForeignKey('PaymentType', verbose_name=_("тип оплаты"), on_delete=models.PROTECT)
-    status = models.ForeignKey('OrderStatus', verbose_name=_("статус заказа"), on_delete=models.PROTECT)
-    address = models.CharField(max_length=150, verbose_name=_("адрес"))
-
-    class Meta:
-        verbose_name = _('заказ')
-        verbose_name_plural = _('заказы')
-
-    def __str__(self):
-        return f'Пользователь: {self.user}'
-
-
-class NumberOffers(models.Model):
-    """Кол-во экземпляров одного товара в заказе"""
-    order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    offer = models.ForeignKey(Offer, on_delete=models.PROTECT)
-    number = models.IntegerField(default=1, verbose_name=_("количество товаров"))
-
-    def __str__(self):
-        return f'{self.order}'
-
-
-class PaymentType(models.Model):
-    """Тип оплаты"""
-    name = models.CharField(max_length=100, verbose_name=_("тип оплаты"))
-
-    def __str__(self):
-        return self.name
-
-
-class OrderStatus(models.Model):
-    """Статус заказа"""
-    name = models.CharField(max_length=100, verbose_name=_("статус заказа"))
-
-    def __str__(self):
-        return self.name
-
-
-class DeliveryType(models.Model):
-    """Тип доставки"""
-    name = models.CharField(max_length=100, verbose_name=_("тип доставки"))
-
-    def __str__(self):
-        return self.name
