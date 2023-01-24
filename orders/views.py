@@ -1,9 +1,8 @@
-from random import sample
-from django.shortcuts import render, reverse, redirect  # noqa F401
+from django.shortcuts import render
 from django.views import generic
-from django.core.cache import cache
-
-from django.conf import settings
+from .models import OrderItem
+from .forms import OrderCreateForm
+from cart.service import Cart
 from orders.models import Order
 
 
@@ -21,12 +20,6 @@ class HistoryOrderDetailView(generic.DetailView):
     model = Order
     template_name = 'orders/history_order_detail.html'
     context_object_name = 'order'
-
-
-from django.shortcuts import render
-from .models import OrderItem
-from .forms import OrderCreateForm
-from cart.service import Cart
 
 
 def order_create(request):

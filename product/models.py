@@ -4,22 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
 
-STATUS_CHOICES = (
-    ('W', _('ожидание ответа от продавца')),
-    ('A', _('продавец принял заказ')),
-    ('M', _('упаковка на складе')),
-    ('S', _('в пути')),
-    ('F', _('прибыл в пункт выдачи')),
-)
-DELIVERY_CHOICES = (
-    ('D', _('обычная доставка')),
-    ('A', _('самовывоз')),
-)
-TYPE_CHOICES = (
-    ('C', _('оплата картой')),
-)
-
-
 class Product(models.Model):
     """Продукт"""
     name = models.CharField(max_length=128, verbose_name=_("наименование"))
