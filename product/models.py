@@ -62,7 +62,7 @@ class Category(MPTTModel):
     ]
 
     name = models.CharField(max_length=100, verbose_name=_("категория"))
-    icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
+    icon = models.FileField(upload_to="images/icons/", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
 
@@ -83,7 +83,7 @@ class Category(MPTTModel):
 
 class Offer(models.Model):
     """Товар"""
-    product = models.ForeignKey("Product", on_delete=models.PROTECT)
+    product = models.ForeignKey("Product", on_delete=models.PROTECT, related_name='offers')
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
 

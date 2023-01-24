@@ -1,5 +1,6 @@
+from django.db.models import Prefetch
 from django.shortcuts import render, redirect
-from product.models import Product
+from product.models import Product, ProductProperty
 from django.views import View
 
 
@@ -9,8 +10,14 @@ class Comparison(View):
         com = request.session.get('comparison')
         if com is None:
             return redirect('/')
-        goods_item = Product.objects.filter(id__in=(item['id'] for item in com))
+        goods_item = Product.objects.prefetch_related(Prefetch(
+            'property',
+            queryset=ProductProperty.objects.select_related(
+                'product',
+                'property',
+            )))
         content = {'goods_item': goods_item}
+
         return render(request, 'comparison/comparison.html', content)
 
 

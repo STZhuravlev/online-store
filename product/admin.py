@@ -1,7 +1,8 @@
 from django.contrib import admin  # noqa F401
 from django.utils.translation import gettext_lazy as _
 from mptt.admin import MPTTModelAdmin
-from product.models import Product, Banner, Category, Offer, Property, ProductProperty, Feedback
+from product.models import Product, Banner, Category, Offer, ProductProperty, \
+    Feedback, HistoryView, ProductImage, Property
 
 
 class ProductInLine(admin.TabularInline):
@@ -27,7 +28,7 @@ class BannerAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(MPTTModelAdmin):
-    list_display = ['name', 'active', 'parent']
+    list_display = ['name', 'active', 'parent', 'icon']
 
     class Meta:
         verbose_name = _('категория')
@@ -50,6 +51,23 @@ class ProductPropertyAdmin(admin.ModelAdmin):
     list_display = ['product', 'property', 'value']
 
 
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ['product', 'image']
+
+    class Meta:
+        verbose_name = _('изображение продукта')
+        verbose_name_plural = _('изображения продуктов')
+
+
+class HistoryViewAdmin(admin.ModelAdmin):
+    """ТЕСТ истории просмотра"""
+    list_display = ['product', 'view_at']
+
+    class Meta:
+        verbose_name = _('история просмотров')
+        verbose_name_plural = _('истории просмотров')
+
+
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ['product', 'author', 'publication_date', 'rating', 'description', 'image']
 
@@ -59,5 +77,7 @@ admin.site.register(Banner, BannerAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(ProductProperty, ProductPropertyAdmin)
+admin.site.register(ProductImage, ProductImageAdmin)
+admin.site.register(HistoryView, HistoryViewAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
