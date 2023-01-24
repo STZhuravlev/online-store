@@ -2,7 +2,6 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest
-
 from product.models import Category, Product
 
 
