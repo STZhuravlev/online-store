@@ -34,13 +34,19 @@ def get_queryset_for_category(request: HttpRequest) -> QuerySet:
         if parent is None:  # if root category, select products of full tree category
             queryset = Product.objects. \
                 select_related('category'). \
-                filter(category__tree_id=category.tree_id)
+                prefetch_related('seller'). \
+                filter(category__tree_id=category.tree_id).\
+                only('name', 'seller__name', 'category_id')
         else:  # if child category, select products of this category
             queryset = Product.objects. \
                 select_related('category'). \
-                filter(category=category_id)
+                prefetch_related('seller'). \
+                filter(category=category_id).\
+                only('name', 'seller__name', 'category_id')
     else:  # if category isn't passed in query-string
-        queryset = Product.objects.all()
+        queryset = Product.objects. \
+            prefetch_related('seller'). \
+            only('name', 'seller__name', 'category_id')
 
     return queryset
 
@@ -52,17 +58,28 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
     :param queryset: список товаров в выбранной категории товаров
     :return:
     """
+    print(0)
+    for item in queryset:
+        print(type(item))
+        print(item.id, item.seller.all())
     # filter for price
     price = request.GET.get('price')
     if price is not None:
         price_from, price_to = map(int, price.split(';'))
-        queryset = queryset.filter(Q(offers__price__gte=price_from),
+        queryset = queryset.filter(Q(offers__price__gte=price_from) &
                                    Q(offers__price__lte=price_to))
-
+    print(1)
+    for item in queryset:
+        print(type(item))
+        print(item.id, item.seller.all())
     # filter for seller
     seller = request.GET.get('seller')
+
     if seller is not None:
         queryset = queryset.filter(seller__name=seller)
+    for item in queryset:
+        print(type(item))
+        print(item.id, item.seller.all())
 
     # filter for title
     title = request.GET.get('title')

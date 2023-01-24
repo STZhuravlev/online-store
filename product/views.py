@@ -130,7 +130,6 @@ class ProductCatalogView(generic.ListView):
         # insert if condition
         final_queryset = apply_filter_to_catalog(request=self.request,
                                                  queryset=cached_data)
-
         # apply sort parameters to products in catalog
         # insert method
 
