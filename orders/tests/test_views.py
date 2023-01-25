@@ -29,7 +29,6 @@ class HistoryTest(TestCase):
         seller = Seller.objects.create(user=user2, name='test2', description='test1',
                                        address='test', number=1234567)
         product = Product.objects.create(name='test', description='test')
-        print(len(Product.objects.all()))
         Offer.objects.create(product=product, seller=seller, price=10.10)
         Order.objects.create(first_name='test', last_name='test', email='test@test.ru',
                              address='test', postal_code='test', city='test',
@@ -40,7 +39,6 @@ class HistoryTest(TestCase):
 
 
     def test_history(self):
-        print(1)
         url = reverse('history')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -54,8 +52,11 @@ class HistoryTest(TestCase):
 
 
     # def test_order_create(self):
-    #     url = reverse('order_create', kwargs={'first_name': 'test', 'last_name': 'test',
-    #                                           'email': 'test@test.ru',
-    #                                           'address': 'test', 'postal_code': 'test', 'city': 'test',
-    #                                           'delivery': 'D', 'payment': 'C'})
+    #     url = reverse('order_create')
+    #     cart = [{'offer': 1, 'price': 10.50, 'quantity': 2}, ]
+    #     data={'first_name': 'test', 'last_name': 'test', 'email': 'test@test.ru',
+    #             'address': 'test', 'postal_code': 'test', 'city': 'test', 'delivery': 'D', 'payment': 'C'}
+    #     response = self.client.post(url, data=data, follow=True)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn('orders/new-order.html', response.template_name)
 
