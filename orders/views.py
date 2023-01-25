@@ -12,7 +12,7 @@ class HistoryOrderView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['orders'] = Order.objects.filter(user=self.request.user)
+        context['orders'] = Order.objects.all()
         return context
 
 
@@ -33,8 +33,6 @@ def order_create(request):
                                          offer=item['offer'],
                                          price=item['price'],
                                          quantity=item['quantity'],
-                                         delivery=item['delivery'],
-                                         payment=item['payment'],
                                          )
             # очистка корзины
             cart.clear()

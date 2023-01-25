@@ -37,14 +37,14 @@ class EntryTest(TestCase):
         self.assertIn('product/banners-view.html', response.template_name)
 
     def test_two(self):
-        url = reverse('offer-detail', kwargs={'pk': 1})
+        url = reverse('offer-detail', kwargs={'pk': Offer.objects.get(price=10.10).id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/offer-detail.html', response.template_name)
         self.assertContains(response, 'test')
 
     def test_three(self):
-        url = reverse('product-detail', kwargs={'pk': 1})
+        url = reverse('product-detail', kwargs={'pk': Product.objects.get(name='test').id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('product/product-detail.html', response.template_name)
