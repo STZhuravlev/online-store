@@ -30,7 +30,7 @@ def order_create(request):
             order = form.save()
             for item in cart:
                 OrderItem.objects.create(order=order,
-                                         offer=item['offer'],
+                                         product=item['product'],
                                          price=item['price'],
                                          quantity=item['quantity'],
                                          )
