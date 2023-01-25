@@ -1,8 +1,8 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.views import generic
-from .models import OrderItem
-from .forms import OrderCreateForm
-from cart.service import Cart
+# from .models import OrderItem
+# from .forms import OrderCreateForm
+# from cart.service import Cart
 from orders.models import Order
 
 
@@ -22,7 +22,8 @@ class HistoryOrderDetailView(generic.DetailView):
     context_object_name = 'order'
 
 
-# def order_create(request):
+def order_create(request):
+    pass
 #     cart = Cart(request)
 #     if request.method == 'POST':
 #         form = OrderCreateForm(request.POST)
