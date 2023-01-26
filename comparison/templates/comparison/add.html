@@ -1,8 +1,6 @@
-{% if  not request.session.comparison %}
 <form action="{% url 'comparison:comparison-add' id=id %}" method="post">
     {% csrf_token %}
     <input type="hidden" name="type" value="{{ type }}">
     <input type="hidden" name="url_from" value="{{ request.path }}">
     <button type="submit">Добавить к сравнению</button>
 </form>
-{% endif %}

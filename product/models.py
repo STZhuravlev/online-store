@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Product(models.Model):
@@ -24,11 +26,14 @@ class Property(models.Model):
     """Свойство продукта"""
     name = models.CharField(max_length=512, verbose_name=_("наименование"))
 
+    def __str__(self):
+        return self.name
+
 
 class ProductProperty(models.Model):
     """Значение свойства продукта"""
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    property = models.ForeignKey(Property, on_delete=models.PROTECT)
+    property = models.ForeignKey(Property, on_delete=models.PROTECT, related_name='prod')
     value = models.CharField(max_length=128, verbose_name=_("значение"))
 
 
@@ -57,7 +62,7 @@ class Category(MPTTModel):
     ]
 
     name = models.CharField(max_length=100, verbose_name=_("категория"))
-    icon = models.ImageField(upload_to="files/icons", verbose_name=_("иконка"), blank=True)
+    icon = models.FileField(upload_to="images/icons/", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
 
@@ -101,3 +106,29 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class HistoryView(models.Model):
+    """История просмотра товаров"""
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
+    product = models.ForeignKey(Product, verbose_name=_('товар'), on_delete=models.CASCADE, related_name='views')
+
+    class Meta:
+        ordering = ('-view_at',)
+        verbose_name = _("история просмотров")
+        verbose_name_plural = _("истории просмотров")
+
+    def __str__(self):
+        return self.product.name
+
+
+class Feedback(models.Model):
+    """Отзыв"""
+    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
+    author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
+    publication_date = models.DateTimeField(auto_now=True)
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)],
+                                 verbose_name=_('рейтинг'))
+    description = models.TextField(max_length=2048, verbose_name=_('описание'))
+    image = models.ImageField(upload_to='feedback_images/')

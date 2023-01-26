@@ -4,6 +4,7 @@ from product.models import Offer
 from .service import Cart
 from .forms import CartAddProductForm
 from django.conf import settings
+from product.services import get_category
 
 
 class CartAdd(View):
@@ -37,8 +38,29 @@ class CartDelete(View):
         return redirect('/')
 
 
+class AddQuantity(View):
+    def post(self, request, id):
+        cart = Cart(request)
+        product = get_object_or_404(Offer, id=id)
+        cart.add_quantity(product)
+        return redirect('cart:cart')
+
+
+class RemoveQuantity(View):
+    def post(self, request, id):
+        cart = Cart(request)
+        product = get_object_or_404(Offer, id=id)
+        cart.remove_quantity(product)
+        return redirect('cart:cart')
+
+
 class CartView(View):
 
     def get(self, request):
         cart = Cart(request)
-        return render(request, 'cart/cart_detail.html', {'cart': cart})
+        categories = get_category()
+        context = {
+            'cart': cart,
+            'categories': categories
+        }
+        return render(request, 'cart/cart_detail.html', context)
