@@ -30,7 +30,7 @@ class HistoryTest(TestCase):
         self.assertIn('orders/history_order.html', response.template_name)
 
     def test_history_detail(self):
-        url = reverse('history-detail', kwargs={'pk': 1})
+        url = reverse('history-detail', kwargs={'pk': Order.objects.get(first_name='test').id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('orders/history_order_detail.html', response.template_name)
