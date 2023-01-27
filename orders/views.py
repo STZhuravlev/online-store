@@ -24,22 +24,22 @@ class HistoryOrderDetailView(generic.DetailView):
 
 def order_create(request):
     pass
-#     cart = Cart(request)
-#     if request.method == 'POST':
-#         form = OrderCreateForm(request.POST)
-#         if form.is_valid():
-#             order = form.save()
-#             for item in cart:
-#                 OrderItem.objects.create(order=order,
-#                                          product=item['product'],
-#                                          price=item['price'],
-#                                          quantity=item['quantity'],
-#                                          )
-#             # очистка корзины
-#             cart.clear()
-#             return render(request, 'orders/created.html',
-#                           {'order': order})
-#     else:
-#         form = OrderCreateForm
-#     return render(request, 'orders/new-order.html',
-#                   {'cart': cart, 'form': form})
+    # cart = Cart(request)
+    # if request.method == 'POST':
+    #     form = OrderCreateForm(request.POST)
+    #     if form.is_valid():
+    #         order = form.save()
+    #         for item in cart:
+    #             OrderItem.objects.create(order=order,
+    #                                      offer=item['product'],
+    #                                      price=item['price'],
+    #                                      quantity=item['quantity'],
+    #                                      )
+    #         # очистка корзины
+    #         cart.clear()
+    #         return render(request, 'orders/created.html',
+    #                       {'order': order})
+    # else:
+    #     form = OrderCreateForm
+    # return render(request, 'orders/new-order.html',
+    #               {'cart': cart, 'form': form})
