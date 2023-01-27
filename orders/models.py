@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from product.models import Offer
+
 STATUS_CHOICES = (
     ('W', _('ожидание ответа от продавца')),
     ('A', _('продавец принял заказ')),
@@ -21,7 +23,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    offer = models.ManyToManyField("shop.Seller", through="OrderItem", verbose_name=_("продукт"))
+    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("продукт"))
     address = models.CharField(max_length=250)
     postal_code = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
@@ -46,7 +48,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT)
-    offer = models.ForeignKey('shop.Seller', related_name='order_items', on_delete=models.PROTECT)
+    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 
