@@ -10,7 +10,7 @@
     <div class="Middle">
         <div class="Section">
             <div class="wrap">
-                <div class="BannersHome">{% for banner in banners %}<a class="BannersHomeBlock" href="#">
+                <div class="BannersHome">{% for banner in banners %}<a class="BannersHomeBlock" href="{% url 'product-detail' pk=banner.product.id %}">
                         <div class="BannersHomeBlock-row">
                             <div class="BannersHomeBlock-block">
                                 <strong class="BannersHomeBlock-title">{{ banner.title }}
