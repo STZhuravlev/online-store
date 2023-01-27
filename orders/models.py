@@ -21,7 +21,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    offer = models.ManyToManyField("product.Offer", through="OrderItem", verbose_name=_("продукт"))
+    offer1 = models.ManyToManyField("product.Offer", through="OrderItem", verbose_name=_("продукт"))
     address = models.CharField(max_length=250)
     postal_code = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
@@ -45,8 +45,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    offer = models.ForeignKey('product.Offer', related_name='order_items', on_delete=models.PROTECT)
     order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT)
+    offer1 = models.ForeignKey('product.Offer', related_name='order_items', on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 
