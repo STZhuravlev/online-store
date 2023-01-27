@@ -110,3 +110,11 @@ class HistoryViewsView(generic.ListView):
         history_list = HistoryView.objects.all()[:5]
         context['history_list'] = history_list
         return context
+
+class IndexView(generic.TemplateView):
+        template_name = 'product/index.html'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['categories'] = get_category()
+            return context
