@@ -59,7 +59,7 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </div>{% block header_row_main %}
         <div class="wrap">
             <div class="row Header-rowMain">
                 <div class="row-block Header-logo"><a class="logo" href="index.html"><img class="logo-image" src="{%  static "assets/img/logo.png" %}" alt="logo.png" /></a>
@@ -110,23 +110,15 @@
                             </div><span class="CategoriesButton-text">Все категории</span>
                             <div class="CategoriesButton-arrow">
                             </div>
-                        </div>
-                        <div class="CategoriesButton-content">
-                            {% recursetree categories %}
-                            {% if node.active %}
-                            <div class="CategoriesButton-link"><a href="{% url 'catalog-view' %}?categoty={{ node.id }}">
+                            <div class="CategoriesButton-content">{% recursetree categories %}{% if node.active %}
+                                <div class="CategoriesButton-link"><a href="{% url 'catalog-view' %}?categoty={{ node.id }}">
                                     <div class="CategoriesButton-icon"><img src="/media/{{ node.icon }}" alt="{{ node.id }}.svg"/>
                                     </div><span class="CategoriesButton-text">{{ node.name }}</span>
-                                </a>
-                                {% if not node.is_leaf_node %}
+                                    </a>
+                                </div>{% if not node.is_leaf_node %}
                                 </a><a class="CategoriesButton-arrow" href="#"></a>
-                                <div class="CategoriesButton-submenu">
-                                    {{ children }}
-                            </div>
-                                {% endif %}
-                                </div>
-                        {% endif %}
-                        {% endrecursetree %}
+                                <div class="CategoriesButton-submenu">{{ children }}
+                                </div>  {% endif %}  {% endif %}   {% endrecursetree %}
                             </div>
                         </div>
                     </div>
@@ -144,7 +136,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header>{% endblock %}
     {% endblock %}
      {% block content %}
     {% endblock %}
