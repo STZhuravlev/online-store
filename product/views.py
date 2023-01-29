@@ -2,9 +2,10 @@ from random import sample
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
+from django.db.models import Prefetch
 
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer, HistoryView
+from product.models import Banner, Product, Category, Offer, HistoryView, ProductProperty
 from product.services import get_category, BannersView, ImageView
 
 # Количество товаров из каталога, которые будут отображаться на странице
@@ -51,6 +52,9 @@ class ProductDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
         context['drawing'] = ImageView.get_image(product_id=self.object.id)
+        context['property'] = Product.objects.\
+            prefetch_related(Prefetch('property', queryset=
+        ProductProperty.objects.select_related('product', 'property').filter(product=self.object.id)))
         histiry_view_list = HistoryView.objects.filter(product=self.object)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=self.object)
