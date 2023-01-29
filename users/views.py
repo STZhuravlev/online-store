@@ -51,6 +51,7 @@ class UserLogin(aut_view.LoginView):
 class UserPasswordChange(aut_view.PasswordChangeView):
     """Класс представления Смена пароля"""
     template_name = 'users/password_change_form.html'
+    success_url = reverse_lazy('password-change-done')
 
 
 class UserPasswordChangeDone(aut_view.PasswordChangeDoneView):
