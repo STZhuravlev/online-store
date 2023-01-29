@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet
 from random import sample
-from product.models import Category, Banner
+from product.models import Category, Banner, ProductImage
 
 
 def get_category(cache_key: str = None,
@@ -46,4 +46,11 @@ class BannersView:
         banner_list = self.get_banners(qty=qty)
         cached_data = cache.get_or_set(offers_cache_key, banner_list, 1 * 60)
         context['banners'] = cached_data
+        return context
+
+
+class ImageView:
+    @staticmethod
+    def get_image(product_id):
+        context = ProductImage.objects.filter(product=product_id).all()
         return context

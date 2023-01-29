@@ -5,7 +5,7 @@ from django.core.cache import cache
 
 from django.conf import settings
 from product.models import Banner, Product, Category, Offer, HistoryView
-from product.services import get_category, BannersView
+from product.services import get_category, BannersView, ImageView
 
 # Количество товаров из каталога, которые будут отображаться на странице
 # CATALOG_PRODUCT_PER_PAGE = 6 для отображения страницы в стандартном десктопном браузере
@@ -49,6 +49,8 @@ class ProductDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['categories'] = get_category()
+        context['drawing'] = ImageView.get_image(product_id=self.object.id)
         histiry_view_list = HistoryView.objects.filter(product=self.object)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=self.object)
