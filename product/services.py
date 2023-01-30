@@ -19,6 +19,7 @@ def get_category(cache_key: str = None,
     cached_data = cache.get_or_set(cache_key, categories, cache_time)
     return cached_data
 
+
 class BannersView:
     """Тест. Отображение баннеров"""
     template_name = 'product/banners-view.html'

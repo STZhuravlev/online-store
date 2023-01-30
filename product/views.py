@@ -1,11 +1,9 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 from django.db.models import Prefetch
-from datetime import  datetime
 from django.conf import settings
-from product.models import  Product, Category, Offer, HistoryView, ProductProperty, Feedback
+from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback
 from product.services import get_category, BannersView, ImageView
 from .forms import FeedbackForm
 from django.urls import reverse
@@ -53,14 +51,14 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
     def get_success_url(self):
         return reverse('product-detail', kwargs={'pk': self.object.product.pk})
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
         context['drawing'] = ImageView.get_image(product_id=self.object.id)
         context['property'] = Product.objects.\
-            prefetch_related(Prefetch('property', queryset=
-        ProductProperty.objects.select_related('product', 'property').filter(product=self.object.id)))
+            prefetch_related(
+            Prefetch('property', queryset=ProductProperty.objects.select_related(
+                'product', 'property').filter(product=self.object.id)))
         context['feedback'] = Feedback.objects.all().filter(product=self.object.id)
         context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=self.object)
@@ -83,8 +81,6 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
 
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
-
-
 
 
 class CategoryView(generic.ListView):
@@ -139,11 +135,12 @@ class HistoryViewsView(generic.ListView):
         context['history_list'] = history_list
         return context
 
-class IndexView(generic.TemplateView):
-        template_name = 'product/index.html'
 
-        def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            context['banners'] = BannersView.get_banners()
-            context['categories'] = get_category()
-            return context
+class IndexView(generic.TemplateView):
+    template_name = 'product/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['banners'] = BannersView.get_banners()
+        context['categories'] = get_category()
+        return context

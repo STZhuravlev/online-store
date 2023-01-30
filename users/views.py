@@ -36,11 +36,9 @@ class UserResetPasswordConfirm(aut_view.PasswordResetConfirmView):
     success_url = reverse_lazy('login')
 
 
-
 class UserResetPasswordComplete(aut_view.PasswordResetCompleteView):
     """Класс представления О завершении изменения пароля"""
     template_name = 'users/password_reset_complete.html'
-
 
 
 class UserLogin(aut_view.LoginView):
