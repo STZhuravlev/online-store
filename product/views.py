@@ -1,13 +1,14 @@
-from random import sample
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 from django.db.models import Prefetch
-
+from datetime import  datetime
 from django.conf import settings
-from product.models import Banner, Product, Category, Offer, HistoryView, ProductProperty
+from product.models import  Product, Category, Offer, HistoryView, ProductProperty, Feedback
 from product.services import get_category, BannersView, ImageView
-
+from .forms import FeedbackForm
+from django.urls import reverse
 # Количество товаров из каталога, которые будут отображаться на странице
 # CATALOG_PRODUCT_PER_PAGE = 6 для отображения страницы в стандартном десктопном браузере
 CATALOG_PRODUCT_PER_PAGE = 6
@@ -43,10 +44,15 @@ CATALOG_PRODUCT_PER_PAGE = 6
 #         return context
 
 
-class ProductDetailView(generic.DetailView):
+class ProductDetailView(generic.DetailView, generic.CreateView):
     model = Product
     template_name = 'product/product-detail.html'
     context_object_name = 'product'
+    form_class = FeedbackForm
+
+    def get_success_url(self):
+        return reverse('product-detail', kwargs={'pk': self.object.product.pk})
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -55,6 +61,8 @@ class ProductDetailView(generic.DetailView):
         context['property'] = Product.objects.\
             prefetch_related(Prefetch('property', queryset=
         ProductProperty.objects.select_related('product', 'property').filter(product=self.object.id)))
+        context['feedback'] = Feedback.objects.all().filter(product=self.object.id)
+        context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=self.object)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=self.object)
@@ -63,6 +71,20 @@ class ProductDetailView(generic.DetailView):
             history_new = HistoryView(product=self.object)
             history_new.save()
         return context
+
+    def form_valid(self, form, **kwargs):
+        form.save(commit=False)
+        if self.request.FILES:
+            form.instance.image = self.request.FILES['image']
+        form.instance.author = self.request.user
+        form.instance.product_id = self.kwargs['pk']
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+
 
 
 class CategoryView(generic.ListView):
