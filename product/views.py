@@ -112,7 +112,7 @@ class OfferDetailView(generic.DetailView):
 class CatalogListView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
-    template_name = 'product/catalog-view.html'
+    template_name = 'product/base-template-2.html'
     paginate_by = CATALOG_PRODUCT_PER_PAGE
 
     def get_context_data(self, **kwargs):
