@@ -50,7 +50,6 @@ class HistoryTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(orders_after - orders_before, 1)
 
-
     def test_order_create_delivery(self):
         order = Order.objects.all().last()
         url = reverse('order_create_delivery', kwargs={'pk': order.pk})
@@ -58,7 +57,6 @@ class HistoryTest(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(order.city, 'test')
-
 
     def test_order_create_payment(self):
         order = Order.objects.all().last()
