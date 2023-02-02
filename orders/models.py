@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from product.models import Offer
 
@@ -11,11 +12,12 @@ STATUS_CHOICES = (
     ('F', _('прибыл в пункт выдачи')),
 )
 DELIVERY_CHOICES = (
-    ('D', _('обычная доставка')),
-    ('A', _('самовывоз')),
+    ('D', _('доставка')),
+    ('A', _('экспресс доставка')),
 )
 TYPE_CHOICES = (
-    ('C', _('оплата картой')),
+    ('C', _('онлайн картой')),
+    ('F', _('онлайн со случайного чужого счета')),
 )
 
 
@@ -24,9 +26,10 @@ class Order(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("продукт"))
-    address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
-    city = models.CharField(max_length=100)
+    address = models.CharField(max_length=250, blank=True, null=True)
+    number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
+                                 verbose_name=_('номер телефона'))
+    city = models.CharField(max_length=100, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
