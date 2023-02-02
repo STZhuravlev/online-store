@@ -61,6 +61,7 @@ class CartView(View):
         categories = get_category()
         context = {
             'cart': cart,
-            'categories': categories
+            'categories': categories,
+
         }
         return render(request, 'cart/cart_detail.html', context)

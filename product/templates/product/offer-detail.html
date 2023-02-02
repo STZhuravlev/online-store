@@ -1,20 +1,21 @@
-{% extends 'product/base-template-1.html' %}
+{% extends 'product/base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block content %}
-    <h2>{% trans "Название товара" %}: {{ offer.name }}</h2>
-    <p>{% trans "Продукт" %}: {{ offer.product }}</p>
-    <p>{% trans "Продавец" %}: {{ offer.seller }}</p>
-    <p>{% trans "Логотип товара" %} <img src={{ offer.image }} width="500"></p>
-    <p>{% trans "Описание" %}: {{ offer.description }}</p>
-    <p>{% trans "Цена" %}: {{ offer.price }}</p>
-    {% block offer_sellers %}
-        <h2>Продавцы у которых доступен данный товар</h2>
-        {% for off in offer_sellers %}
-            <p><a href="/shop/seller/{{ off.seller.id }}">Продавец {{ off.seller }}</a></p>
-        {% endfor %}
-
-    {% endblock %}
+{#    <h2>{% trans "Название товара" %}: {{ offer.name }}</h2>#}
+{#    <p>{% trans "Продукт" %}: {{ offer.product }}</p>#}
+{#    <p>{% trans "Продавец" %}: {{ offer.seller }}</p>#}
+{#    <p>{% trans "Логотип товара" %} <img src={{ offer.image }} width="500"></p>#}
+{#    <p>{% trans "Описание" %}: {{ offer.description }}</p>#}
+{#    <p>{% trans "Цена" %}: {{ offer.price }}</p>#}
+{#    {% block offer_sellers %}#}
+{#        <h2>Продавцы у которых доступен данный товар</h2>#}
+{#        {% for off in offer_sellers %}#}
+{#            <p><a href="/shop/seller/{{ off.seller.id }}">Продавец {{ off.seller }}</a></p>#}
+{#        {% endfor %}#}
+{##}
+{#    {% endblock %}#}
 {#    <form action="{% url 'comparison:comparison-delete' %}" method="post">#}
 {#    {% csrf_token %}#}
 {#    <button type="submit">Удалить данные сравнения</button>#}
@@ -24,23 +25,9 @@
 {#{% include 'comparison/remove.html' with type='product' id=offer.product.id %}#}
 
 
-{%  include 'cart/add.html' with id=offer.product.id %}
+{#{%  include 'cart/add.html' with id=offer.product.id %}#}
 
       <div class="Middle Middle_top">
-    <div class="Middle-top">
-      <div class="wrap">
-        <div class="Middle-header">
-          <h1 class="Middle-title">{{ offer.seller }}
-          </h1>
-          <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="index.html">home</a>
-            </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Product</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
     <div class="Section">
       <div class="wrap">
         <div class="Product">
@@ -48,7 +35,7 @@
             <div class="ProductCard-look">
               <div class="ProductCard-photo">
                 <div class="ProductCard-sale">-15%
-                </div><img src="assets/img/content/home/bigGoods.png" alt="bigGoods.png"/>
+                </div><img src="{% static "assets/img/content/home/bigGoods.png" %}" alt="bigGoods.png"/>
               </div>
             </div>
             <div class="ProductCard-desc">
@@ -62,7 +49,8 @@
                     <div class="ProductCard-priceOld">{{ offer.price }}$
                     </div>
                   </div>
-                  <div class="ProductCard-compare"><a class="btn btn_default" href="#"><img class="btn-icon" src="assets/img/icons/card/change.svg" alt="change.svg"/></a>
+                  <div class="ProductCard-compare">{% include 'comparison/add.html' with type='product' id=offer.product.id  %}
+
                   </div>
                 </div>
               </div>
@@ -70,28 +58,23 @@
                 <p>{{ offer.product.description }}</p>
               </div>
                 <br>
-                <form action="{% url 'comparison:comparison-delete' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Удалить данные сравнения</button>
-                </form>
-                {% include 'comparison/add.html' with type='product' id=offer.product.id  %}
               <div class="ProductCard-cart">
                 <div class="ProductCard-cartElement ProductCard-cartElement_amount">
                   <div class="Amount Amount_product">
-                    <button class="Amount-remove" type="button">
-                    </button>
-                    <input class="Amount-input form-input" name="amount" type="text" value="1"/>
-                    <button class="Amount-add" type="button">
-                    </button>
+{#                    <button class="Amount-remove" type="button">#}
+{#                    </button>#}
+{#                    <input class="Amount-input form-input" name="amount" type="text" value="1"/>#}
+{#                    <button class="Amount-add" type="button">#}
+{#                    </button>#}
                   </div>
                 </div>
-                <div class="ProductCard-cartElement"><a class="btn btn_primary" href="#"><img class="btn-icon" src="assets/img/icons/card/cart_white.svg" alt="cart_white.svg"/><span class="btn-content">Add To Cart</span></a>
+                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=offer.product.id %}
                 </div>
               </div>
               <div class="ProductCard-footer">
                 <div class="ProductCard-tags">
                   <strong class="ProductCard-tagsTitle">Tags:
-                  </strong><a href="#">Accesories</a>,<a href="#">Creative</a>,<a href="#">Design</a>,<a href="#">Gaming</a>
+                  </strong><a href="{% url 'category' %}">{{ offer.product.category.name }}</a>
                 </div>
               </div>
             </div>

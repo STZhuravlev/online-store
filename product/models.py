@@ -125,10 +125,26 @@ class HistoryView(models.Model):
 
 class Feedback(models.Model):
     """Отзыв"""
+
+    grate_list = [
+        (1, '1 🌟'),
+        (2, '2 🌟'),
+        (3, '3 🌟'),
+        (4, '4 🌟'),
+        (5, '5 🌟'),
+    ]
+
     product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
     author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
     publication_date = models.DateTimeField(auto_now=True)
-    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)],
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)], choices=grate_list,
                                  verbose_name=_('рейтинг'))
     description = models.TextField(max_length=2048, verbose_name=_('описание'))
-    image = models.ImageField(upload_to='feedback_images/')
+    image = models.ImageField(upload_to='feedback_images/', blank=True, verbose_name=_('фотография'))
+
+    class Meta:
+        verbose_name = _('отзыв')
+        verbose_name_plural = _('отзывы')
+
+    def __str__(self):
+        return self.product.name
