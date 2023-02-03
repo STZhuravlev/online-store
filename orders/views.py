@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.shortcuts import get_object_or_404
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -37,7 +37,7 @@ def order_create(request):
                                          )
             # очистка корзины
             cart.clear()
-            return redirect(reverse('order_create_delivery', kwargs={'pk': order.pk}))
+            return redirect('order_create_delivery', pk=order.pk)
     else:
         form = OrderUserCreateForm
     return render(request, 'orders/new-order.html',
@@ -53,7 +53,7 @@ def order_create_delivery(request, pk):
             order.city = form.cleaned_data['city']
             order.address = form.cleaned_data['address']
             order.save()
-            return redirect(reverse('order_create_payment', kwargs={'pk': order.pk}))
+            return redirect('order_create_payment', pk=order.pk)
     else:
         form = OrderDeliveryCreateForm
     return render(request, 'orders/order-delivery.html',
