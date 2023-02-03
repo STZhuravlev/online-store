@@ -1,9 +1,10 @@
-# from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
-# from .models import OrderItem
-# from .forms import OrderCreateForm
-# from cart.service import Cart
-from orders.models import Order
+from django.shortcuts import get_object_or_404
+# from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import OrderItem, Order
+from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm
+from cart.service import Cart
 
 
 class HistoryOrderView(generic.ListView):
@@ -23,23 +24,51 @@ class HistoryOrderDetailView(generic.DetailView):
 
 
 def order_create(request):
-    pass
-#     cart = Cart(request)
-#     if request.method == 'POST':
-#         form = OrderCreateForm(request.POST)
-#         if form.is_valid():
-#             order = form.save()
-#             for item in cart:
-#                 OrderItem.objects.create(order=order,
-#                                          product=item['product'],
-#                                          price=item['price'],
-#                                          quantity=item['quantity'],
-#                                          )
-#             # очистка корзины
-#             cart.clear()
-#             return render(request, 'orders/created.html',
-#                           {'order': order})
-#     else:
-#         form = OrderCreateForm
-#     return render(request, 'orders/new-order.html',
-#                   {'cart': cart, 'form': form})
+    cart = Cart(request)
+    if request.method == 'POST':
+        form = OrderUserCreateForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            for item in cart:
+                OrderItem.objects.create(order=order,
+                                         offer=item['product'],
+                                         price=item['price'],
+                                         quantity=item['quantity'],
+                                         )
+            # очистка корзины
+            cart.clear()
+            return redirect('order_create_delivery', pk=order.pk)
+    else:
+        form = OrderUserCreateForm
+    return render(request, 'orders/new-order.html',
+                  {'cart': cart, 'form': form})
+
+
+def order_create_delivery(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form = OrderDeliveryCreateForm(request.POST)
+        if form.is_valid():
+            order.delivery = form.cleaned_data['delivery']
+            order.city = form.cleaned_data['city']
+            order.address = form.cleaned_data['address']
+            order.save()
+            return redirect('order_create_payment', pk=order.pk)
+    else:
+        form = OrderDeliveryCreateForm
+    return render(request, 'orders/order-delivery.html',
+                  {'pk': order.pk, 'form': form})
+
+
+def order_create_payment(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form = OrderPaymentCreateForm(request.POST)
+        if form.is_valid():
+            order.payment = form.cleaned_data['payment']
+            order.save()
+            return render(request, 'orders/created.html')
+    else:
+        form = OrderPaymentCreateForm
+    return render(request, 'orders/order-delivery.html',
+                  {'order': order, 'form': form})
