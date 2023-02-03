@@ -115,7 +115,6 @@ class ProductCatalogView(generic.ListView):
         return context
 
     def get_queryset(self):
-        print(self.request.GET)
         category_id = self.request.GET.get('category', '')
         cache_key = f'products:{category_id}'
 
@@ -123,13 +122,14 @@ class ProductCatalogView(generic.ListView):
         queryset = get_queryset_for_category(request=self.request)
 
         # put queryset to cache
-        #cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
-        cached_data = cache.get_or_set(cache_key, queryset, 1)
+        cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
+        # cached_data = cache.get_or_set(cache_key, queryset, 1)
 
         # apply filters parameters to products in catalog
         # insert if condition
         final_queryset = apply_filter_to_catalog(request=self.request,
                                                  queryset=cached_data)
+
         # apply sort parameters to products in catalog
         # insert method
 
