@@ -3,7 +3,7 @@ from django.views import generic
 from django.core.cache import cache
 from django.db.models import Prefetch
 from django.conf import settings
-from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback
+from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback, ProductImage
 from product.services import get_category, BannersView, ImageView
 from .forms import FeedbackForm
 from django.urls import reverse
