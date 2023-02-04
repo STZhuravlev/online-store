@@ -1,6 +1,9 @@
 {#{% extends 'product/base-template-1.html' %}#}
 {% load i18n %}
-
+<p>{{ order.offer.all }}</p>
+{% for i in order.offer.all %}
+    <p>{{ i }}</p>
+{% endfor %}
 {#{% block content %}#}
 <div class="Middle Middle_top">
         <div class="Middle-top">
@@ -69,27 +72,27 @@
                                 </div>
                             </div>
                             <div class="Cart Cart_order">
-                                {% for offer in order.offer %}
-                                    <div class="Cart-product">
-                                        <div class="Cart-block Cart-block_row">
-                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>
-                                            </div>
-                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">{{ offer.product.name }}</a>
-                                                <div class="Cart-desc">{{ offer.product.description }}
-                                                </div>
-                                            </div>
-                                            <div class="Cart-block Cart-block_price">
-                                                <div class="Cart-price">{{ offer.price }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="Cart-block Cart-block_row">
-
-                                            <div class="Cart-block Cart-block_amount">{{ offer.numberoffer }} шт.
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+{#                                {% for offer in order.offer %}#}
+{#                                    <div class="Cart-product">#}
+{#                                        <div class="Cart-block Cart-block_row">#}
+{#                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>#}
+{#                                            </div>#}
+{#                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">{{ offer.product.name }}</a>#}
+{#                                                <div class="Cart-desc">{{ offer.product.description }}#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                            <div class="Cart-block Cart-block_price">#}
+{#                                                <div class="Cart-price">{{ offer.price }}#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="Cart-block Cart-block_row">#}
+{##}
+{#                                            <div class="Cart-block Cart-block_amount">{{ offer.numberoffer }} шт.#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
 
                                 <div class="Cart-total">
                                     <div class="Cart-block Cart-block_total">
