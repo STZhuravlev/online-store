@@ -3,7 +3,7 @@ from django.views import generic
 from django.core.cache import cache
 from django.db.models import Prefetch
 from django.conf import settings
-from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback
+from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback, ProductImage
 from product.services import get_category, BannersView, ImageView
 from .forms import FeedbackForm
 from django.urls import reverse
@@ -97,16 +97,32 @@ class CategoryView(generic.ListView):
         return context
 
 
-class OfferDetailView(generic.DetailView):
-    model = Offer
+class FeedbackDetailView(generic.CreateView):
+
+    """Детальное отображение продукта, отзывов и добавления отзыва"""
+
+    model = Feedback
+    form_class = FeedbackForm
     template_name = 'product/offer-detail.html'
-    context_object_name = 'offer'
+
+    def get_success_url(self):
+        return reverse('offer-detail', kwargs={'pk': self.object.product.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['offer_sellers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['offer'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         context['categories'] = get_category()
+        context['product_image'] = ProductImage.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['feedback'] = Feedback.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         return context
+
+    def form_valid(self, form, **kwargs):
+        form.save(commit=False)
+        if self.request.FILES:
+            form.instance.image = self.request.FILES['image']
+        form.instance.author = self.request.user
+        form.instance.product_id = self.kwargs['pk']
+        return super().form_valid(form)
 
 
 class CatalogListView(generic.ListView):

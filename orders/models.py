@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+from product.models import Offer
 
 STATUS_CHOICES = (
     ('W', _('ожидание ответа от продавца')),
@@ -9,11 +12,12 @@ STATUS_CHOICES = (
     ('F', _('прибыл в пункт выдачи')),
 )
 DELIVERY_CHOICES = (
-    ('D', _('обычная доставка')),
-    ('A', _('самовывоз')),
+    ('D', _('доставка')),
+    ('A', _('экспресс доставка')),
 )
 TYPE_CHOICES = (
-    ('C', _('оплата картой')),
+    ('C', _('онлайн картой')),
+    ('F', _('онлайн со случайного чужого счета')),
 )
 
 
@@ -21,10 +25,11 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
-    # product = models.ManyToManyField("product.Product", through="OrderItem", verbose_name=_("продукт"))
-    address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
-    city = models.CharField(max_length=100)
+    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("продукт"))
+    address = models.CharField(max_length=250, blank=True, null=True)
+    number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
+                                 verbose_name=_('номер телефона'))
+    city = models.CharField(max_length=100, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
@@ -46,7 +51,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT)
-    # product = models.ForeignKey('product.Product', related_name='order_items', on_delete=models.PROTECT)
+    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
 

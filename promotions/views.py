@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.generic import ListView
 from promotions.models import Promo
 from product.services import get_category
