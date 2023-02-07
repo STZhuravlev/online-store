@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'cart',
     'django_extensions',
     'orders',
+    'promotions',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
