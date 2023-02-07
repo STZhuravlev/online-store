@@ -25,7 +25,7 @@
 
               {% for promo in promotions %}
                 <div class="Card">
-                  <a class="Card-picture" href="{% url 'promo:promo-detail' promo.id %}">
+                  <a class="Card-picture" href="{% url 'promotions:promo-detail' promo.id %}">
                     <img src="/media/{{ promo.image }}" alt="product.png" />
                   </a>
 
@@ -48,7 +48,7 @@
 
                   <div class="Card-content">
                     <strong class="Card-title">
-                      <a href="{% url 'promo:promo-detail' promo.id %}">{{ promo.name }}</a>
+                      <a href="{% url 'promotions:promo-detail' promo.id %}">{{ promo.name }}</a>
                     </strong>
                     <div class="Card-description">{{ promo.description|slice:":128" }}</div>
                   </div>

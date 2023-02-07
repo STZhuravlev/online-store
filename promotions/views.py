@@ -35,7 +35,8 @@ class PromoDetailView(DetailView):
                 annotate(avg_price=Avg('offers__price'))
         else:
             product_list = Product.objects.\
-                select_related('category').all()
+                select_related('category'). \
+                annotate(avg_price=Avg('offers__price')).all()
 
         paginator = Paginator(product_list, PROMO_PRODUCTS_PER_PAGE)
         page_number = self.request.GET.get('page')
