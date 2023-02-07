@@ -66,11 +66,10 @@
                     </strong>
                     <div class="Card-description">
                       <div class="Card-cost">
-                        <span class="Card-priceOld">$115.00</span>
-                        <span class="Card-price">$85.00</span>
+                        <span class="Card-price">${{ item.avg_price|floatformat:"2" }}</span>
                       </div>
                       <div class="Card-category">
-                        Games / xbox
+                          {{ item.category.name }}
                       </div>
                       <div class="Card-hover">
                         <a class="Card-btn" href="#">

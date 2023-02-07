@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.db.models import Avg
 from django.views.generic import ListView, DetailView
 from promotions.models import Promo
 from product.models import Product
@@ -29,9 +30,13 @@ class PromoDetailView(DetailView):
     def get_related_products(self):
         product_list = self.object.promo2products.first()
         if hasattr(product_list, 'product'):
-            product_list = product_list.product.all()
+            product_list = product_list.product. \
+                select_related('category'). \
+                annotate(avg_price=Avg('offers__price'))
         else:
-            product_list = Product.objects.all()
+            product_list = Product.objects.\
+                select_related('category').all()
+
         paginator = Paginator(product_list, PROMO_PRODUCTS_PER_PAGE)
         page_number = self.request.GET.get('page')
         products = paginator.get_page(page_number)
