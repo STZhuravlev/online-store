@@ -121,7 +121,7 @@ class ProductCatalogView(generic.ListView):
     применяет к ним набор фильтров и сортировку."""
     model = Product
     context_object_name = 'catalog'
-    template_name = 'product/base-template-2.html'
+    template_name = 'product/product-catalog.html'
     paginate_by = CATALOG_PRODUCT_PER_PAGE
 
     def get_context_data(self, **kwargs):
@@ -142,7 +142,7 @@ class ProductCatalogView(generic.ListView):
 
         # put queryset to cache
         cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
-        # cached_data = cache.get_or_set(cache_key, queryset, 1)
+        #cached_data = cache.get_or_set(cache_key, queryset, 1)
 
         # apply filters parameters to products in catalog
         # insert if condition
