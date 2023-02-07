@@ -142,7 +142,6 @@ class ProductCatalogView(generic.ListView):
 
         # put queryset to cache
         cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
-        #cached_data = cache.get_or_set(cache_key, queryset, 1)
 
         # apply filters parameters to products in catalog
         # insert if condition
