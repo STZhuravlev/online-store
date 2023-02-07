@@ -6,7 +6,10 @@ from product.models import Product
 from product.services import get_category
 
 
+# Количество акция, отображаемых на странице
 PROMO_PER_PAGE = 4
+# Количество продуктов, привязанных к акции, 
+# отображаемых на странице
 PROMO_PRODUCTS_PER_PAGE = 4
 
 
