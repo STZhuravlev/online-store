@@ -20,6 +20,7 @@ class UserResetPassword(aut_view.PasswordResetView):
     """Класс представления Формы востановления пароля"""
     template_name = 'users/password_reset_form.html'
     email_template_name = "users/password_reset_email.html"
+    success_url = reverse_lazy('password-reset-done')
 
 
 class UserResetPasswordDone(aut_view.PasswordResetDoneView):
@@ -32,6 +33,7 @@ class UserResetPasswordConfirm(aut_view.PasswordResetConfirmView):
     """Класс представления Ввод нового пароля """
     template_name = 'users/password_reset_confirm.html'
     post_reset_login = True
+    success_url = reverse_lazy('login')
 
 
 class UserResetPasswordComplete(aut_view.PasswordResetCompleteView):
@@ -47,6 +49,7 @@ class UserLogin(aut_view.LoginView):
 class UserPasswordChange(aut_view.PasswordChangeView):
     """Класс представления Смена пароля"""
     template_name = 'users/password_change_form.html'
+    success_url = reverse_lazy('password-change-done')
 
 
 class UserPasswordChangeDone(aut_view.PasswordChangeDoneView):

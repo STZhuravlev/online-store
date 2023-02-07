@@ -1,10 +1,9 @@
+from random import sample
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q, Avg
-from django.db.models.functions import Round
 from django.http import HttpRequest
-from product.models import Category, Product
-from decimal import Decimal
+from product.models import Category, Product, Banner, ProductImage
 
 
 def get_category(cache_key: str = None,
@@ -64,14 +63,14 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
     """
     # filter for price
     price = request.GET.get('price')
-    if price is not None:
+    if price:
         price_from, price_to = map(int, price.split(';'))
         queryset = queryset.filter(Q(offers__price__gte=price_from) &
                                    Q(offers__price__lte=price_to))
 
     # filter for seller
     seller = request.GET.get('seller')
-    if seller is not None:
+    if seller:
         queryset = queryset.filter(seller__name=seller)
 
     # filter for title
@@ -90,3 +89,40 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
         pass
 
     return queryset
+
+
+class BannersView:
+    """Тест. Отображение баннеров"""
+    template_name = 'product/banners-view.html'
+
+    @staticmethod
+    def get_banners(qty: int = 3):
+        """ Возвращает список из qty активных баннеров. """
+        banners = Banner.objects.filter(is_active=True)
+        result = []
+        if banners.exists():
+            if 3 < qty < 1:
+                qty = 3
+            if banners.count() < qty:
+                qty = banners.count()
+            banners = list(banners)
+            result = sample(banners, k=qty)
+        return result
+
+    def get_context_data(self, qty: int = 3, **kwargs):
+        """ Добавляет в контекст список баннеров. Список кэшируется. """
+        context = super().get_context_data(**kwargs)
+        # TODO заменить в ключе имя на емейл
+        offers_cache_key = f'offers:{self.request.user.username}'
+        # Получаем список баннеров и кэшируем его
+        banner_list = self.get_banners(qty=qty)
+        cached_data = cache.get_or_set(offers_cache_key, banner_list, 1 * 60)
+        context['banners'] = cached_data
+        return context
+
+
+class ImageView:
+    @staticmethod
+    def get_image(product_id):
+        context = ProductImage.objects.filter(product=product_id).all()
+        return context

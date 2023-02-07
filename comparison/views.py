@@ -2,6 +2,7 @@ from django.db.models import Prefetch
 from django.shortcuts import render, redirect
 from product.models import Product, ProductProperty
 from django.views import View
+from product.services import get_category
 
 
 class Comparison(View):
@@ -16,7 +17,8 @@ class Comparison(View):
                 'product',
                 'property',
             )))
-        content = {'goods_item': goods_item}
+        categories = get_category()
+        content = {'goods_item': goods_item, 'categories': categories}
 
         return render(request, 'comparison/comparison.html', content)
 
