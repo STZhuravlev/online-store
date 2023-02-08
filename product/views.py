@@ -4,8 +4,13 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
-from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView
+from product.services import (
+    get_category,
+    get_queryset_for_category,
+    apply_filter_to_catalog,
+    BannersView,
+    ImageView
+)
 from .forms import FeedbackForm
 from shop.models import Seller
 from product.models import (
@@ -15,7 +20,8 @@ from product.models import (
     HistoryView,
     ProductProperty,
     Feedback,
-    ProductImage)
+    ProductImage
+)
 
 
 # Количество товаров из каталога, которые будут отображаться на странице
