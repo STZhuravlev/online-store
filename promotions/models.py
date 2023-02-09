@@ -23,7 +23,7 @@ class Promo(models.Model):
     """Описывает модель акций/скидок."""
     name = models.CharField(max_length=128, verbose_name=_('название акции'))
     promo_type = models.ForeignKey(PromoType, related_name='promos',
-                                      on_delete=models.CASCADE)
+                                   on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/promotions/",
                               verbose_name=_("изображение"), blank=True)
     description = models.TextField(verbose_name=_('описание'))
