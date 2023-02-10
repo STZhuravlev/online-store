@@ -167,5 +167,8 @@ CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'  # для rabbitmq, поменяйте адрес брокера на amqp://guest:guest@127.0.0.1:5672
+CELERY_TASK_TRACK_STARTED = True  # запускает трекинг задач Celery
 
