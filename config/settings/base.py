@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'comparison',
     'cart',
     'django_extensions',
+    'orders',
+    'promotions',
 ]
 
 MIDDLEWARE = [
@@ -128,6 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
@@ -141,6 +144,7 @@ USE_TZ = True
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, сюда будет собирать статику collectstatic
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

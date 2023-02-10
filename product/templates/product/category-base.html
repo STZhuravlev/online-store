@@ -2,19 +2,19 @@
 {% load static %}
 {% load i18n %}
 
-<div class="Header-categories">
-  <div class="CategoriesButton">
-    <div class="CategoriesButton-title">
-      <div class="CategoriesButton-icon">
-        <img src="{% static "assets/img/icons/allDep.svg" %}" alt="allDep.svg"/>
-      </div>
-      <span class="CategoriesButton-text">
-          {% translate 'категории товаров'|capfirst %}
-      </span>
-      <div class="CategoriesButton-arrow"></div>
-    </div>
-
-    <div class="CategoriesButton-content">
+{#<div class="Header-categories">#}
+{#  <div class="CategoriesButton">#}
+{#    <div class="CategoriesButton-title">#}
+{#      <div class="CategoriesButton-icon">#}
+{#        <img src="{% static "assets/img/icons/allDep.svg" %}" alt="allDep.svg"/>#}
+{#      </div>#}
+{#      <span class="CategoriesButton-text">#}
+{#          {% translate 'категории товаров'|capfirst %}#}
+{#      </span>#}
+{#      <div class="CategoriesButton-arrow"></div>#}
+{#    </div>#}
+{##}
+{#    <div class="CategoriesButton-content">#}
 {#      {% recursetree categories %}#}
 {#        {% if node.active %}#}
 {#          <div class="CategoriesButton-link">#}
@@ -26,7 +26,7 @@
 {#            </a>#}
 {##}
 {#            {% if not node.is_leaf_node %}#}
-{#              <a class="CategoriesButton-arrow" href="#">#}
+{#              <a class="CategoriesButton-arrow" href="#"></a>#}
 {#                <div class="CategoriesButton-submenu">#}
 {#                  {{ children }}#}
 {#                </div>#}
@@ -35,6 +35,6 @@
 {#          </div>#}
 {#        {% endif %}#}
 {#      {% endrecursetree %}#}
-    </div>
-  </div>
-</div>
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
