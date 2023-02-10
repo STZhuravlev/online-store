@@ -4,6 +4,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from .models import Order
 
+
 @shared_task
 def payment(pk):
     time.sleep(60)

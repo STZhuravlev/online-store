@@ -1,14 +1,11 @@
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.views import generic
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-# from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import OrderItem, Order
-from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm, OrderCardForm
+from .forms import OrderUserCreateForm, OrderDeliveryCreateForm, OrderCardForm
 from cart.service import Cart
 from . import tasks
+
 
 class HistoryOrderView(generic.ListView):
     model = Order
@@ -80,7 +77,4 @@ def order_create_payment(request, pk):
 
 def wait_payment(request, pk):
     order = get_object_or_404(Order, pk=pk)
-    return render(request, 'orders/created.html', {'order':order})
-
-
-
+    return render(request, 'orders/created.html', {'order': order})
