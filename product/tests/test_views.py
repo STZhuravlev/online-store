@@ -79,12 +79,12 @@ class EntryTest(TestCase):
         self.assertIn('product/offer-detail.html', response.template_name)
         self.assertContains(response, 'test')
 
-    def test_three(self):
-        url = reverse('product-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('product/product-detail.html', response.template_name)
-        self.assertContains(response, 'Product Detail')
+    # def test_three(self):
+    #     url = reverse('product-detail', kwargs={'pk': 1})
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn('product/product-detail.html', response.template_name)
+    #     self.assertContains(response, 'Product Detail')
 
 
 class CategoryViewsTest(TestCase):

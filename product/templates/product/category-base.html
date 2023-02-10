@@ -15,26 +15,26 @@
     </div>
 
     <div class="CategoriesButton-content">
-      {% recursetree categories %}
-        {% if node.active %}
-          <div class="CategoriesButton-link">
-            <a href="{% url 'catalog-view' %}?categoty={{ node.id }}">
-              <div class="CategoriesButton-icon">
-                <img src="/media/{{ node.icon }}" alt="{{ node.id }}.svg"/>
-              </div>
-              <span class="CategoriesButton-text">{{ node.name }}</span>
-            </a>
-
-            {% if not node.is_leaf_node %}
-              <a class="CategoriesButton-arrow" href="#"></a>
-                <div class="CategoriesButton-submenu">
-                  {{ children }}
-                </div>
-              </a>
-            {% endif %}
-          </div>
-        {% endif %}
-      {% endrecursetree %}
+{#      {% recursetree categories %}#}
+{#        {% if node.active %}#}
+{#          <div class="CategoriesButton-link">#}
+{#            <a href="{% url 'catalog-view' %}?categoty={{ node.id }}">#}
+{#              <div class="CategoriesButton-icon">#}
+{#                <img src="/media/{{ node.icon }}" alt="{{ node.id }}.svg"/>#}
+{#              </div>#}
+{#              <span class="CategoriesButton-text">{{ node.name }}</span>#}
+{#            </a>#}
+{##}
+{#            {% if not node.is_leaf_node %}#}
+{#              <a class="CategoriesButton-arrow" href="#">#}
+{#                <div class="CategoriesButton-submenu">#}
+{#                  {{ children }}#}
+{#                </div>#}
+{#              </a>#}
+{#            {% endif %}#}
+{#          </div>#}
+{#        {% endif %}#}
+{#      {% endrecursetree %}#}
     </div>
   </div>
 </div>

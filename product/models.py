@@ -5,6 +5,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from users.models import CustomUser
+
 
 class Product(models.Model):
     """Продукт"""
@@ -110,7 +112,7 @@ class ProductImage(models.Model):
 
 class HistoryView(models.Model):
     """История просмотра товаров"""
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='views_user')
     view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
     product = models.ForeignKey(Product, verbose_name=_('товар'), on_delete=models.CASCADE, related_name='views')
 
