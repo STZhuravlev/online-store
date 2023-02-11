@@ -63,9 +63,9 @@ def order_create_delivery(request, pk):
 def order_create_payment(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
-        form = OrderCardForm(request.POST)
+        form = OrderCardForm(request.POST, instance=order)
         if form.is_valid():
-            order.card_number = form.cleaned_data['card_number']
+            order = form.save(commit=False)
             order.save()
             tasks.payment.delay(pk)
             return redirect('wait-payment', pk=pk)
