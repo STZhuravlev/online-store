@@ -1,12 +1,16 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect  # noqa F401
-from django.views import generic
+from django.views import generic, View
 from django.core.cache import cache
 from django.db.models import Prefetch
 from django.conf import settings
-from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback, ProductImage
-from product.services import get_category, BannersView, ImageView
-from .forms import FeedbackForm
 from django.urls import reverse
+
+from product.models import Product, Category, Offer, HistoryView, ProductProperty, Feedback, ProductImage
+from product.services import get_category, BannersView, ImageView, handle_uploaded_file
+
+from .forms import FeedbackForm, UploadProductFileJsonForm
+
 # Количество товаров из каталога, которые будут отображаться на странице
 # CATALOG_PRODUCT_PER_PAGE = 6 для отображения страницы в стандартном десктопном браузере
 CATALOG_PRODUCT_PER_PAGE = 6
@@ -160,3 +164,27 @@ class IndexView(generic.TemplateView):
         context['banners'] = BannersView.get_banners()
         context['categories'] = get_category()
         return context
+
+
+class UploadProductFileView(View):
+
+    """Добавление продукта, автора и т.п. через файл формата JSON """
+
+    def get(self, request):
+
+        form = UploadProductFileJsonForm()
+        return render(request, 'product/upload_file.html', context={'form': form})
+
+    def post(self, request):
+
+        form_file = UploadProductFileJsonForm(request.POST, request.FILES)
+        check_file_json = request.FILES['file_json'].name
+
+        if form_file.is_valid() and check_file_json.endswith('.json'):
+
+            open_upload_file = form_file.cleaned_data['file_json']
+            handle_uploaded_file(open_upload_file)
+
+            return HttpResponse('Успех')
+        form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
+        return render(request, 'product/upload_file.html', context={'form': form_file})

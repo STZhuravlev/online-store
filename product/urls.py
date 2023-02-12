@@ -7,4 +7,5 @@ urlpatterns = [
     path('offer/<int:pk>/', views.FeedbackDetailView.as_view(), name='offer-detail'),
     path('catalog', views.CatalogListView.as_view(), name='catalog-view'),
     path('index', views.IndexView.as_view(), name='index'),
+    path('upload_file/', views.UploadProductFileView.as_view(), name='upload_file'),
 ]

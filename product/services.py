@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet
@@ -55,3 +58,15 @@ class ImageView:
     def get_image(product_id):
         context = ProductImage.objects.filter(product=product_id).all()
         return context
+
+
+def handle_uploaded_file(f):
+
+    """Функция сохранения файла в папку media/import_files"""
+
+    path = os.path.abspath(os.path.join('media/import_files/queued_files'))
+
+    with open(f'{path}/{datetime.now().strftime("%d-%m-%Y---%H.%M.%S")}_{f.name}', 'wb+') as dest:
+        for chunk in f.chunks():
+            dest.write(chunk)
+
