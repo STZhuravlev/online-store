@@ -1,9 +1,11 @@
-from random import sample
+import os
+from datetime import datetime
+
 from django.core.cache import cache
 from django.conf import settings
-from django.db.models import QuerySet, Q, Avg
-from django.http import HttpRequest
-from product.models import Category, Product, Banner, ProductImage
+from django.db.models import QuerySet
+from random import sample
+from product.models import Category, Banner, ProductImage
 
 
 def get_category(cache_key: str = None,
@@ -19,76 +21,6 @@ def get_category(cache_key: str = None,
         cache_key = 'categories'
     cached_data = cache.get_or_set(cache_key, categories, cache_time)
     return cached_data
-
-
-def get_queryset_for_category(request: HttpRequest) -> QuerySet:
-    """
-    Возвращает список продуктов в заданной категории товаров.
-    Если категория не задана, возвращает список всех продуктов.
-    :param request: HTTP request, в query-string которого содержится название категории товара
-    :return: QuerySet
-    """
-    category_id = request.GET.get('category', '')
-
-    if category_id:  # if category is passed in query-string
-        category = Category.objects.get(id=category_id)
-        parent = category.parent
-        if parent is None:  # if root category, select products of full tree category
-            queryset = Product.objects. \
-                select_related('category'). \
-                filter(category__tree_id=category.tree_id).all()
-        else:  # if child category, select products of this category
-            queryset = Product.objects. \
-                select_related('category'). \
-                filter(category=category_id).all()
-    else:  # if category isn't passed in query-string
-        queryset = Product.objects. \
-            select_related('category').all()
-    # select required fields and add average price on seller
-    if queryset:
-        queryset = queryset. \
-            values('id', 'name', 'images__image', 'category__name'). \
-            annotate(avg_price=Avg('offers__price')). \
-            order_by('avg_price')
-
-    return queryset
-
-
-def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySet:
-    """
-    Возвращает отфильтрованный список товаров в выбранной категории товаров
-    :param request: HTTP request, в query-string которого указаны параметры сортировки
-    :param queryset: список товаров в выбранной категории товаров
-    :return:
-    """
-    # filter for price
-    price = request.GET.get('price')
-    if price:
-        price_from, price_to = map(int, price.split(';'))
-        queryset = queryset.filter(Q(offers__price__gte=price_from) &
-                                   Q(offers__price__lte=price_to))
-
-    # filter for seller
-    seller = request.GET.get('seller')
-    if seller:
-        queryset = queryset.filter(seller__name=seller)
-
-    # filter for title
-    title = request.GET.get('title')
-    if title:
-        queryset = queryset.filter(name__icontains=title)
-
-    # filter for free delivery
-    delivery = request.GET.get('deliv')
-    if delivery == 'on':
-        pass
-
-    # filter for product in stock
-    stock = request.GET.get('stock')
-    if stock == 'on':
-        pass
-
-    return queryset
 
 
 class BannersView:
@@ -126,3 +58,15 @@ class ImageView:
     def get_image(product_id):
         context = ProductImage.objects.filter(product=product_id).all()
         return context
+
+
+def handle_uploaded_file(f):
+
+    """Функция сохранения файла в папку media/import_files"""
+
+    path = os.path.abspath(os.path.join('media/import_files/queued_files'))
+
+    with open(f'{path}/{datetime.now().strftime("%d-%m-%Y---%H.%M.%S")}_{f.name}', 'wb+') as dest:
+        for chunk in f.chunks():
+            dest.write(chunk)
+
