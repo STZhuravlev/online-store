@@ -22,25 +22,25 @@ TYPE_CHOICES = (
 
 
 class Order(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField()
-    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("продукт"))
-    address = models.CharField(max_length=250, blank=True, null=True)
+    first_name = models.CharField(max_length=50, verbose_name=_("имя"))
+    last_name = models.CharField(max_length=50, verbose_name=_("фамилия"))
+    email = models.EmailField(verbose_name=_("почта"))
+    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("товар"))
+    address = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("адрес"))
     number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
                                  verbose_name=_('номер телефона'))
-    city = models.CharField(max_length=100, blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    paid = models.BooleanField(default=False)
-    delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name='тип доставки')
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='W', verbose_name='статус заказа')
-    payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name='тип оплаты')
+    city = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("город"))
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_("дата создания"))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_("дата обновления"))
+    paid = models.BooleanField(default=False, verbose_name=_("статус оплаты"))
+    delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name=_('тип доставки'))
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='W', verbose_name=_('статус заказа'))
+    payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'))
 
     class Meta:
         ordering = ('-created',)
-        verbose_name = 'Заказ'
-        verbose_name_plural = 'Заказы'
+        verbose_name = _('заказ')
+        verbose_name_plural = _('заказы')
 
     def __str__(self):
         return 'Order {}'.format(self.id)
@@ -50,13 +50,17 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT)
-    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.PositiveIntegerField(default=1)
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT, verbose_name=_("заказ"))
+    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT, verbose_name=_("товар"))
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("цена"))
+    quantity = models.PositiveIntegerField(default=1, verbose_name=_("количество"))
 
     def __str__(self):
         return '{}'.format(self.id)
 
     def get_cost(self):
         return self.price * self.quantity
+
+    class Meta:
+        verbose_name = _('товар в заказе')
+        verbose_name_plural = _('товары в заказах')

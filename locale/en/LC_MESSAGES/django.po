@@ -1,0 +1,496 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-13 17:43+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: orders/apps.py:8 orders/models.py:43
+msgid "заказы"
+msgstr "orders"
+
+#: orders/models.py:8
+msgid "ожидание ответа от продавца"
+msgstr "waiting for a response from the seller"
+
+#: orders/models.py:9
+msgid "продавец принял заказ"
+msgstr "the seller accepted the order"
+
+#: orders/models.py:10
+msgid "упаковка на складе"
+msgstr "packaging in stock"
+
+#: orders/models.py:11
+msgid "в пути"
+msgstr "on the way"
+
+#: orders/models.py:12
+msgid "прибыл в пункт выдачи"
+msgstr "arrived at the pick-up point"
+
+#: orders/models.py:15
+msgid "доставка"
+msgstr "delivery"
+
+#: orders/models.py:16
+msgid "экспресс доставка"
+msgstr "express delivery"
+
+#: orders/models.py:19
+msgid "онлайн картой"
+msgstr "online card"
+
+#: orders/models.py:20
+msgid "онлайн со случайного чужого счета"
+msgstr "online from a random someone else's account"
+
+#: orders/models.py:25
+msgid "имя"
+msgstr "first name"
+
+#: orders/models.py:26
+msgid "фамилия"
+msgstr "second name"
+
+#: orders/models.py:27
+msgid "почта"
+msgstr "E-mail"
+
+#: orders/models.py:28 orders/models.py:54 product/admin.py:17
+#: product/models.py:113
+msgid "товар"
+msgstr "offer"
+
+#: orders/models.py:29 shop/models.py:12
+msgid "адрес"
+msgstr "address"
+
+#: orders/models.py:31 shop/models.py:14
+msgid "номер телефона"
+msgstr "phone number"
+
+#: orders/models.py:32
+msgid "город"
+msgstr "city"
+
+#: orders/models.py:33
+msgid "дата создания"
+msgstr "date created"
+
+#: orders/models.py:34
+msgid "дата обновления"
+msgstr "date updated"
+
+#: orders/models.py:35
+msgid "статус оплаты"
+msgstr "payment status"
+
+#: orders/models.py:36
+msgid "тип доставки"
+msgstr "delivery"
+
+#: orders/models.py:37
+msgid "статус заказа"
+msgstr "order status"
+
+#: orders/models.py:38
+msgid "тип оплаты"
+msgstr "payment type"
+
+#: orders/models.py:42 orders/models.py:53
+msgid "заказ"
+msgstr "order"
+
+#: orders/models.py:55 product/admin.py:42 product/models.py:107
+msgid "цена"
+msgstr "price"
+
+#: orders/models.py:56
+msgid "количество"
+msgstr "qyantity"
+
+#: orders/models.py:65
+msgid "товар в заказе"
+msgstr "offer in order"
+
+#: orders/models.py:66
+msgid "товары в заказах"
+msgstr "offers in orders"
+
+#: orders/templates/orders/history_order.html:13
+msgid "Навигация"
+msgstr "Navigation"
+
+#: orders/templates/orders/history_order.html:19
+msgid "Личный кабинет"
+msgstr "Personal account"
+
+#: orders/templates/orders/history_order.html:21
+msgid "Профиль"
+msgstr "Profile"
+
+#: orders/templates/orders/history_order.html:23
+msgid "История заказов"
+msgstr "Order history"
+
+#: orders/templates/orders/history_order.html:41
+msgid "Пользователь:"
+msgstr "user"
+
+#: orders/templates/orders/history_order.html:47
+msgid "Город:"
+msgstr "city"
+
+#: orders/templates/orders/history_order.html:53
+#: orders/templates/orders/history_order_detail.html:49
+msgid "Адрес:"
+msgstr "address"
+
+#: orders/templates/orders/history_order.html:59
+#: orders/templates/orders/history_order_detail.html:43
+msgid "Тип доставки:"
+msgstr "delivery"
+
+#: orders/templates/orders/history_order.html:65
+#: orders/templates/orders/history_order_detail.html:55
+msgid "Оплата:"
+msgstr "Payment"
+
+#: orders/templates/orders/history_order.html:71
+msgid "Общая стоимость:"
+msgstr "Total cost"
+
+#: orders/templates/orders/history_order.html:77
+#: orders/templates/orders/history_order_detail.html:61
+msgid "Статус:"
+msgstr "Status"
+
+#: orders/templates/orders/history_order.html:83
+#: orders/templates/orders/history_order_detail.html:67
+msgid "Оплата не прошла:"
+msgstr "Payment failed:"
+
+#: orders/templates/orders/history_order.html:85
+#: orders/templates/orders/history_order_detail.html:69
+msgid "Оплата не выполнена, т.к. вы подозреваетесь в нетолерантности"
+msgstr "Payment has not been completed, because you are suspected of intolerance"
+
+#: orders/templates/orders/history_order_detail.html:13
+msgid "Заказ №"
+msgstr "order №"
+
+#: orders/templates/orders/history_order_detail.html:29
+msgid "Дата заказа:"
+msgstr "order date"
+
+#: orders/templates/orders/history_order_detail.html:35
+msgid "Почта:"
+msgstr "E-mail"
+
+#: orders/templates/orders/history_order_detail.html:100
+msgid "Итого:"
+msgstr "Total"
+
+#: orders/templates/orders/history_order_detail.html:103
+msgid "Оплатить"
+msgstr "to pay"
+
+#: orders/templates/orders/new-order.html:15
+#: orders/templates/orders/order-delivery.html:14
+#: orders/templates/orders/order-payment.html:14
+msgid "Прогресс заполнения"
+msgstr "Filling progress"
+
+#: orders/templates/orders/new-order.html:21
+#: orders/templates/orders/new-order.html:39
+#: orders/templates/orders/order-delivery.html:20
+#: orders/templates/orders/order-payment.html:20
+msgid "Шаг 1. Параметры пользователя"
+msgstr "Step 1. User Parameters"
+
+#: orders/templates/orders/new-order.html:23
+#: orders/templates/orders/order-delivery.html:22
+#: orders/templates/orders/order-delivery.html:37
+#: orders/templates/orders/order-payment.html:22
+msgid "Шаг 2. Способ доставки"
+msgstr "Step 2. Delivery Method"
+
+#: orders/templates/orders/new-order.html:25
+#: orders/templates/orders/order-delivery.html:24
+#: orders/templates/orders/order-payment.html:24
+#: orders/templates/orders/order-payment.html:37
+msgid "Шаг 3. Способ оплаты"
+msgstr "Step 3. Payment method"
+
+#: orders/templates/orders/new-order.html:27
+#: orders/templates/orders/order-delivery.html:26
+#: orders/templates/orders/order-payment.html:26
+msgid "Шаг 4. Подтверждение заказа"
+msgstr "Step 4. Order Confirmation"
+
+#: orders/views.py:51
+msgid "Пользователь уже существует"
+msgstr "The user already exists"
+
+#: orders/views.py:59
+msgid "Данный пользователь не зарегистрирован, Введите пароль"
+msgstr "This user is not registered, Enter the password"
+
+#: orders/views.py:65
+msgid "Пароль должен быть длиннее 8 символов"
+msgstr "The password must be longer than 8 characters"
+
+#: orders/views.py:80
+msgid "Пароли не совпадают"
+msgstr "Passwords don't match"
+
+#: product/admin.py:18 product/models.py:114
+msgid "товары"
+msgstr "offers"
+
+#: product/admin.py:26 product/models.py:70
+msgid "баннер"
+msgstr "banner"
+
+#: product/admin.py:27 product/models.py:71
+msgid "баннеры"
+msgstr "banners"
+
+#: product/admin.py:34 product/models.py:16 product/models.py:81
+#: product/models.py:91
+msgid "категория"
+msgstr "category"
+
+#: product/admin.py:35 product/models.py:92
+msgid "категории"
+msgstr "categories"
+
+#: product/admin.py:43
+msgid "цены"
+msgstr "prices"
+
+#: product/admin.py:58 product/models.py:120 product/models.py:123
+msgid "изображение продукта"
+msgstr "product image"
+
+#: product/admin.py:59 product/models.py:124
+msgid "изображения продуктов"
+msgstr "product images"
+
+#: product/admin.py:67 product/models.py:138
+msgid "история просмотров"
+msgstr "browsing history"
+
+#: product/admin.py:68 product/models.py:139
+msgid "истории просмотров"
+msgstr "browsing histories"
+
+#: product/apps.py:8 product/models.py:20
+msgid "продукты"
+msgstr "product"
+
+#: product/models.py:11 product/models.py:32
+msgid "наименование"
+msgstr "name"
+
+#: product/models.py:12 product/models.py:161 shop/models.py:11
+msgid "описание"
+msgstr "description"
+
+#: product/models.py:13 product/models.py:106 shop/admin.py:10
+#: shop/models.py:17 shop/models.py:26
+msgid "продавец"
+msgstr "seller"
+
+#: product/models.py:14
+msgid "характеристики"
+msgstr "specifications"
+
+#: product/models.py:19 product/models.py:44 product/models.py:59
+#: product/models.py:104 product/models.py:119 product/models.py:134
+#: product/models.py:156
+msgid "продукт"
+msgstr "product"
+
+#: product/models.py:38 product/models.py:45
+msgid "свойство"
+msgstr "property"
+
+#: product/models.py:39
+msgid "свойства"
+msgstr "properties"
+
+#: product/models.py:46
+msgid "значение"
+msgstr "value"
+
+#: product/models.py:49
+msgid "свойство продукта"
+msgstr "product property"
+
+#: product/models.py:50
+msgid "свойства продуктов"
+msgstr "product properties"
+
+#: product/models.py:55
+msgid "заголовок"
+msgstr "heading"
+
+#: product/models.py:56
+msgid "краткое описание"
+msgstr "short description"
+
+#: product/models.py:57
+msgid "изображение"
+msgstr "image"
+
+#: product/models.py:58
+msgid "дата добавления"
+msgstr "date added"
+
+#: product/models.py:60 product/models.py:83
+msgid "активность"
+msgstr "activity"
+
+#: product/models.py:77
+msgid "Активна"
+msgstr "active"
+
+#: product/models.py:78
+msgid "Не активна"
+msgstr "not active"
+
+#: product/models.py:82
+msgid "иконка"
+msgstr "icon"
+
+#: product/models.py:85
+msgid "родитель"
+msgstr "parent"
+
+#: product/models.py:133
+msgid "время просмотра"
+msgstr "viewing time"
+
+#: product/models.py:157
+msgid "автор"
+msgstr "author"
+
+#: product/models.py:158
+msgid "дата публикации"
+msgstr "date of publication"
+
+#: product/models.py:160
+msgid "рейтинг"
+msgstr "rating"
+
+#: product/models.py:162
+msgid "фотография"
+msgstr "photo"
+
+#: product/models.py:165
+msgid "отзыв"
+msgstr "review"
+
+#: product/models.py:166
+msgid "отзывы"
+msgstr "reviews"
+
+#: product/templates/product/base-template-2.html:168
+#: product/templates/product/catalog-view.html:17
+msgid "не найдено товаров в каталоге"
+msgstr "no products found in the catalog"
+
+#: product/templates/product/catalog-view.html:24
+#, python-format
+msgid ""
+"\n"
+"            %(page)s %(number)s из %(num_pages)s\n"
+"            "
+msgstr ""
+
+#: product/templates/product/catalog-view.html:33
+msgid "первая"
+msgstr "first"
+
+#: product/templates/product/catalog-view.html:35
+msgid "предыдущая"
+msgstr "previous"
+
+#: product/templates/product/catalog-view.html:41
+msgid "следующая"
+msgstr "next"
+
+#: product/templates/product/catalog-view.html:44
+msgid "последняя"
+msgstr "past"
+
+#: shop/admin.py:11 shop/models.py:18
+msgid "продавцы"
+msgstr "sellers"
+
+#: shop/admin.py:18 shop/models.py:28 shop/models.py:31
+msgid "логотип продавца"
+msgstr "seller logo"
+
+#: shop/admin.py:19 shop/models.py:32
+msgid "логотипы продавцов"
+msgstr "seller logos"
+
+#: shop/apps.py:8
+msgid "магазин"
+msgstr "shop"
+
+#: shop/models.py:9 users/models.py:17
+msgid "пользователь"
+msgstr "user"
+
+#: shop/models.py:10
+msgid "имя продавца"
+msgstr "name"
+
+#: shop/templates/shop/seller.html:37
+msgid "Адрес"
+msgstr "address"
+
+#: shop/templates/shop/seller.html:45
+msgid "Почта"
+msgstr "E-mail"
+
+#: shop/templates/shop/seller.html:53
+msgid "Логотип"
+msgstr "logo"
+
+#: users/apps.py:8 users/models.py:18
+msgid "пользователи"
+msgstr "users"
+
+#: users/managers.py:9
+msgid "Введите электронную почту"
+msgstr "Enter your email address"
+
+#: users/managers.py:21
+msgid "Суперпользователь должен иметь статус персонала"
+msgstr "The superuser must have the status of a staff"
+
+#: users/managers.py:23
+msgid "Суперпользователь должен иметь is_superuser=True"
+msgstr "The superuser must have is_superuser=True"
+
+#: users/models.py:9
+msgid "email address"
+msgstr "почта"
