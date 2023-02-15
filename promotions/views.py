@@ -4,17 +4,18 @@ from django.views.generic import ListView, DetailView
 from promotions.models import Promo
 from product.models import Product
 from product.services import get_category
-
+from django.conf import settings
 
 # Количество акция, отображаемых на странице
-PROMO_PER_PAGE = 4
+# PROMO_PER_PAGE = 4
 # Количество продуктов в акции, отображаемых на странице
-PROMO_PRODUCTS_PER_PAGE = 4
+# PROMO_PRODUCTS_PER_PAGE = 4
 
 
 class PromoListView(ListView):
     template_name = 'promotions/promo-list.html'
-    paginate_by = PROMO_PER_PAGE
+    # paginate_by = PROMO_PER_PAGE
+    paginate_by = settings.PROMO_PER_PAGE
     queryset = Promo.objects.filter(is_active=True)
     context_object_name = 'promotions'
 
@@ -40,7 +41,7 @@ class PromoDetailView(DetailView):
                 select_related('category'). \
                 annotate(avg_price=Avg('offers__price')).all()
 
-        paginator = Paginator(product_list, PROMO_PRODUCTS_PER_PAGE)
+        paginator = Paginator(product_list, settings.PROMO_PRODUCTS_PER_PAGE)
         page_number = self.request.GET.get('page')
         products = paginator.get_page(page_number)
         return products

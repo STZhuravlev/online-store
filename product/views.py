@@ -19,7 +19,7 @@ from product.models import (
 
 
 # Количество товаров из каталога, которые будут отображаться на странице
-CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
+# CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
 
 
 class ProductDetailView(generic.DetailView, generic.CreateView):
@@ -122,7 +122,7 @@ class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
     template_name = 'product/product-catalog.html'
-    paginate_by = CATALOG_PRODUCT_PER_PAGE
+    paginate_by = settings.CATALOG_PRODUCT_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

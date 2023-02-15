@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import CustomUser
+from .singleton_model import SingletonModel
 
 
 class Seller(models.Model):
@@ -33,3 +34,15 @@ class SellerLogo(models.Model):
 
     def __str__(self):
         return self.seller.name
+
+class AdminSettings(SingletonModel):
+    tite_to_cahce = models.PositiveIntegerField(verbose_name='Время кэширования в днях', default=1)
+    promo_per_page = models.PositiveIntegerField(verbose_name='Количество акция, отображаемых на странице', default=4)
+    promo_products_per_page = models.PositiveIntegerField(verbose_name='Количество продуктов в акции, отображаемых на странице', default=4)
+
+    def __str__(self):
+        return 'Настройки'
+
+    class Meta:
+        verbose_name = 'Конфигурация'
+        verbose_name_plural = 'Конфигурация'
