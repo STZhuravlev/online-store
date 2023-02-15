@@ -74,7 +74,7 @@
         <div class="wrap">
           <div class="row Header-rowMain">
             <div class="row-block Header-logo">
-              <a class="logo" href="index.html">
+              <a class="logo" href="{% url 'index' %}">
                 <img class="logo-image" src="{%  static "assets/img/logo.png" %}" alt="logo.png" />
               </a>
             </div>
@@ -82,7 +82,7 @@
               <div class="menuModal" id="navigate">
                 <ul class="menu menu_main">
                   <li class="menu-item">
-                    <a class="menu-link" href="index.html">Главная</a>
+                    <a class="menu-link" href="{% url 'index' %}">Главная</a>
                   </li>
                   <li class="menu-item">
                     <span class="menu-label menu-label_success">Скидки</span>
@@ -92,7 +92,7 @@
                     <a class="menu-link" href="{% url 'promotions:promo-list' %}">Акции</a>
                   </li>
                   <li class="menu-item">
-                    <a class="menu-link" href="comparison.html">Сравнение</a>
+                    <a class="menu-link" href="{% url 'comparison:comparison' %}">Сравнение</a>
                   </li>
                 </ul>
               </div>
@@ -109,7 +109,7 @@
                     <a class="dropdown-content-a" href="account.html">Выход</a>
                   </div>
                 </div>
-                <a class="CartBlock-block" href="cart.html">
+                <a class="CartBlock-block" href="{% url 'cart:cart' %}">
                   <img class="CartBlock-img" src="{%  static "assets/img/icons/cart.svg" %}" alt="cart.svg" />
                   <span class="CartBlock-amount">0</span>
                 </a>
@@ -187,20 +187,20 @@
     <footer class="Footer">
       <div class="wrap">
         <div class="row Footer-main">
-          <div class="row-block"><a class="logo Footer-logo" href="index.html">
+          <div class="row-block"><a class="logo Footer-logo" href="{% url 'index' %}">
             <img class="logo-image" src="{%  static "assets/img/logo_footer.png" %}" alt="logo_footer.png" /></a>
           </div>
           <div class="row-block">
             <strong class="Footer-title">Навигация</strong>
             <ul class="menu menu_vt Footer-menu">
               <li class="menu-item">
-                <a class="menu-link" href="index.html">Главная</a>
+                <a class="menu-link" href="{% url 'index' %}">Главная</a>
               </li>
               <li class="menu-item">
-                <a class="menu-link" href="catalog.html">Каталог</a>
+                <a class="menu-link" href="{% url 'catalog-view' %}">Каталог</a>
               </li>
               <li class="menu-item">
-                <a class="menu-link" href="comparison.html">Сравнение</a>
+                <a class="menu-link" href="{% url 'comparison:comparison' %}">Сравнение</a>
               </li>
               <li class="menu-item">
                 <a class="menu-link" href="account.html">Профиль</a>
