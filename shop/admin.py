@@ -22,7 +22,7 @@ class SellerLogoAdmin(admin.ModelAdmin):
 class SiteSettings(admin.ModelAdmin):
     pass
 
+
 admin.site.register(Seller, SellerAdmin)
 admin.site.register(SellerLogo, SellerLogoAdmin)
 admin.site.register(AdminSettings, SiteSettings)
-
