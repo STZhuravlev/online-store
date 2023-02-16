@@ -7,7 +7,7 @@ from .models import Order
 
 @shared_task
 def payment(pk):
-    time.sleep(60)
+    time.sleep(15)
     card = get_object_or_404(Order, pk=pk)
     card_number = card.card_number
     errors_list = [
