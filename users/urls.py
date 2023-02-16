@@ -15,6 +15,4 @@ urlpatterns = [
          name='password-reset-confirm'),
     path('password-reset/complete', UserResetPasswordComplete.as_view(), name='password-reset-complete'),
 
-
-
 ]
