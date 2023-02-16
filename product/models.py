@@ -167,3 +167,11 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class LoggingImportFileModel(models.Model):
+    """Модель логирование ошибок импорта файла"""
+
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='seller_log')
+    message = models.CharField(max_length=255, verbose_name=_('текст ошибки'))
+    date = models.DateTimeField(auto_now_add=True)

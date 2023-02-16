@@ -60,13 +60,23 @@ class ImageView:
         return context
 
 
-def handle_uploaded_file(f):
+class UploadProductFile:
 
-    """Функция сохранения файла в папку media/import_files"""
+    @staticmethod
+    def get_object_or_none(obj, **kwargs):
+        """Возвращает продукт, если его нет, то None"""
 
-    path = os.path.abspath(os.path.join('media/import_files/queued_files'))
+        try:
+            return obj.objects.get(**kwargs)
+        except obj.DoesNotExist:
+            return None
 
-    with open(f'{path}/{datetime.now().strftime("%d-%m-%Y---%H.%M.%S")}_{f.name}', 'wb+') as dest:
-        for chunk in f.chunks():
-            dest.write(chunk)
+    @classmethod
+    def get_category(cls, name: str):
+        """Возвращает категорию. Если её нет, то создаёт"""
 
+        category = cls.get_object_or_none(Category, name=name)
+        if not category:
+            category = Category.objects.create(name=name)
+            return category
+        return category
