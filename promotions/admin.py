@@ -24,14 +24,3 @@ class PromoAdmin(admin.ModelAdmin):
     list_display = ['name', 'description', 'started', 'finished', 'is_active']
     list_editable = ['is_active']
     inlines = [PromoInline]
-
-
-# @admin.register(Promo2Product)
-# class Promo2ProductAdmin(admin.ModelAdmin):
-#     inlines = [ProductInline]
-#     list_display = ['promo']
-#     list_display_links = ['promo']
-#     filter_horizontal = ['product']
-#
-#     def get_queryset(self, request):
-#         return Promo2Product.objects.select_related('promo').prefetch_related('product')
