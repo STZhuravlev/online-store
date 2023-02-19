@@ -41,7 +41,7 @@
                 <div class="range Section-columnRange">
                   <input type="hidden" name="category" value="{{ current_category }}">
                   <input class="range-line" id="price" name="price" type="text"
-                         data-type="double" data-min="50" data-max="500000" data-from="0" data-to="100000"/>
+                         data-type="double" data-min="50" data-max="500000" data-from="0" data-to="250000"/>
                   <div class="range-price">Цена:&#32;
                     <div class="rangePrice">
                     </div>
@@ -109,10 +109,38 @@
           <div class="Sort-title">Сортировать по:
           </div>
           <div class="Sort-variants">
-            <a class="Sort-sortBy Sort-sortBy_dec" href="#">Популярности</a>
-            <a class="Sort-sortBy" href="#">Цене</a>
-            <a class="Sort-sortBy" href="#">Отзывам</a>
-            <a class="Sort-sortBy Sort-sortBy_inc" href="#">Новизне</a>
+            {% if request.GET.sort == 'dpop' %}
+              <a class="Sort-sortBy Sort-sortBy_dec" href="?{% add_query_params request sort='apop' %}">
+                Популярности
+              </a>
+            {% else %}
+              <a class="Sort-sortBy Sort-sortBy_dec" href="?{% add_query_params request sort='dpop' %}">
+                Популярности
+              </a>
+            {% endif %}
+
+            {% if request.GET.sort == 'aprice' %}
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='dprice' %}">Цене</a>
+            {% else %}
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='aprice' %}">Цене</a>
+            {% endif %}
+
+            {% if request.GET.sort == 'drate' %}
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='arate' %}">Отзывам</a>
+            {% else %}
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='drate' %}">Отзывам</a>
+            {% endif %}
+
+            {% if request.GET.sort == 'dnew' %}
+              <a class="Sort-sortBy Sort-sortBy_inc" href="?{% add_query_params request sort='anew' %}">
+                Новизне
+              </a>
+            {% else %}
+              <a class="Sort-sortBy Sort-sortBy_inc" href="?{% add_query_params request sort='dnew' %}">
+                Новизне
+              </a>
+            {% endif %}
+
           </div>
         </div>
 
