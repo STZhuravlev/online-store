@@ -180,3 +180,5 @@ PROMO_PRODUCTS_PER_PAGE = 4
 
 # Количество товаров из каталога, которые будут отображаться на странице
 CATALOG_PRODUCT_PER_PAGE = 6
+
+ADMIN_SETTINGS_ID = 'admin_settings'
