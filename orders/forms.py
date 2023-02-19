@@ -16,3 +16,11 @@ class OrderDeliveryCreateForm(forms.Form):
 
 class OrderPaymentCreateForm(forms.Form):
     payment = forms.ChoiceField(choices=TYPE_CHOICES)
+
+
+class OrderCardForm(forms.ModelForm):
+    card_number = forms.CharField(min_length=8, max_length=9, required=True, label='Номер карты',)
+
+    class Meta:
+        model = Order
+        fields = ['card_number']
