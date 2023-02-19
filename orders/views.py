@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.shortcuts import get_object_or_404
-# from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import OrderItem, Order
-from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm
+from .forms import OrderUserCreateForm, OrderDeliveryCreateForm, OrderCardForm
 from cart.service import Cart
+from . import tasks
 
 
 class HistoryOrderView(generic.ListView):
@@ -63,12 +63,18 @@ def order_create_delivery(request, pk):
 def order_create_payment(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
-        form = OrderPaymentCreateForm(request.POST)
+        form = OrderCardForm(request.POST, instance=order)
         if form.is_valid():
-            order.payment = form.cleaned_data['payment']
+            order = form.save(commit=False)
             order.save()
-            return render(request, 'orders/created.html')
+            tasks.payment.delay(pk)
+            return redirect('wait-payment', pk=pk)
     else:
-        form = OrderPaymentCreateForm
+        form = OrderCardForm()
     return render(request, 'orders/order-delivery.html',
                   {'order': order, 'form': form})
+
+
+def wait_payment(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    return render(request, 'orders/created.html', {'order': order})

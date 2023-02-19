@@ -2,6 +2,12 @@ from django.contrib import admin
 from promotions.models import PromoType, Promo, Promo2Product
 
 
+class PromoInline(admin.TabularInline):
+    model = Promo2Product
+    filter_horizontal = ['product']
+    extra = 0
+
+
 class ProductInline(admin.TabularInline):
     model = Promo2Product.product.through
     extra = 0
@@ -17,13 +23,4 @@ class PromoTypeAdmin(admin.ModelAdmin):
 class PromoAdmin(admin.ModelAdmin):
     list_display = ['name', 'description', 'started', 'finished', 'is_active']
     list_editable = ['is_active']
-
-
-@admin.register(Promo2Product)
-class Promo2ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductInline]
-    list_display = ['promo']
-    list_display_links = ['promo']
-
-    def get_queryset(self, request):
-        return Promo2Product.objects.select_related('promo').prefetch_related('product')
+    inlines = [PromoInline]

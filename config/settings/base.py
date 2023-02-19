@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'orders',
     'promotions',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +168,7 @@ MPTT_ADMIN_LEVEL_INDENT = 10
 CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_TASK_TRACK_STARTED = True
