@@ -143,7 +143,10 @@ class ProductCatalogView(generic.ListView):
     def get_queryset(self):
         category_id = self.request.GET.get('category', '')
         query_param = [f"{key}={value}" for key, value in self.request.GET.items() if key != 'page']
-        cache_key_2 = ''.join(query_param)
+        if query_param:
+            cache_key_2 = ''.join(query_param)
+        else:
+            cache_key_2 = 'blank'
         cache_key = f'products:{category_id}'
 
         # get queryset for selected category
@@ -161,7 +164,7 @@ class ProductCatalogView(generic.ListView):
                                                    queryset=filtered_queryset)
 
         cached_data = cache.get_or_set(cache_key_2, sorted_queryset, settings.CACHE_STORAGE_TIME)
-        return sorted_queryset
+        return cached_data
 
 
 class IndexView(generic.TemplateView):

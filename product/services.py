@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models import QuerySet, Q, Avg, Max, Count
 from django.http import HttpRequest
 from product.models import Category, Product, Banner, ProductImage
+from orders.models import OrderItem
 
 
 def get_category(cache_key: str = None,
@@ -104,7 +105,6 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     :param queryset: список товаров в выбранной категории товаров
     :return:
     """
-    # sorting on price
     # sorting on price
     sort_by = request.GET.get('sort', None)
     if sort_by == 'aprice':
