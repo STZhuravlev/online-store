@@ -71,9 +71,12 @@ class CategoryView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         categories_list = Category.objects.all()
-        time_to_cahded = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if time_to_cahded['']
-        cached_data = cache.get_or_set("categories", categories_list, 1)
+        time_to_cachded = self.request.session.get(settings.ADMIN_SETTINGS_ID)
+        if time_to_cachded['CACHE_STORAGE_TIME']:
+            cache_time = time_to_cachded['CACHE_STORAGE_TIME']
+        else:
+            cache_time = settings.CACHE_STORAGE_TIME
+        cached_data = cache.get_or_set("categories", categories_list, cache_time)
         context['categories'] = cached_data
         return context
 
