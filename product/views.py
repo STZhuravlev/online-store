@@ -10,7 +10,6 @@ from shop.models import Seller
 
 from config.settings_local import CACHE_STORAGE_BANNERS_TIME
 from product.models import (
-    Banner,
     Product,
     Category,
     Offer,
@@ -27,7 +26,9 @@ from product.services import (
     apply_sorting_to_catalog,
     get_banners,
     BannersView,
-    ImageView
+    ImageView,
+    get_favorite_categories,
+    get_popular_products
 )
 
 
@@ -130,7 +131,7 @@ class HistoryViewsView(generic.ListView):
 
 
 class MainPageView(generic.TemplateView):
-    template_name = 'product/main-page.html'
+    template_name = 'product/index-2.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -143,6 +144,10 @@ class MainPageView(generic.TemplateView):
                                        get_banners(),
                                        CACHE_STORAGE_BANNERS_TIME)
         context['banners'] = cached_data
+
+        context['favorite'] = get_favorite_categories()
+
+        context['popular'] = get_popular_products()
 
         return context
 

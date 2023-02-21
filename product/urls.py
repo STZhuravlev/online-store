@@ -1,6 +1,6 @@
 from django.urls import path
+# from product.services import BannersView
 from product.views import (
-    BannersView,
     ProductDetailView,
     CategoryView,
     FeedbackDetailView,
@@ -13,7 +13,7 @@ from product.views import (
 
 urlpatterns = [
     path('', MainPageView.as_view(), name='main'),
-    path('banners/', BannersView.as_view(), name='banners'),
+    # path('banners/', BannersView.as_view(), name='banners'),
     path('<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
     path('category/', CategoryView.as_view(), name='category'),
     path('offer/<int:pk>/', FeedbackDetailView.as_view(), name='offer-detail'),

@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Min
 
 
 class Product(models.Model):
@@ -79,6 +80,12 @@ class Category(MPTTModel):
         elif self.parent.level >= 2:
             raise ValueError('Достигнута максимальная вложенность!')
         super(Category, self).save(*args, **kwargs)
+
+    def min_price(self):
+        """Возвращает минимальную стоимость товара в категории."""
+        result = Product.objects.select_related('category'). \
+            filter(category_id=self.pk).aggregate(min_price=Min('offers__price'))
+        return result['min_price']
 
 
 class Offer(models.Model):

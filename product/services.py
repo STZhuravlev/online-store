@@ -2,7 +2,7 @@ from typing import List
 from random import sample
 from django.core.cache import cache
 from django.conf import settings
-from django.db.models import QuerySet, Q, Avg, Max, Count
+from django.db.models import QuerySet, Q, Avg, Max, Count, Min
 from django.http import HttpRequest
 from product.models import Category, Product, Banner, ProductImage
 
@@ -182,3 +182,38 @@ class ImageView:
     def get_image(product_id):
         context = ProductImage.objects.filter(product=product_id).all()
         return context
+
+
+def get_favorite_categories(qty: int = 3,
+                            cache_time: int = settings.CACHE_STORAGE_TIME) -> List[Category]:
+    """
+    Возвращает закешированный список из qty категорий
+    :param qty: кол-во избранных категорий, по-умолчанию, 3.
+    :param cache_time: время кеширования списка
+    :return: список категорий
+    """
+    categories = get_category().filter(level=1)
+    favorite = sample(list(categories), qty)
+
+    cached_data = cache.get_or_set('favorite_categories', favorite, cache_time)
+
+    # for category in cached_data:
+    #     get_min_price_in_category(category)
+
+    return cached_data
+
+
+def get_min_price_in_category(category: Category):
+    result = Product.objects.select_related('category').\
+        filter(category_id=category.id).aggregate(min_price=Min('offers__price'))
+
+    return result['min_price']
+
+
+def get_popular_products():
+    queryset = Product.objects.select_related('category').prefetch_related('seller'). \
+        values('id', 'name', 'images__image', 'category__name'). \
+        annotate(count=Count('offers__order_items__offer')).\
+        annotate(avg_price=Avg('offers__price')).order_by('-count')[:8]
+
+    return queryset
