@@ -45,7 +45,7 @@ class CategoryAdmin(MPTTModelAdmin):
 
 
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ['product', 'seller', 'price', 'added_at']
+    list_display = ['product', 'seller', 'price', 'is_free_delivery', 'is_present']
 
     class Meta:
         verbose_name = _('цена')

@@ -87,6 +87,8 @@ class Offer(models.Model):
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='sellers')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
     added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_('время добавления'))
+    is_free_delivery = models.BooleanField(default=True, verbose_name=_('бесплатная доставка'))
+    is_present = models.BooleanField(default=True, verbose_name=_('в наличии'))
 
     def __str__(self):
         return self.product.name

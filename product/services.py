@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db.models import QuerySet, Q, Avg, Max, Count
 from django.http import HttpRequest
 from product.models import Category, Product, Banner, ProductImage
-from orders.models import OrderItem
 
 
 def get_category(cache_key: str = None,
@@ -65,10 +64,6 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
     price = request.GET.get('price')
     if price:
         price_from, price_to = map(int, price.split(';'))
-        # queryset = queryset.filter(Q(offers__price__gte=price_from) &
-        #                            Q(offers__price__lte=price_to))
-        # queryset = queryset.filter(Q(avg_price__gte=price_from) &
-        #                            Q(avg_price__lte=price_to))
         queryset = queryset.filter(Q(offers__price__gte=price_from) &
                                    Q(offers__price__lte=price_to))
 
@@ -85,12 +80,12 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
     # filter for free delivery
     delivery = request.GET.get('deliv')
     if delivery == 'on':
-        pass
+        queryset = queryset.filter(offers__is_free_delivery=True)
 
     # filter for product in stock
     stock = request.GET.get('stock')
     if stock == 'on':
-        pass
+        queryset = queryset.filter(offers__is_present=True)
 
     # queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
     #     annotate(avg_price=Avg('offers__price'))
