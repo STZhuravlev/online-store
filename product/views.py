@@ -28,7 +28,8 @@ from product.services import (
     BannersView,
     ImageView,
     get_favorite_categories,
-    get_popular_products
+    get_popular_products,
+    get_limited_edition
 )
 
 
@@ -148,6 +149,10 @@ class MainPageView(generic.TemplateView):
         context['favorite'] = get_favorite_categories()
 
         context['popular'] = get_popular_products()
+
+        day_offer, limited = get_limited_edition()
+        context['day_offer'] = day_offer
+        context['limited'] = limited
 
         return context
 

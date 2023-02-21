@@ -1,5 +1,5 @@
 from typing import List
-from random import sample
+from random import sample, choice
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q, Avg, Max, Count, Min
@@ -217,3 +217,17 @@ def get_popular_products():
         annotate(avg_price=Avg('offers__price')).order_by('-count')[:8]
 
     return queryset
+
+
+def get_limited_edition():
+    queryset = Product.objects.select_related('category').prefetch_related('seller').\
+        filter(is_limited=True).values('id', 'name', 'images__image', 'category__name'). \
+        annotate(avg_price=Avg('offers__price'))
+
+    day_offer = choice(list(queryset))
+
+    # queryset = queryset.exclude(id=day_offer.id)
+    limited = [qs for qs in queryset if qs != day_offer]
+    # for item in queryset:
+    #     print(item)
+    return day_offer, limited

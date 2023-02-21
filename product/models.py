@@ -14,6 +14,7 @@ class Product(models.Model):
     seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
+    is_limited = models.BooleanField(default=False, verbose_name=_('ограниченный тираж'))
 
     def __str__(self):
         return self.name

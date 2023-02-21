@@ -19,8 +19,9 @@ class ProductInLine(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', ]
+    list_display = ['name', 'is_limited']
     inlines = [ProductInLine, ]
+    list_editable = ['is_limited']
 
     class Meta:
         verbose_name = _('товар')
