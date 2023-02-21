@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'cart',
     'django_extensions',
     'orders',
+    'promotions',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'ru-ru'
+# LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -173,3 +177,7 @@ MPTT_ADMIN_LEVEL_INDENT = 10
 CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_TASK_TRACK_STARTED = True

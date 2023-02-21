@@ -9,8 +9,9 @@ from django.contrib.auth import authenticate, login
 from .models import OrderItem, Order
 from users.models import CustomUser
 from product.services import get_category
-from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm
+from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm, OrderCardForm
 from cart.service import Cart
+from . import tasks
 
 
 class HistoryOrderView(generic.ListView):
@@ -164,3 +165,23 @@ def order_type_payment(request, pk):
         form = OrderPaymentCreateForm
     return render(request, 'orders/order-payment.html',
                   {'order': order, 'form': form, 'categories': get_category()})
+
+
+def order_create_payment(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form = OrderCardForm(request.POST, instance=order)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.save()
+            tasks.payment.delay(pk)
+            return redirect('wait-payment', pk=pk)
+    else:
+        form = OrderCardForm()
+    return render(request, 'orders/order-delivery.html',
+                  {'order': order, 'form': form})
+
+
+def wait_payment(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    return render(request, 'orders/created.html', {'order': order})

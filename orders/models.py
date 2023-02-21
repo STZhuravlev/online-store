@@ -36,6 +36,10 @@ class Order(models.Model):
     delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name=_('тип доставки'))
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='W', verbose_name=_('статус заказа'))
     payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'))
+    card_number = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)],
+                                              verbose_name=_('номер карты'), null=True)
+    status_payment = models.CharField(max_length=50, verbose_name=_('статус платежа'), null=True, blank=True)
+    payment_code = models.IntegerField(default=0, verbose_name=_('код оплаты'))
 
     class Meta:
         ordering = ('-created',)
