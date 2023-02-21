@@ -4,7 +4,8 @@ from django.views.generic import ListView, DetailView
 from promotions.models import Promo
 from product.models import Product
 from product.services import get_category
-from shop.models import AdminSettings
+from django.conf import settings
+
 # Количество акция, отображаемых на странице
 # PROMO_PER_PAGE = 4
 # Количество продуктов в акции, отображаемых на странице
@@ -14,7 +15,6 @@ from shop.models import AdminSettings
 class PromoListView(ListView):
     template_name = 'promotions/promo-list.html'
     # paginate_by = PROMO_PER_PAGE
-    paginate_by = AdminSettings.objects.get().promo_per_page
     queryset = Promo.objects.filter(is_active=True)
     context_object_name = 'promotions'
 
@@ -23,11 +23,22 @@ class PromoListView(ListView):
         context['categories'] = get_category()
         return context
 
+    def get_paginate_by(self, queryset):
+        promo_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
+        if  promo_per_page['PROMO_PER_PAGE']:
+            paginator = promo_per_page['PROMO_PER_PAGE']
+        else:
+            paginator = settings.PROMO_PER_PAGE
+        return paginator
+
+
+
 
 class PromoDetailView(DetailView):
     template_name = 'promotions/promo-detail.html'
     model = Promo
     context_object_name = 'promo'
+
 
     def get_related_products(self):
         product_list = self.object.promo2products.first()
@@ -39,8 +50,12 @@ class PromoDetailView(DetailView):
             product_list = Product.objects.\
                 select_related('category'). \
                 annotate(avg_price=Avg('offers__price')).all()
-
-        paginator = Paginator(product_list, AdminSettings.objects.get().promo_products_per_page)
+        promo_product_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
+        if promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']:
+            count_per_page= promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']
+        else:
+            count_per_page = settings.PROMO_PRODUCTS_PER_PAGE
+        paginator = Paginator(product_list, count_per_page)
         page_number = self.request.GET.get('page')
         products = paginator.get_page(page_number)
         return products

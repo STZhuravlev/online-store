@@ -15,7 +15,7 @@ from product.models import (
     ProductProperty,
     Feedback,
     ProductImage)
-from shop.models import AdminSettings
+from django.conf import settings
 
 # Количество товаров из каталога, которые будут отображаться на странице
 # CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
@@ -71,9 +71,13 @@ class CategoryView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         categories_list = Category.objects.all()
-        cached_data = cache.get_or_set("categories", categories_list, AdminSettings.objects.get().time_to_cahce)
+        time_to_cahded = self.request.session.get(settings.ADMIN_SETTINGS_ID)
+        if time_to_cahded['']
+        cached_data = cache.get_or_set("categories", categories_list, 1)
         context['categories'] = cached_data
         return context
+
+
 
 
 class FeedbackDetailView(generic.CreateView):
@@ -121,7 +125,7 @@ class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
     template_name = 'product/product-catalog.html'
-    paginate_by = AdminSettings.objects.get().catalog_product_per_page
+    paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,7 +144,7 @@ class ProductCatalogView(generic.ListView):
         queryset = get_queryset_for_category(request=self.request)
 
         # put queryset to cache
-        cached_data = cache.get_or_set(cache_key, queryset, AdminSettings.objects.get().time_to_cahce)
+        cached_data = cache.get_or_set(cache_key, queryset, 1)
 
         # apply filters parameters to products in catalog
         # insert if condition
