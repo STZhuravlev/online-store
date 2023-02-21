@@ -152,7 +152,7 @@ def order_create_delivery(request, pk):
                   {'pk': order.pk, 'form': form, 'categories': get_category()})
 
 
-def order_create_payment(request, pk):
+def order_type_payment(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
         form = OrderPaymentCreateForm(request.POST)
