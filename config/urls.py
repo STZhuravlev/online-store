@@ -18,11 +18,16 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
     path('user/', include('users.urls')),
     path('product/', include('product.urls')),
+    path('shop/', include('shop.urls')),
     path('comparison/', include('comparison.urls')),
-    path('cart/', include('cart.urls'))
+    path('cart/', include('cart.urls')),
+    path('orders/', include('orders.urls')),
+    path('promos/', include('promotions.urls', namespace='promo')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

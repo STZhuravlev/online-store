@@ -84,8 +84,11 @@ class Category(MPTTModel):
 class Offer(models.Model):
     """Товар"""
     product = models.ForeignKey("Product", on_delete=models.PROTECT, related_name='offers')
-    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT)
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='sellers')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
+    added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_('время добавления'))
+    is_free_delivery = models.BooleanField(default=True, verbose_name=_('бесплатная доставка'))
+    is_present = models.BooleanField(default=True, verbose_name=_('в наличии'))
 
     def __str__(self):
         return self.product.name
@@ -125,10 +128,26 @@ class HistoryView(models.Model):
 
 class Feedback(models.Model):
     """Отзыв"""
+
+    grate_list = [
+        (1, '1 🌟'),
+        (2, '2 🌟'),
+        (3, '3 🌟'),
+        (4, '4 🌟'),
+        (5, '5 🌟'),
+    ]
+
     product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
     author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
     publication_date = models.DateTimeField(auto_now=True)
-    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)],
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)], choices=grate_list,
                                  verbose_name=_('рейтинг'))
     description = models.TextField(max_length=2048, verbose_name=_('описание'))
-    image = models.ImageField(upload_to='feedback_images/')
+    image = models.ImageField(upload_to='feedback_images/', blank=True, verbose_name=_('фотография'))
+
+    class Meta:
+        verbose_name = _('отзыв')
+        verbose_name_plural = _('отзывы')
+
+    def __str__(self):
+        return self.product.name

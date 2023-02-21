@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'mptt',
     'product',
     'shop',
@@ -48,6 +49,10 @@ INSTALLED_APPS = [
     'comparison',
     'cart',
     'django_extensions',
+    'orders',
+    'promotions',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -128,6 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
@@ -140,7 +147,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, сюда будет собирать статику collectstatic
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -162,3 +170,7 @@ MPTT_ADMIN_LEVEL_INDENT = 10
 CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_TASK_TRACK_STARTED = True

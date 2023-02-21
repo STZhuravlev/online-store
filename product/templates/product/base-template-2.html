@@ -53,12 +53,13 @@
             </header>
             <div class="Section-columnContent">
               <form class="form"
-                    action="{% url 'catalog-view' %}?category={{ request.GET.get.category }}"
+                    action="{% url 'catalog-view' %}"
                     method="get">
                 <div class="form-group">
                   <div class="range Section-columnRange">
+                      <input type="hidden" name="category" value="{{ current_category }}">
                     <input class="range-line" id="price" name="price" type="text"
-                           data-type="double" data-min="50" data-max="500000" data-from="1000" data-to="100000"/>
+                           data-type="double" data-min="50" data-max="500000" data-from="0" data-to="100000"/>
                     <div class="range-price">Цена:&#32;
                       <div class="rangePrice">
                       </div>
@@ -147,7 +148,7 @@
             {% for item in catalog %}
               <div class="Card">
                 <a class="Card-picture" href="#">
-                  <img src="/media/{{ item.images.first.image }}" alt="card.jpg"/>
+                  <img src="/media/{{ item.images__image }}" alt="card.jpg"/>
                 </a>
                 <div class="Card-content">
                   <strong class="Card-title">
@@ -155,8 +156,8 @@
                   </strong>
                   <div class="Card-description">
                     <div class="Card-cost">
-                      <span class="Card-priceOld">$115.00</span>
-                      <span class="Card-price">{{ item.offers.first.price }} ₽</span>
+{#                      <span class="Card-priceOld">₽115.00</span>#}
+                      <span class="Card-price">{{ item.avg_price|floatformat:2 }} ₽</span>
                     </div>
                     <div class="Card-category">
                         Games / xbox

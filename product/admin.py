@@ -1,8 +1,17 @@
 from django.contrib import admin  # noqa F401
 from django.utils.translation import gettext_lazy as _
 from mptt.admin import MPTTModelAdmin
-from product.models import Product, Banner, Category, Offer, ProductProperty, \
-    Feedback, HistoryView, ProductImage, Property
+from product.models import (
+    Product,
+    Banner,
+    Category,
+    Offer,
+    ProductProperty,
+    Feedback,
+    HistoryView,
+    ProductImage,
+    Property
+)
 
 
 class ProductInLine(admin.TabularInline):
@@ -36,7 +45,7 @@ class CategoryAdmin(MPTTModelAdmin):
 
 
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ['product', 'seller', 'price']
+    list_display = ['product', 'seller', 'price', 'is_free_delivery', 'is_present']
 
     class Meta:
         verbose_name = _('цена')
