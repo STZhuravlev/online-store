@@ -13,7 +13,7 @@ class Product(models.Model):
     seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True,
-                                 related_name="cat", verbose_name=_("категория"))
+                                 related_name="products", verbose_name=_("категория"))
 
     class Meta:
         verbose_name = _("продукт")

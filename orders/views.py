@@ -42,8 +42,8 @@ def order_create(request):
         if form.is_valid():
             if request.user.is_authenticated:
                 form.fields['email'].widget.attrs['readonly'] = True
-                form.fields['password1'].widget.attrs['readonly'] = True
-                form.fields['password2'].widget.attrs['readonly'] = True
+                form.fields['password1'].widget.attrs['disabled'] = True
+                form.fields['password2'].widget.attrs['disabled'] = True
                 order = Order.objects.create(first_name=form.cleaned_data.get('first_name'),
                                              last_name=form.cleaned_data.get('last_name'),
                                              email=request.user.email,
@@ -52,6 +52,7 @@ def order_create(request):
                 # Если пользователь не авторизован, но существует
                 if CustomUser.objects.filter(email=form.cleaned_data['email']).exists():
                     form._errors["email"] = ErrorList([_(u"Пользователь уже существует")])
+                    # Выводить форму входа
                     return render(request, 'orders/new-order.html',
                                   {'cart': cart, 'form': form, 'categories': get_category()})
                 # Если пользователь не авторизован и не существует
@@ -103,8 +104,8 @@ def order_create(request):
                     }
             form = OrderUserCreateForm(data)
             form.fields['email'].widget.attrs['readonly'] = True
-            form.fields['password1'].widget.attrs['readonly'] = True
-            form.fields['password2'].widget.attrs['readonly'] = True
+            form.fields['password1'].widget.attrs['disabled'] = True
+            form.fields['password2'].widget.attrs['disabled'] = True
         else:
             form = OrderUserCreateForm
     return render(request, 'orders/new-order.html',

@@ -13,7 +13,7 @@ class SellerInfo(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         popular = {}
-        popular_queryset = OrderItem.objects.filter(offer__seller_id=kwargs['object'].id).\
+        popular_queryset = OrderItem.objects.filter(offer__seller_id=self.object.id).\
             values_list('offer__id', 'quantity')
         for i in popular_queryset:
             if i[0] in popular:
