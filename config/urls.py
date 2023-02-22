@@ -26,6 +26,6 @@ urlpatterns = [
     path('comparison/', include('comparison.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
+    path('i18n', include('django.conf.urls.i18n')),
     path('promos/', include('promotions.urls', namespace='promo')),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

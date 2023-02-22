@@ -12,7 +12,12 @@ class Product(models.Model):
     description = models.CharField(max_length=1024, verbose_name=_("описание"))
     seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
-    category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True, related_name="cat")
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True,
+                                 related_name="products", verbose_name=_("категория"))
+
+    class Meta:
+        verbose_name = _("продукт")
+        verbose_name_plural = _("продукты")
 
     def __str__(self):
         return self.name
@@ -29,12 +34,20 @@ class Property(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = _("свойство")
+        verbose_name_plural = _("свойства")
+
 
 class ProductProperty(models.Model):
     """Значение свойства продукта"""
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    property = models.ForeignKey(Property, on_delete=models.PROTECT, related_name='prod')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name=_("продукт"))
+    property = models.ForeignKey(Property, on_delete=models.PROTECT, related_name='prod', verbose_name=_("свойство"))
     value = models.CharField(max_length=128, verbose_name=_("значение"))
+
+    class Meta:
+        verbose_name = _("свойство продукта")
+        verbose_name_plural = _("свойства продуктов")
 
 
 class Banner(models.Model):
@@ -42,9 +55,9 @@ class Banner(models.Model):
     title = models.CharField(max_length=128, verbose_name=_('заголовок'))
     brief = models.CharField(max_length=512, verbose_name=_('краткое описание'))
     icon = models.ImageField(upload_to='files/', verbose_name=_('изображение'))
-    added_at = models.DateTimeField(auto_created=True, auto_now=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners')
-    is_active = models.BooleanField(default=False)
+    added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_("дата добавления"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners', verbose_name=_("продукт"))
+    is_active = models.BooleanField(default=False, verbose_name=_("активность"))
 
     def __str__(self):
         return self.title
@@ -52,6 +65,10 @@ class Banner(models.Model):
     def get_absolute_url(self):
         """ Возвращает урл на продукт """
         return self.product.get_absolute_url()
+
+    class Meta:
+        verbose_name = _("баннер")
+        verbose_name_plural = _("баннеры")
 
 
 class Category(MPTTModel):
@@ -64,7 +81,8 @@ class Category(MPTTModel):
     name = models.CharField(max_length=100, verbose_name=_("категория"))
     icon = models.FileField(upload_to="images/icons/", verbose_name=_("иконка"), blank=True)
     active = models.BooleanField(choices=STATUS_CHOICE, default=False, verbose_name=_("активность"))
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="children")
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
+                            related_name="children", verbose_name=_("родитель"))
 
     def __str__(self):
         return self.name
@@ -83,8 +101,9 @@ class Category(MPTTModel):
 
 class Offer(models.Model):
     """Товар"""
-    product = models.ForeignKey("Product", on_delete=models.PROTECT, related_name='offers')
-    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='sellers')
+    product = models.ForeignKey("Product", on_delete=models.PROTECT, related_name='offers', verbose_name=_("продукт"))
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT,
+                               related_name='sellers', verbose_name=_("продавец"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
 
     def __str__(self):
@@ -98,7 +117,7 @@ class Offer(models.Model):
 class ProductImage(models.Model):
     """Фотографии продукта"""
     product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images/', verbose_name=_("изображение продукта"))
 
     class Meta:
         verbose_name = _('изображение продукта')
@@ -112,7 +131,7 @@ class HistoryView(models.Model):
     """История просмотра товаров"""
     # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
-    product = models.ForeignKey(Product, verbose_name=_('товар'), on_delete=models.CASCADE, related_name='views')
+    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='views')
 
     class Meta:
         ordering = ('-view_at',)
@@ -136,7 +155,7 @@ class Feedback(models.Model):
 
     product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
     author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
-    publication_date = models.DateTimeField(auto_now=True)
+    publication_date = models.DateTimeField(auto_now=True, verbose_name=_("дата публикации"))
     rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)], choices=grate_list,
                                  verbose_name=_('рейтинг'))
     description = models.TextField(max_length=2048, verbose_name=_('описание'))

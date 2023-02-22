@@ -14,8 +14,8 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = _('пользователь')
+        verbose_name_plural = _('пользователи')
         permissions = [
             ('can make a purchase', 'может совершать покупку')
         ]
