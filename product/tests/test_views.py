@@ -80,7 +80,7 @@ class FeedbackViewTest(SettingsTest):
     """Тестирование добавления отзыва к товару"""
 
     def setUp(self):
-        self.product = Product.objects.get(pk=1)
+        self.product = Product.objects.first()
         self.user = get_user_model().objects.first()
         self.url = reverse('offer-detail', args=(self.product.id,))
 

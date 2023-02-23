@@ -2,10 +2,20 @@ from django import forms
 from .models import Order, DELIVERY_CHOICES, TYPE_CHOICES
 
 
-class OrderUserCreateForm(forms.ModelForm):
+class OrderUserCreateForm(forms.Form):
+    first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)
+    email = forms.EmailField(max_length=50)
+    number = forms.IntegerField(min_value=100000, max_value=89999999999, widget=forms.TextInput())
+    password1 = forms.CharField(widget=forms.PasswordInput, required=False)
+    password2 = forms.CharField(widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = Order
         fields = ['first_name', 'last_name', 'email', 'number']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-group'}),
+        }
 
 
 class OrderDeliveryCreateForm(forms.Form):

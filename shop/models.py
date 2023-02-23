@@ -25,11 +25,11 @@ class SellerLogo(models.Model):
     """Логотип продавца"""
     seller = models.OneToOneField(Seller, verbose_name=_('продавец'),
                                   on_delete=models.CASCADE, related_name='logo')
-    image = models.ImageField(upload_to='static/img/')
+    image = models.ImageField(upload_to='static/img/', verbose_name=_("логотип продавца"))
 
     class Meta:
-        verbose_name = 'логотип продавца'
-        verbose_name_plural = 'логотипы продавцов'
+        verbose_name = _('логотип продавца')
+        verbose_name_plural = _('логотипы продавцов')
 
     def __str__(self):
         return self.seller.name

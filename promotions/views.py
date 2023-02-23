@@ -62,6 +62,5 @@ class PromoDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
         products = self.get_related_products()
-        context['products'] = products
         context['page_obj'] = products
         return context

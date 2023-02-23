@@ -27,6 +27,7 @@ urlpatterns = [
     path('comparison/', include('comparison.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
+    path('i18n', include('django.conf.urls.i18n')),
     path('promos/', include('promotions.urls', namespace='promo')),
     path('', IndexView.as_view(), name='index')
 
