@@ -1,9 +1,14 @@
+import json
+import requests
+
+from random import randint
 from random import sample
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q, Avg
 from django.http import HttpRequest
-from product.models import Category, Product, Banner, ProductImage
+from product.models import Category, Product, Banner, ProductImage, Property, ProductProperty, Offer, \
+    LoggingImportFileModel
 
 
 def get_category(cache_key: str = None,
@@ -128,23 +133,182 @@ class ImageView:
         return context
 
 
-class UploadProductFile:
+# class UploadProductFile:
+#
+#     @staticmethod
+#     def get_object_or_none(obj, **kwargs):
+#         """Возвращает продукт, если его нет, то None"""
+#
+#         try:
+#             return obj.objects.get(**kwargs)
+#         except obj.DoesNotExist:
+#             return None
+#
+#     @classmethod
+#     def get_category(cls, name: str):
+#         """Возвращает категорию. Если её нет, то создаёт"""
+#
+#         category = cls.get_object_or_none(Category, name=name)
+#         if not category:
+#             category = Category.objects.create(name=name)
+#             return category
+#         return category
 
-    @staticmethod
-    def get_object_or_none(obj, **kwargs):
-        """Возвращает продукт, если его нет, то None"""
 
+def get_object_or_none(obj, **kwargs):
+    """Возвращает продукт, если его нет, то None"""
+
+    try:
+        return obj.objects.get(**kwargs)
+    except obj.DoesNotExist:
+        return None
+
+
+def upload_product_file(file, seller, file_name):
+    """Парсинг файла json и создание экземпляров модели"""
+
+    file_read = file.read()
+    file_json = json.loads(file_read)
+
+    for i_category in file_json['category']:
+        category = get_object_or_none(Category, name=i_category)
         try:
-            return obj.objects.get(**kwargs)
-        except obj.DoesNotExist:
-            return None
+            if not category:
+                category = Category.objects.create(name=i_category)
+        except Exception as ex:
+            LoggingImportFileModel.objects.create(
+                file_name=file_name,
+                seller=seller,
+                message=f'Ошибка создании Category: {ex} | {type(ex)}'
+            )
+            continue
 
-    @classmethod
-    def get_category(cls, name: str):
-        """Возвращает категорию. Если её нет, то создаёт"""
+        for i_product in file_json['category'][i_category]:
+            product = get_object_or_none(Product, name=i_product['name'])
 
-        category = cls.get_object_or_none(Category, name=name)
-        if not category:
-            category = Category.objects.create(name=name)
-            return category
-        return category
+            if not product:
+                property = get_object_or_none(Property, name=i_product['property']['name'])
+                try:
+                    if not property:
+                        property = Property.objects.create(name=i_product['property']['name'])
+                except Exception as ex:
+                    LoggingImportFileModel.objects.create(
+                        file_name=file_name,
+                        seller=seller,
+                        message=f'Ошибка создании Property: {ex} | {type(ex)}'
+                    )
+                    continue
+
+                try:
+                    product = Product.objects.create(
+                                        name=i_product['name'],
+                                        description=i_product['description'],
+                                        category=category,
+                                    )
+                except Exception as ex:
+                    LoggingImportFileModel.objects.create(
+                        file_name=file_name,
+                        seller=seller,
+                        message=f'Ошибка создании Product: {ex} | {type(ex)}'
+                    )
+                    continue
+
+                try:
+                    ProductProperty.objects.create(
+                        product=product,
+                        property=property,
+                        value=i_product['property']['value']
+                    )
+                except Exception as ex:
+                    LoggingImportFileModel.objects.create(
+                        file_name=file_name,
+                        seller=seller,
+                        message=f'Ошибка создании ProductProperty: {ex} | {type(ex)}'
+                    )
+                    continue
+
+                if i_product.get('image'):
+                    try:
+                        for image in i_product['image']:
+                            r = requests.get(image)
+                            file_img_name = f'{randint(1, 9999)}_{i_product["name"]}.jpg'
+
+                            with open(f'{settings.MEDIA_ROOT}{settings.MEDIA_IMAGE_URL}{file_img_name}', 'wb')\
+                                    as image_file:
+                                image_file.write(r.content)
+
+                            ProductImage.objects.create(
+                                product=product,
+                                image=f'{settings.MEDIA_IMAGE_URL}{file_img_name}'
+                            )
+                    except Exception as ex:
+                        LoggingImportFileModel.objects.create(
+                            file_name=file_name,
+                            seller=seller,
+                            message=f'Ошибка создании ProductImage: {ex} | {type(ex)}'
+                        )
+                        continue
+
+            if i_product.get('offer'):
+                try:
+                    Offer.objects.create(
+                        product=product,
+                        seller=seller,
+                        price=i_product['offer']['price']
+                    )
+                except Exception as ex:
+                    LoggingImportFileModel.objects.create(
+                        file_name=file_name,
+                        seller=seller,
+                        message=f'Ошибка создании Offer: {ex} | {type(ex)}'
+                    )
+                    continue
+
+
+        # for i_category in file_json['category']:
+        #     category = UploadProductFile.get_category(name=i_category)
+        #
+        #     for j_product in file_json['category'][i_category]:
+        #         product = UploadProductFile.get_object_or_none(Product, name=j_product['name'])
+        #
+        #         if not product:
+        #             try:
+        #                 product = Product.objects.create(
+        #                     name=j_product['name'],
+        #                     description=j_product['description'],
+        #                     category=category
+        #                 )
+        #             except Exception as ex:
+        #                 LoggingImportFileModel.objects.create(
+        #                     seller=seller,
+        #                     message=f'Ошибка при создании экземпляра модели product: {ex} | {type(ex)}'
+        #                 )
+        #                 continue
+        #
+        #             try:
+        #                 if j_product.get('image'):
+        #                     # Проблемы с отображением фото товара если URL ссылкой
+        #                     ProductImage.objects.create(
+        #                         product=product,
+        #                         image=j_product['image']
+        #                     )
+        #             except Exception as ex:
+        #                 LoggingImportFileModel.objects.create(
+        #                     seller=seller,
+        #                     message=f'Ошибка при создании экземпляра модели product_image: {ex} | {type(ex)}'
+        #                 )
+        #                 continue
+        #
+        #         try:
+        #             if j_product.get('offer'):
+        #                 Offer.objects.create(
+        #                     product=product,
+        #                     seller=seller,
+        #                     price=j_product['offer']['price']
+        #                 )
+        #         except Exception as ex:
+        #             LoggingImportFileModel.objects.create(
+        #                 seller=seller,
+        #                 message=f'Ошибка при создании экземпляра модели offer: {ex} | {type(ex)}'
+        #             )
+        #             continue

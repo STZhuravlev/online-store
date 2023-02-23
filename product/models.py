@@ -172,6 +172,14 @@ class Feedback(models.Model):
 class LoggingImportFileModel(models.Model):
     """Модель логирование ошибок импорта файла"""
 
+    file_name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Имя файла'))
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='seller_log')
-    message = models.CharField(max_length=255, verbose_name=_('текст ошибки'))
+    message = models.CharField(max_length=255, verbose_name=_('Текст ошибки'))
     date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Логирование')
+        verbose_name_plural = _('Логирование')
+
+    def __str__(self):
+        return self.file_name

@@ -1,6 +1,3 @@
-import json
-
-from django.http import HttpResponse
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic, View
 from django.core.cache import cache
@@ -8,7 +5,7 @@ from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView, UploadProductFile
+    apply_filter_to_catalog, BannersView, ImageView, upload_product_file
 from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
@@ -188,59 +185,9 @@ class UploadProductFileView(View):
             seller = Seller.objects.get(user=self.request.user)
 
             try:
-                file_read = form_file.cleaned_data['file_json'].read()
-                file_json = json.loads(file_read.decode('utf-8'))
-
-                for i_category in file_json['category']:
-                    category = UploadProductFile.get_category(name=i_category)
-
-                    for j_product in file_json['category'][i_category]:
-                        product = UploadProductFile.get_object_or_none(Product, name=j_product['name'])
-
-                        if not product:
-                            try:
-                                product = Product.objects.create(
-                                    name=j_product['name'],
-                                    description=j_product['description'],
-                                    category=category
-                                )
-                            except Exception as ex:
-                                LoggingImportFileModel.objects.create(
-                                    seller=seller,
-                                    message=f'Ошибка при создании экземпляра модели product: {ex} | {type(ex)}'
-                                )
-                                continue
-
-                            try:
-                                if j_product.get('image'):
-                                    # Проблемы с отображением фото товара если URL ссылкой
-                                    ProductImage.objects.create(
-                                        product=product,
-                                        image=j_product['image']
-                                    )
-                            except Exception as ex:
-                                LoggingImportFileModel.objects.create(
-                                    seller=seller,
-                                    message=f'Ошибка при создании экземпляра модели product_image: {ex} | {type(ex)}'
-                                )
-                                continue
-
-                        try:
-                            if j_product.get('offer'):
-                                Offer.objects.create(
-                                    product=product,
-                                    seller=seller,
-                                    price=j_product['offer']['price']
-                                )
-                        except Exception as ex:
-                            LoggingImportFileModel.objects.create(
-                                seller=seller,
-                                message=f'Ошибка при создании экземпляра модели offer: {ex} | {type(ex)}'
-                            )
-                            continue
-
-                return redirect('/product/catalog/')
-            except KeyError as ex:
+                upload_product_file(file=file, seller=seller, file_name=file.name)
+                return redirect('catalog-view')
+            except Exception as ex:
                 LoggingImportFileModel.objects.create(
                     seller=seller,
                     message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
@@ -250,3 +197,77 @@ class UploadProductFileView(View):
 
         form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
         return render(request, 'product/upload_file.html', context={'form': form_file})
+
+
+    # def post(self, request):
+    #
+    #     form_file = UploadProductFileJsonForm(request.POST, request.FILES)
+    #     file = request.FILES['file_json']
+    #
+    #     if form_file.is_valid() and file.name.endswith('.json'):
+    #
+    #         seller = Seller.objects.get(user=self.request.user)
+    #
+    #         try:
+    #             file_read = form_file.cleaned_data['file_json'].read()
+    #             file_json = json.loads(file_read.decode('utf-8'))
+    #
+    #             for i_category in file_json['category']:
+    #                 category = UploadProductFile.get_category(name=i_category)
+    #
+    #                 for j_product in file_json['category'][i_category]:
+    #                     product = UploadProductFile.get_object_or_none(Product, name=j_product['name'])
+    #
+    #                     if not product:
+    #                         try:
+    #                             product = Product.objects.create(
+    #                                 name=j_product['name'],
+    #                                 description=j_product['description'],
+    #                                 category=category
+    #                             )
+    #                         except Exception as ex:
+    #                             LoggingImportFileModel.objects.create(
+    #                                 seller=seller,
+    #                                 message=f'Ошибка при создании экземпляра модели product: {ex} | {type(ex)}'
+    #                             )
+    #                             continue
+    #
+    #                         try:
+    #                             if j_product.get('image'):
+    #                                 # Проблемы с отображением фото товара если URL ссылкой
+    #                                 ProductImage.objects.create(
+    #                                     product=product,
+    #                                     image=j_product['image']
+    #                                 )
+    #                         except Exception as ex:
+    #                             LoggingImportFileModel.objects.create(
+    #                                 seller=seller,
+    #                                 message=f'Ошибка при создании экземпляра модели product_image: {ex} | {type(ex)}'
+    #                             )
+    #                             continue
+    #
+    #                     try:
+    #                         if j_product.get('offer'):
+    #                             Offer.objects.create(
+    #                                 product=product,
+    #                                 seller=seller,
+    #                                 price=j_product['offer']['price']
+    #                             )
+    #                     except Exception as ex:
+    #                         LoggingImportFileModel.objects.create(
+    #                             seller=seller,
+    #                             message=f'Ошибка при создании экземпляра модели offer: {ex} | {type(ex)}'
+    #                         )
+    #                         continue
+    #
+    #             return redirect('/product/catalog/')
+    #         except KeyError as ex:
+    #             LoggingImportFileModel.objects.create(
+    #                 seller=seller,
+    #                 message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
+    #             )
+    #             form_file.add_error(None, f'Ошибка: {ex}! Не корректно сформирован файл')
+    #             return render(request, 'product/upload_file.html', context={'form': form_file})
+    #
+    #     form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
+    #     return render(request, 'product/upload_file.html', context={'form': form_file})
