@@ -194,7 +194,7 @@ class UploadProductFileView(View):
                 )
                 form_file.add_error(None, f'Ошибка: {ex}! Не корректно сформирован файл')
                 return render(request, 'product/upload_file.html', context={'form': form_file})
-
+        print('Не валидно')
         form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
         return render(request, 'product/upload_file.html', context={'form': form_file})
 

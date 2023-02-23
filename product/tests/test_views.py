@@ -1,8 +1,13 @@
+import json
+
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
-    TestCase,
+    TestCase, override_settings,
     # RequestFactory,
 )
+
+from config import settings
 # from django.core.files.uploadedfile import SimpleUploadedFile
 # from django.urls import reverse
 from product.models import (
@@ -12,10 +17,10 @@ from product.models import (
     # Banner,
     Category,
     Offer,
-    Feedback,
+    Feedback, Property, ProductProperty, ProductImage,
 )
 
-from product.forms import FeedbackForm
+from product.forms import FeedbackForm, UploadProductFileJsonForm
 
 from django.urls import reverse
 from shop.models import Seller
@@ -124,3 +129,29 @@ class FeedbackViewTest(SettingsTest):
         feedback_count = Feedback.objects.count()
         self.assertEqual(feedback_count, 2)
         print(f'[TEST][INFO] - count feedback {feedback_count}')
+
+
+class TestUploadFileView(SettingsTest):
+
+    """Тестирование ипрот файла"""
+
+    def test_post_upload_file(self):
+
+        self.client.login(email='test1@test.ru', password='test1234')
+
+        file_json = SimpleUploadedFile(
+            name='file_json.json',
+            content=open('/vagrant/product/tests/test_file_json.json', 'rb').read(),
+            content_type='text/json'
+        )
+
+        url = reverse('upload_file')
+        response_post = self.client.post(url, {'file_json': file_json})
+        self.assertEqual(response_post.status_code, 302)
+        print(f'[TEST][INFO] - response_post status_code {response_post.status_code}')
+        print(f'[TEST][INFO] - Product {Product.objects.last()}')
+        print(f'[TEST][INFO] - Category {Category.objects.last()}')
+        print(f'[TEST][INFO] - Property {Property.objects.last().name}')
+        print(f'[TEST][INFO] - ProductProperty {ProductProperty.objects.last().value}')
+        print(f'[TEST][INFO] - ProductImage {ProductImage.objects.last().image}')
+
