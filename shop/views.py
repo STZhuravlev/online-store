@@ -27,6 +27,7 @@ class SellerInfo(DetailView):
         context['categories'] = get_category()
         return context
 
+
 class SiteSettingsView(View):
 
     def get(self, request):
