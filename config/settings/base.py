@@ -181,3 +181,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_TASK_TRACK_STARTED = True
+
+# Количество акция, отображаемых на странице
+PROMO_PER_PAGE = 4
+# Количество продуктов в акции, отображаемых на странице
+PROMO_PRODUCTS_PER_PAGE = 4
+
+# Количество товаров из каталога, которые будут отображаться на странице
+CATALOG_PRODUCT_PER_PAGE = 6
+
+CACHE_STORAGE_TIME = 60 * 60 * 24
+
+ADMIN_SETTINGS_ID = 'admin_settings'
