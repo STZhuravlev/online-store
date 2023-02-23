@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic, View
@@ -6,7 +8,7 @@ from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView, handle_uploaded_file
+    apply_filter_to_catalog, BannersView, ImageView, UploadProductFile
 from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
@@ -16,7 +18,9 @@ from product.models import (
     HistoryView,
     ProductProperty,
     Feedback,
-    ProductImage)
+    ProductImage,
+    LoggingImportFileModel,
+)
 
 
 # Количество товаров из каталога, которые будут отображаться на странице
