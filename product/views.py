@@ -173,7 +173,7 @@ class UploadProductFileView(View):
     def get(self, request):
 
         form = UploadProductFileJsonForm()
-        return render(request, 'product/upload_file.html', context={'form': form})
+        return render(request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
 
     def post(self, request):
 
@@ -193,10 +193,11 @@ class UploadProductFileView(View):
                     message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
                 )
                 form_file.add_error(None, f'Ошибка: {ex}! Не корректно сформирован файл')
-                return render(request, 'product/upload_file.html', context={'form': form_file})
+                return render(request, 'product/upload_file.html', context={'form': form_file,
+                                                                            'categories': get_category()})
         print('Не валидно')
         form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
-        return render(request, 'product/upload_file.html', context={'form': form_file})
+        return render(request, 'product/upload_file.html', context={'form': form_file, 'categories': get_category()})
 
 
     # def post(self, request):
