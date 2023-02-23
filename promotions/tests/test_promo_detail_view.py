@@ -5,7 +5,7 @@ from django.utils import timezone
 from promotions.models import PromoType, Promo, Promo2Product
 from product.models import Product, Category, Offer
 from shop.models import Seller
-from promotions.views import PROMO_PRODUCTS_PER_PAGE
+from django.conf import settings
 
 
 class PromoDetailViewTest(TestCase):
@@ -66,7 +66,7 @@ class PromoDetailViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('page_obj' in response.context)
-        self.assertEqual(len(response.context['page_obj']), PROMO_PRODUCTS_PER_PAGE)
+        self.assertEqual(len(response.context['page_obj']), settings.PROMO_PRODUCTS_PER_PAGE)
 
     def test_pagination_second_page(self):
         """Тест, что пагинатор получает все товары из каталога и
