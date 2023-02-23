@@ -72,10 +72,10 @@ class CategoryView(generic.ListView):
         context = super().get_context_data(**kwargs)
         categories_list = Category.objects.all()
         time_to_cachded = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if time_to_cachded['CACHE_STORAGE_TIME']:
-            cache_time = time_to_cachded['CACHE_STORAGE_TIME']
-        else:
+        if time_to_cachded is None or time_to_cachded.get('CACHE_STORAGE_TIME') is None:
             cache_time = settings.CACHE_STORAGE_TIME
+        else:
+            cache_time = time_to_cachded['CACHE_STORAGE_TIME']
         cached_data = cache.get_or_set("categories", categories_list, cache_time)
         context['categories'] = cached_data
         return context
@@ -158,10 +158,11 @@ class ProductCatalogView(generic.ListView):
 
     def get_paginate_by(self, queryset):
         promo_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if promo_per_page['CATALOG_PRODUCT_PER_PAGE']:
-            paginator = promo_per_page['CATALOG_PRODUCT_PER_PAGE']
-        else:
+        if promo_per_page is None or promo_per_page.get('CATALOG_PRODUCT_PER_PAGE') is None:
             paginator = settings.CATALOG_PRODUCT_PER_PAGE
+        else:
+            paginator = promo_per_page['CATALOG_PRODUCT_PER_PAGE']
+
         return paginator
 
 
