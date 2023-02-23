@@ -25,20 +25,17 @@ class PromoListView(ListView):
 
     def get_paginate_by(self, queryset):
         promo_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if  promo_per_page['PROMO_PER_PAGE']:
+        if promo_per_page['PROMO_PER_PAGE']:
             paginator = promo_per_page['PROMO_PER_PAGE']
         else:
             paginator = settings.PROMO_PER_PAGE
         return paginator
 
 
-
-
 class PromoDetailView(DetailView):
     template_name = 'promotions/promo-detail.html'
     model = Promo
     context_object_name = 'promo'
-
 
     def get_related_products(self):
         product_list = self.object.promo2products.first()
@@ -52,7 +49,7 @@ class PromoDetailView(DetailView):
                 annotate(avg_price=Avg('offers__price')).all()
         promo_product_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
         if promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']:
-            count_per_page= promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']
+            count_per_page = promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']
         else:
             count_per_page = settings.PROMO_PRODUCTS_PER_PAGE
         paginator = Paginator(product_list, count_per_page)

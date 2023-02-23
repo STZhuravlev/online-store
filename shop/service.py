@@ -1,7 +1,6 @@
 from django.conf import settings
 
 
-
 class SiteSettings:
 
     def __init__(self, request):
@@ -13,10 +12,7 @@ class SiteSettings:
         self.site_settings = site_settings
 
     def add(self, name, value):
-
-        if name not in self.site_settings:
-            self.site_settings[name] = value
-
+        self.site_settings[name] = value
         self.save()
 
     def __iter__(self):
@@ -24,8 +20,6 @@ class SiteSettings:
 
             yield item
 
-
     def save(self):
         self.sessions[settings.ADMIN_SETTINGS_ID] = self.site_settings
         self.sessions.modified = True
-

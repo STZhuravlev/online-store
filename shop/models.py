@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import CustomUser
 
 
-
 class Seller(models.Model):
     """Продавец"""
     user = models.OneToOneField(CustomUser, verbose_name=_('пользователь'), on_delete=models.CASCADE)
@@ -34,5 +33,3 @@ class SellerLogo(models.Model):
 
     def __str__(self):
         return self.seller.name
-
-

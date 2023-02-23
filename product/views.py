@@ -81,8 +81,6 @@ class CategoryView(generic.ListView):
         return context
 
 
-
-
 class FeedbackDetailView(generic.CreateView):
 
     """Детальное отображение продукта, отзывов и добавления отзыва"""
@@ -128,7 +126,6 @@ class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
     template_name = 'product/product-catalog.html'
-    paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -158,6 +155,14 @@ class ProductCatalogView(generic.ListView):
         # insert method
 
         return final_queryset
+
+    def get_paginate_by(self, queryset):
+        promo_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
+        if promo_per_page['CATALOG_PRODUCT_PER_PAGE']:
+            paginator = promo_per_page['CATALOG_PRODUCT_PER_PAGE']
+        else:
+            paginator = settings.CATALOG_PRODUCT_PER_PAGE
+        return paginator
 
 
 class IndexView(generic.TemplateView):

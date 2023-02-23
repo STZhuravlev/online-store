@@ -19,9 +19,5 @@ class SellerLogoAdmin(admin.ModelAdmin):
         verbose_name_plural = _('логотипы продавцов')
 
 
-
-
-
 admin.site.register(Seller, SellerAdmin)
 admin.site.register(SellerLogo, SellerLogoAdmin)
-
