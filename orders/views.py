@@ -156,7 +156,7 @@ def order_create_payment(request):
                                          )
             cart.clear()
             cache.close()
-            tasks.payment.delay(order.pk)
+            # tasks.payment.delay(order.pk)
             return redirect('wait-payment', pk=order.pk)
     else:
         form = OrderCardForm()
