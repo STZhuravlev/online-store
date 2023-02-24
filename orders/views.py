@@ -13,7 +13,7 @@ from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCre
 from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
-import redis
+# import redis
 # from django.core.cache import cache
 # from django.conf import settings
 # from django.core.cache.backends.base import DEFAULT_TIMEOUT
