@@ -17,7 +17,8 @@ class CustomUser(AbstractUser):
         verbose_name = _('пользователь')
         verbose_name_plural = _('пользователи')
         permissions = [
-            ('can make a purchase', 'может совершать покупку')
+            ('can make a purchase', 'может совершать покупку'),
+            ('can_settings_site', 'Может настраивать сайт')
         ]
 
     def __str__(self):
