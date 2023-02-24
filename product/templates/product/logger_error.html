@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if logger_error %}
+    {% for error in logger_error %}
+        <p>Ошибки:</p>
+        {{ i }}
+        <p>{{ error.file_name }}: {{ error.message }}</p>
+    {% endfor %}
+{% endif %}
+</body>
+</html>

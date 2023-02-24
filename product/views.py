@@ -1,3 +1,4 @@
+from random import randint
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic, View
 from django.core.cache import cache
@@ -5,7 +6,7 @@ from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView, upload_product_file
+    apply_filter_to_catalog, BannersView, ImageView, upload_product_file, get_object_or_none
 from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
@@ -166,35 +167,75 @@ class IndexView(generic.TemplateView):
         return context
 
 
-class UploadProductFileView(View):
+class UploadProductFileView(generic.FormView):
 
     """Добавление продукта, автора и т.п. через файл формата JSON """
 
-    def get(self, request):
+    template_name = 'product/upload_file.html'
+    form_class = UploadProductFileJsonForm
+    success_url = '/product/catalog/'
 
-        form = UploadProductFileJsonForm()
-        return render(request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = get_category()
+        return context
 
-    def post(self, request):
-
-        form_file = UploadProductFileJsonForm(request.POST, request.FILES)
-        file = request.FILES['file_json']
-
-        if form_file.is_valid() and file.name.endswith('.json'):
-
+    def form_valid(self, form, **kwargs):
+        file = self.request.FILES['file_json']
+        if file.name.endswith('.json'):
             seller = Seller.objects.get(user=self.request.user)
+            file_name = f'{randint(1, 9999)}_{file.name}'
 
             try:
-                upload_product_file(file=file, seller=seller, file_name=file.name)
+                upload_product_file(file=file, seller=seller, file_name=file_name)
+                get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name, seller=seller)
+
+                if get_logger_error:
+                    return render(self.request, 'product/logger_error.html', {'logger_error': get_logger_error})
                 return redirect('catalog-view')
             except Exception as ex:
                 LoggingImportFileModel.objects.create(
+                    file_name=file_name,
                     seller=seller,
                     message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
                 )
-                form_file.add_error(None, f'Ошибка: {ex}! Не корректно сформирован файл')
-                return render(request, 'product/upload_file.html', context={'form': form_file,
-                                                                            'categories': get_category()})
+                form.add_error(None, f'Ошибка: {ex} | {type(ex)}! Не корректно сформирован файл')
+                return render(self.request, 'product/upload_file.html', context={'form': form,
+                                                                                 'categories': get_category()})
+        form.add_error(None, 'Кодировка файла должна быть формата JSON')
+        return render(self.request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
 
-        form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
-        return render(request, 'product/upload_file.html', context={'form': form_file, 'categories': get_category()})
+    # def get(self, request):
+    #
+    #     form = UploadProductFileJsonForm()
+    #     return render(request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
+    #
+    # def post(self, request):
+    #
+    #     form_file = UploadProductFileJsonForm(request.POST, request.FILES)
+    #     file = request.FILES['file_json']
+    #
+    #     if form_file.is_valid() and file.name.endswith('.json'):
+    #
+    #         seller = Seller.objects.get(user=self.request.user)
+    #
+    #         try:
+    #             file_name = f'{randint(1, 9999)}_{file.name}'
+    #             upload_product_file(file=file, seller=seller, file_name=file_name)
+    #             get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name)
+    #
+    #             if get_logger_error:
+    #                 return render(request, 'product/logger_error.html', {'logger_error': get_logger_error})
+    #             return redirect('catalog-view')
+    #         except Exception as ex:
+    #             LoggingImportFileModel.objects.create(
+    #                 file_name=file_name,
+    #                 seller=seller,
+    #                 message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
+    #             )
+    #             # form_file.add_error(None, f'Ошибка: {ex} | {type(ex)}! Не корректно сформирован файл')
+    #             # return render(request, 'product/upload_file.html', context={'form': form_file,
+    #             #                                                             'categories': get_category()})
+    #
+    #     form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
+    #     return render(request, 'product/upload_file.html', context={'form': form_file, 'categories': get_category()})
