@@ -12,13 +12,14 @@ from product.services import get_category
 from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm, OrderCardForm
 from cart.service import Cart
 from . import tasks
+from django.core.cache import cache
 import redis
 # from django.core.cache import cache
 # from django.conf import settings
 # from django.core.cache.backends.base import DEFAULT_TIMEOUT
 #
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
-caching = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+# caching = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
 # caching = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
 
 
@@ -49,10 +50,10 @@ def order_create(request):
         form = OrderUserCreateForm(request.POST)
         if form.is_valid():
             if request.user.is_authenticated:
-                caching.set('first_name', form.cleaned_data.get('first_name'))
-                caching.set('last_name', form.cleaned_data.get('last_name'))
-                caching.set('email', request.user.email)
-                caching.set('number', form.cleaned_data.get('number'))
+                cache.set('first_name', form.cleaned_data.get('first_name'))
+                cache.set('last_name', form.cleaned_data.get('last_name'))
+                cache.set('email', request.user.email)
+                cache.set('number', form.cleaned_data.get('number'))
             else:
                 # Если пользователь не авторизован, но существует
                 if CustomUser.objects.filter(email=form.cleaned_data['email']).exists():
@@ -83,10 +84,10 @@ def order_create(request):
                         user = authenticate(email=form.cleaned_data.get('email'),
                                             password=form.cleaned_data.get('password1'))
                         login(request, user)
-                        caching.set('first_name', form.cleaned_data.get('first_name'))
-                        caching.set('last_name', form.cleaned_data.get('last_name'))
-                        caching.set('email', request.user.email)
-                        caching.set('number', form.cleaned_data.get('number'))
+                        cache.set('first_name', form.cleaned_data.get('first_name'))
+                        cache.set('last_name', form.cleaned_data.get('last_name'))
+                        cache.set('email', request.user.email)
+                        cache.set('number', form.cleaned_data.get('number'))
                     else:
                         form._errors["password1"] = ErrorList([_(u"Пароли не совпадают")])
                         return render(request, 'orders/new-order.html',
@@ -111,9 +112,9 @@ def order_create_delivery(request):
     if request.method == 'POST':
         form = OrderDeliveryCreateForm(request.POST)
         if form.is_valid():
-            caching.set('delivery', form.cleaned_data.get('delivery'))
-            caching.set('city', form.cleaned_data.get('city'))
-            caching.set('address', form.cleaned_data.get('address'))
+            cache.set('delivery', form.cleaned_data.get('delivery'))
+            cache.set('city', form.cleaned_data.get('city'))
+            cache.set('address', form.cleaned_data.get('address'))
             return redirect('order_type_payment')
     else:
         form = OrderDeliveryCreateForm
@@ -125,7 +126,7 @@ def order_type_payment(request):
     if request.method == 'POST':
         form = OrderPaymentCreateForm(request.POST)
         if form.is_valid():
-            caching.set('payment', form.cleaned_data.get('payment'))
+            cache.set('payment', form.cleaned_data.get('payment'))
             return redirect('order_create_payment')
     else:
         form = OrderPaymentCreateForm
@@ -138,14 +139,14 @@ def order_create_payment(request):
     if request.method == 'POST':
         form = OrderCardForm(request.POST)
         if form.is_valid():
-            order = Order.objects.create(first_name=caching.get('first_name'),
-                                         last_name=caching.get('last_name'),
-                                         email=caching.get('email'),
-                                         number=caching.get('number'),
-                                         delivery=caching.get('delivery'),
-                                         city=caching.get('city'),
-                                         address=caching.get('address'),
-                                         payment=caching.get('payment'),
+            order = Order.objects.create(first_name=cache.get('first_name'),
+                                         last_name=cache.get('last_name'),
+                                         email=cache.get('email'),
+                                         number=cache.get('number'),
+                                         delivery=cache.get('delivery'),
+                                         city=cache.get('city'),
+                                         address=cache.get('address'),
+                                         payment=cache.get('payment'),
                                          card_number=form.cleaned_data.get('card_number'))
             for item in cart.cart:
                 OrderItem.objects.create(order=order,
@@ -154,7 +155,7 @@ def order_create_payment(request):
                                          quantity=cart.cart[item]['quantity'],
                                          )
             cart.clear()
-            caching.close()
+            cache.close()
             tasks.payment.delay(order.pk)
             return redirect('wait-payment', pk=order.pk)
     else:
