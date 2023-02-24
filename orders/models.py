@@ -34,7 +34,7 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name=_("дата обновления"))
     paid = models.BooleanField(default=False, verbose_name=_("статус оплаты"))
     delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name=_('тип доставки'))
-    status = models.CharField(max_length=50, verbose_name=_('статус заказа'))
+    status = models.CharField(max_length=50, verbose_name=_('статус заказа'), null=True, blank=True)
     payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'))
     card_number = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)],
                                               verbose_name=_('номер карты'), null=True)

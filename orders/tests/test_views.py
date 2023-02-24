@@ -52,7 +52,7 @@ class HistoryTest(TestCase):
 
     def test_order_type_payment(self):
         url = reverse('order_type_payment')
-        data = {'payment': 'A'}
+        data = {'payment': 'C'}
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
 
