@@ -11,7 +11,7 @@ from users.models import CustomUser
 from product.services import get_category
 from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm, OrderCardForm
 from cart.service import Cart
-# from . import tasks
+from . import tasks
 from django.core.cache import cache
 # import redis
 # from django.core.cache import cache
@@ -156,7 +156,7 @@ def order_create_payment(request):
                                          )
             cart.clear()
             cache.close()
-            # tasks.payment.delay(order.pk)
+            tasks.payment.delay(order.pk)
             return redirect('wait-payment', pk=order.pk)
     else:
         form = OrderCardForm()
