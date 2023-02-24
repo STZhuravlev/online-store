@@ -18,8 +18,8 @@ import redis
 # from django.core.cache.backends.base import DEFAULT_TIMEOUT
 #
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
-# caching = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
-caching = redis.Redis(host='docker.for.mac.localhost', port=6379, db=0, decode_responses=True)
+caching = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+# caching = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
 
 
 class HistoryOrderView(generic.ListView):
