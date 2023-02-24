@@ -1,4 +1,5 @@
 {% extends 'product/base.html' %}
+{% load i18n %}
 {% load static %}
 
 {% block content %}
@@ -23,8 +24,8 @@
                                         <div class="table">
                                             <table>
                                                 <tr>
-                                                    <th class="hed">Характеристика</th>
-                                                    <th class="hed">Значение</th>
+                                                    <th class="hed">{% trans "Характеристика" %}</th>
+                                                    <th class="hed">{% trans "Значение" %}</th>
                                                 </tr>
                                             </table>
                                             {% for product in com.property.all %}

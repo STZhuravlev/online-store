@@ -4,7 +4,7 @@
 {% load mptt_tags %}
 
 
-    {% block title %}<title>Главная страница</title> {% endblock %}
+    {% block title %}<title>{% trans "Главная страница" %}</title> {% endblock %}
 
      {% block content %}
     <div class="Middle">
@@ -30,7 +30,7 @@
             <div class="wrap">
                 <div class="Section-content">
                     <header class="Section-header">
-                        <h2 class="Section-title">Популярные товары
+                        <h2 class="Section-title">{% trans "Популярные товары" %}
                         </h2>
                     </header>
                     <div class="Cards">
@@ -155,7 +155,7 @@
                 <div class="Section-content">
                     <div class="Slider Slider_carousel">
                         <header class="Section-header Section-header_close">
-                            <h2 class="Section-title">Ограниченный тираж
+                            <h2 class="Section-title">{% trans "Ограниченный тираж" %}
                             </h2>
                             <div class="Section-control">
                                 <div class="Slider-navigate">

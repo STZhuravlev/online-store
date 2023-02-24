@@ -2,15 +2,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from product.models import Offer
+from product.models import Product
 
-STATUS_CHOICES = (
-    ('W', _('ожидание ответа от продавца')),
-    ('A', _('продавец принял заказ')),
-    ('M', _('упаковка на складе')),
-    ('S', _('в пути')),
-    ('F', _('прибыл в пункт выдачи')),
-)
+# STATUS_CHOICES = (
+#     ('W', _('ожидание ответа от продавца')),
+#     ('A', _('продавец принял заказ')),
+#     ('M', _('упаковка на складе')),
+#     ('S', _('в пути')),
+#     ('F', _('прибыл в пункт выдачи')),
+# )
 DELIVERY_CHOICES = (
     ('D', _('доставка')),
     ('A', _('экспресс доставка')),
@@ -25,7 +25,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50, verbose_name=_("имя"))
     last_name = models.CharField(max_length=50, verbose_name=_("фамилия"))
     email = models.EmailField(verbose_name=_("почта"))
-    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("товар"))
+    product = models.ManyToManyField(Product, through="OrderItem", verbose_name=_("товар"))
     address = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("адрес"))
     number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
                                  verbose_name=_('номер телефона'))
@@ -34,7 +34,7 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name=_("дата обновления"))
     paid = models.BooleanField(default=False, verbose_name=_("статус оплаты"))
     delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name=_('тип доставки'))
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='W', verbose_name=_('статус заказа'))
+    status = models.CharField(max_length=50, verbose_name=_('статус заказа'))
     payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'))
     card_number = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)],
                                               verbose_name=_('номер карты'), null=True)
@@ -55,7 +55,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT, verbose_name=_("заказ"))
-    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT, verbose_name=_("товар"))
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT, verbose_name=_("товар"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("цена"))
     quantity = models.PositiveIntegerField(default=1, verbose_name=_("количество"))
 

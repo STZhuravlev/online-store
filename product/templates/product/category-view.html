@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 {% load mptt_tags %}
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Категории</title>
+    <title>{% trans "Категории" %}</title>
 </head>
 <body>
-<h2>Меню выбора категорий каталога</h2>
+<h2>{% trans "Меню выбора категорий каталога" %}</h2>
 <ul>
     {% recursetree categories %}
         {% if node.active %}
