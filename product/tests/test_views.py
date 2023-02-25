@@ -1,3 +1,5 @@
+import os.path
+
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
@@ -141,10 +143,9 @@ class TestUploadFileView(SettingsTest):
     def test_post_upload_file(self):
 
         self.client.login(email='test1@test.ru', password='test1234')
-
         file_json = SimpleUploadedFile(
             name='file_json.json',
-            content=open('test_file_json.json', 'rb').read(),
+            content=open(os.path.abspath(os.path.join('product/tests', 'test_file_json.json')), 'rb').read(),
             content_type='text/json'
         )
 
