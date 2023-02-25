@@ -144,7 +144,7 @@ class TestUploadFileView(SettingsTest):
 
         file_json = SimpleUploadedFile(
             name='file_json.json',
-            content=open('/vagrant/product/tests/test_file_json.json', 'rb').read(),
+            content=open('test_file_json.json', 'rb').read(),
             content_type='text/json'
         )
 
