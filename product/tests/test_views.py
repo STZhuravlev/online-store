@@ -1,13 +1,10 @@
-import json
-
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
-    TestCase, override_settings,
+    TestCase
     # RequestFactory,
 )
 
-from config import settings
 # from django.core.files.uploadedfile import SimpleUploadedFile
 # from django.urls import reverse
 from product.models import (
@@ -20,7 +17,7 @@ from product.models import (
     Feedback, Property, ProductProperty, ProductImage,
 )
 
-from product.forms import FeedbackForm, UploadProductFileJsonForm
+from product.forms import FeedbackForm
 
 from django.urls import reverse
 from shop.models import Seller
@@ -135,6 +132,12 @@ class TestUploadFileView(SettingsTest):
 
     """Тестирование ипрот файла"""
 
+    def test_get_upload_file(self):
+
+        url = reverse('upload_file')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_post_upload_file(self):
 
         self.client.login(email='test1@test.ru', password='test1234')
@@ -154,4 +157,3 @@ class TestUploadFileView(SettingsTest):
         print(f'[TEST][INFO] - Property {Property.objects.last().name}')
         print(f'[TEST][INFO] - ProductProperty {ProductProperty.objects.last().value}')
         print(f'[TEST][INFO] - ProductImage {ProductImage.objects.last().image}')
-

@@ -1,12 +1,12 @@
 from random import randint
 from django.shortcuts import render, redirect  # noqa F401
-from django.views import generic, View
+from django.views import generic
 from django.core.cache import cache
 from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView, upload_product_file, get_object_or_none
+    apply_filter_to_catalog, BannersView, ImageView, upload_product_file
 from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
@@ -204,4 +204,3 @@ class UploadProductFileView(generic.FormView):
                                                                                  'categories': get_category()})
         form.add_error(None, 'Кодировка файла должна быть формата JSON')
         return render(self.request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
-

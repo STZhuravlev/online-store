@@ -142,7 +142,7 @@ def get_object_or_none(obj, **kwargs):
         return None
 
 
-def upload_product_file(file, seller, file_name):
+def upload_product_file(file, seller, file_name):  # noqa: C901
     """Парсинг файла json и создание экземпляров модели"""
 
     file_read = file.read()
