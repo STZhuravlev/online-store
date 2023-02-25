@@ -53,7 +53,7 @@ class PromoDetailView(DetailView):
             count_per_page = settings.PROMO_PRODUCTS_PER_PAGE
         else:
             count_per_page = promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']
-        paginator = Paginator(product_list, count_per_page)
+        paginator = Paginator(product_list.order_by('id'), count_per_page)
         page_number = self.request.GET.get('page')
         products = paginator.get_page(page_number)
         return products
