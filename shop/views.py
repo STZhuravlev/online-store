@@ -6,6 +6,7 @@ from orders.models import OrderItem
 from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class SellerInfo(DetailView):
@@ -28,7 +29,8 @@ class SellerInfo(DetailView):
         return context
 
 
-class SiteSettingsView(View):
+class SiteSettingsView(PermissionRequiredMixin, View):
+    permission_required = 'users.can_settings_site'
 
     def get(self, request):
         site = SiteSettings(request)
