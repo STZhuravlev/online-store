@@ -173,7 +173,6 @@ class UploadProductFileView(generic.FormView):
 
     template_name = 'product/upload_file.html'
     form_class = UploadProductFileJsonForm
-    success_url = '/product/catalog/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -191,9 +190,10 @@ class UploadProductFileView(generic.FormView):
                 get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name, seller=seller)
 
                 if get_logger_error:
-                    return render(self.request, 'product/logger_error.html', {'logger_error': get_logger_error})
+                    return render(self.request, 'product/logger_error.html', {'logger_error': get_logger_error,
+                                                                              'categories': get_category()})
                 return redirect('catalog-view')
-            except Exception as ex:
+            except (TypeError, ValueError) as ex:
                 LoggingImportFileModel.objects.create(
                     file_name=file_name,
                     seller=seller,
@@ -205,37 +205,3 @@ class UploadProductFileView(generic.FormView):
         form.add_error(None, 'Кодировка файла должна быть формата JSON')
         return render(self.request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
 
-    # def get(self, request):
-    #
-    #     form = UploadProductFileJsonForm()
-    #     return render(request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})
-    #
-    # def post(self, request):
-    #
-    #     form_file = UploadProductFileJsonForm(request.POST, request.FILES)
-    #     file = request.FILES['file_json']
-    #
-    #     if form_file.is_valid() and file.name.endswith('.json'):
-    #
-    #         seller = Seller.objects.get(user=self.request.user)
-    #
-    #         try:
-    #             file_name = f'{randint(1, 9999)}_{file.name}'
-    #             upload_product_file(file=file, seller=seller, file_name=file_name)
-    #             get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name)
-    #
-    #             if get_logger_error:
-    #                 return render(request, 'product/logger_error.html', {'logger_error': get_logger_error})
-    #             return redirect('catalog-view')
-    #         except Exception as ex:
-    #             LoggingImportFileModel.objects.create(
-    #                 file_name=file_name,
-    #                 seller=seller,
-    #                 message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
-    #             )
-    #             # form_file.add_error(None, f'Ошибка: {ex} | {type(ex)}! Не корректно сформирован файл')
-    #             # return render(request, 'product/upload_file.html', context={'form': form_file,
-    #             #                                                             'categories': get_category()})
-    #
-    #     form_file.add_error(None, 'Кодировка файла должна быть формата JSON')
-    #     return render(request, 'product/upload_file.html', context={'form': form_file, 'categories': get_category()})

@@ -154,7 +154,7 @@ def upload_product_file(file, seller, file_name):
         try:
             if not category:
                 category = Category.objects.create(name=i_category)
-        except Exception as ex:
+        except TypeError as ex:
             LoggingImportFileModel.objects.create(
                 file_name=file_name,
                 seller=seller,
@@ -170,7 +170,7 @@ def upload_product_file(file, seller, file_name):
                 try:
                     if not property:
                         property = Property.objects.create(name=i_product['property']['name'])
-                except Exception as ex:
+                except (KeyError, TypeError) as ex:
                     LoggingImportFileModel.objects.create(
                         file_name=file_name,
                         seller=seller,
@@ -184,7 +184,7 @@ def upload_product_file(file, seller, file_name):
                                         description=i_product['description'],
                                         category=category,
                                     )
-                except Exception as ex:
+                except (KeyError, TypeError) as ex:
                     LoggingImportFileModel.objects.create(
                         file_name=file_name,
                         seller=seller,
@@ -198,7 +198,7 @@ def upload_product_file(file, seller, file_name):
                         property=property,
                         value=i_product['property']['value']
                     )
-                except Exception as ex:
+                except (KeyError, TypeError) as ex:
                     LoggingImportFileModel.objects.create(
                         file_name=file_name,
                         seller=seller,
@@ -220,7 +220,7 @@ def upload_product_file(file, seller, file_name):
                                 product=product,
                                 image=f'{settings.MEDIA_IMAGE_URL}{file_img_name}'
                             )
-                    except Exception as ex:
+                    except (KeyError, TypeError) as ex:
                         LoggingImportFileModel.objects.create(
                             file_name=file_name,
                             seller=seller,
@@ -235,7 +235,7 @@ def upload_product_file(file, seller, file_name):
                         seller=seller,
                         price=i_product['offer']['price']
                     )
-                except Exception as ex:
+                except (KeyError, TypeError) as ex:
                     LoggingImportFileModel.objects.create(
                         file_name=file_name,
                         seller=seller,
