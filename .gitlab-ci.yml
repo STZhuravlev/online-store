@@ -56,6 +56,6 @@ test:
   variables:
     DATABASE_URL: "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB"
   script:
-    - python mkdir -m=MODE -p media
+    - mkdir -p media/images
     - python manage.py makemigrations
     - python manage.py test
