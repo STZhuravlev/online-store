@@ -1,11 +1,13 @@
+from random import randint
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
 from django.urls import reverse
 from django.db.models import Prefetch
+from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView
-from .forms import FeedbackForm
+    apply_filter_to_catalog, BannersView, ImageView, upload_product_file
+from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
     Product,
@@ -14,11 +16,13 @@ from product.models import (
     HistoryView,
     ProductProperty,
     Feedback,
-    ProductImage)
-from django.conf import settings
+    ProductImage,
+    LoggingImportFileModel,
+)
+
 
 # Количество товаров из каталога, которые будут отображаться на странице
-# CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
+CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
 
 
 class ProductDetailView(generic.DetailView, generic.CreateView):
@@ -71,12 +75,7 @@ class CategoryView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         categories_list = Category.objects.all()
-        time_to_cachded = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if time_to_cachded is None or time_to_cachded.get('CACHE_STORAGE_TIME') is None:
-            cache_time = settings.CACHE_STORAGE_TIME
-        else:
-            cache_time = time_to_cachded['CACHE_STORAGE_TIME']
-        cached_data = cache.get_or_set("categories", categories_list, cache_time)
+        cached_data = cache.get_or_set("categories", categories_list, settings.CACHE_STORAGE_TIME)
         context['categories'] = cached_data
         return context
 
@@ -126,6 +125,7 @@ class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
     template_name = 'product/product-catalog.html'
+    paginate_by = CATALOG_PRODUCT_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -144,7 +144,7 @@ class ProductCatalogView(generic.ListView):
         queryset = get_queryset_for_category(request=self.request)
 
         # put queryset to cache
-        cached_data = cache.get_or_set(cache_key, queryset, 1)
+        cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
 
         # apply filters parameters to products in catalog
         # insert if condition
@@ -156,15 +156,6 @@ class ProductCatalogView(generic.ListView):
 
         return final_queryset
 
-    def get_paginate_by(self, queryset):
-        promo_per_page = self.request.session.get(settings.ADMIN_SETTINGS_ID)
-        if promo_per_page is None or promo_per_page.get('CATALOG_PRODUCT_PER_PAGE') is None:
-            paginator = settings.CATALOG_PRODUCT_PER_PAGE
-        else:
-            paginator = promo_per_page['CATALOG_PRODUCT_PER_PAGE']
-
-        return paginator
-
 
 class IndexView(generic.TemplateView):
     template_name = 'product/index.html'
@@ -174,3 +165,42 @@ class IndexView(generic.TemplateView):
         context['banners'] = BannersView.get_banners()
         context['categories'] = get_category()
         return context
+
+
+class UploadProductFileView(generic.FormView):
+
+    """Добавление продукта, автора и т.п. через файл формата JSON """
+
+    template_name = 'product/upload_file.html'
+    form_class = UploadProductFileJsonForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = get_category()
+        return context
+
+    def form_valid(self, form, **kwargs):
+        file = self.request.FILES['file_json']
+        if file.name.endswith('.json'):
+            seller = Seller.objects.get(user=self.request.user)
+            file_name = f'{randint(1, 9999)}_{file.name}'
+
+            try:
+                upload_product_file(file=file, seller=seller, file_name=file_name)
+                get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name, seller=seller)
+
+                if get_logger_error:
+                    return render(self.request, 'product/logger_error.html', {'logger_error': get_logger_error,
+                                                                              'categories': get_category()})
+                return redirect('catalog-view')
+            except (TypeError, ValueError) as ex:
+                LoggingImportFileModel.objects.create(
+                    file_name=file_name,
+                    seller=seller,
+                    message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
+                )
+                form.add_error(None, f'Ошибка: {ex} | {type(ex)}! Не корректно сформирован файл')
+                return render(self.request, 'product/upload_file.html', context={'form': form,
+                                                                                 'categories': get_category()})
+        form.add_error(None, 'Кодировка файла должна быть формата JSON')
+        return render(self.request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})

@@ -1,6 +1,6 @@
 from django.urls import path
 from product.views import ProductDetailView, CategoryView, FeedbackDetailView, \
-    HistoryViewsView, ProductCatalogView
+    HistoryViewsView, ProductCatalogView, IndexView, UploadProductFileView
 
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('offer/<int:pk>/', FeedbackDetailView.as_view(), name='offer-detail'),
     path('catalog/', ProductCatalogView.as_view(), name='catalog-view'),
     path('history_view/', HistoryViewsView.as_view(), name='history_view'),
-    # path('index/', IndexView.as_view(), name='index'),
+    path('index/', IndexView.as_view(), name='index'),
+    path('upload_file/', UploadProductFileView.as_view(), name='upload_file'),
 ]

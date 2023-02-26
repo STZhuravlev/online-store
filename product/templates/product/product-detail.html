@@ -11,11 +11,12 @@
                     <div class="ProductCard">
                         <div class="ProductCard-look">
                             <div class="ProductCard-photo">
-                                <img src="{{drawing.first.image.url}}" alt="bigGoods.png" />
+                                <img src="{{ drawing.first.image.url }}" alt="bigGoods.png" />
                             </div>
-                            <div class="ProductCard-picts">{% for item in drawing %}<a class="ProductCard-pict" href="{{ item.image.url }}"><img src="{{ item.image.url }}" alt="bigGoods.png" /></a>{% endfor %}
+                            <div class="ProductCard-picts">{% for item in drawing %}<a class="ProductCard-pict" href="{{ item.image.url }}"><img src="{{ item.image.url }}" alt="bigGoods.png" /></a>{% endfor %}>
                             </div>
                         </div>
+{#                    <h3>{{ drawing.first.image.url }}</h3>#}
                         <div class="ProductCard-desc">
                             <div class="ProductCard-header">
                                 <h2 class="ProductCard-title">{{ product.name }}
