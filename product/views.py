@@ -146,10 +146,13 @@ class MainPageView(generic.TemplateView):
                                        CACHE_STORAGE_BANNERS_TIME)
         context['banners'] = cached_data
 
+        # получает список избранных категорий
         context['favorite'] = get_favorite_categories()
 
+        # получает список популярных товаров
         context['popular'] = get_popular_products()
 
+        # получает предложение дня и список товаров ограниченного тиража
         day_offer, limited = get_limited_edition()
         context['day_offer'] = day_offer
         context['limited'] = limited

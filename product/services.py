@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Optional
 from random import sample, choice
 from django.core.cache import cache
 from django.conf import settings
@@ -10,15 +10,18 @@ from product.models import Category, Product, Banner, ProductImage
 def get_category(cache_key: str = None,
                  cache_time: int = settings.CACHE_STORAGE_TIME) -> QuerySet:
     """
-    Возвращает кэшированный список активных категорий
-    :param cache_key: ключ кеша
-    :param cache_time: время кэширования в секундах
+    Возвращает кешированный список активных категорий.
+    :param cache_key: ключ кеша.
+    :param cache_time: время кеширования в секундах.
     :return:
     """
     categories = Category.objects.filter(active=True)
+
     if cache_key is None:
         cache_key = 'categories'
+
     cached_data = cache.get_or_set(cache_key, categories, cache_time)
+
     return cached_data
 
 
@@ -126,15 +129,15 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     return queryset
 
 
-def get_banners(qty: int = 3) -> List['Banners']:
+def get_banners(qty: int = 3) -> List[Banner]:
     """
     Возвращает список из qty активных баннеров, баннеры выбираются случайным образом.
     :param qty: Количество возвращаемых баннеров. По-умолчанию, 3
-    :return: Список из qty экземпляров модели Banners
+    :return: Список из qty экземпляров модели Banner
     """
     banners = Banner.objects.filter(is_active=True)
     result = []
-    if banners.exists():  # делаем выборку
+    if banners:  # делаем выборку
         # проверка, что кол-во баннеров в пределах от 1 до 3
         if qty < 1 or qty > 3:
             qty = 3
@@ -187,47 +190,81 @@ class ImageView:
 def get_favorite_categories(qty: int = 3,
                             cache_time: int = settings.CACHE_STORAGE_TIME) -> List[Category]:
     """
-    Возвращает закешированный список из qty категорий
+    Возвращает кешированный список из qty категорий.
     :param qty: кол-во избранных категорий, по-умолчанию, 3.
-    :param cache_time: время кеширования списка
-    :return: список категорий
+    :param cache_time: время кеширования списка.
+    :return: список категорий или пустой список, если нет категорий.
     """
-    categories = get_category().filter(level=1)
-    favorite = sample(list(categories), qty)
+    categories = [category
+                  for category
+                  in get_category()
+                  if category.is_leaf_node()]
 
-    cached_data = cache.get_or_set('favorite_categories', favorite, cache_time)
+    if not categories:
+        return categories
 
-    # for category in cached_data:
-    #     get_min_price_in_category(category)
+    cached_data = cache.get_or_set("favorite_categories",
+                                   sample(categories, qty),
+                                   cache_time)
 
     return cached_data
 
 
-def get_min_price_in_category(category: Category):
+def get_min_price_in_category(category: Category) -> float:
+    """
+    Вычисляет минимальную стоимость товара в категории.
+    :param category: категория, для которой вычисляется минимальная цена.
+    :return: минимальная цена.
+    """
     result = Product.objects.select_related('category').\
         filter(category_id=category.id).aggregate(min_price=Min('offers__price'))
 
     return result['min_price']
 
 
-def get_popular_products():
+def get_popular_products(qty: int = 8, cache_key: str = None,
+                         cache_time: int = settings.CACHE_STORAGE_TIME) -> List[dict]:
+    """
+    Возвращает кешированный список из qty популярных (по кол-ву продаж) товаров.
+    :param qty: кол-во популярных товаров.
+    :param cache_key: ключ кеша.
+    :param cache_time: время, на которое кешируется список.
+    :return: список популярных товаров.
+    """
+    if cache_key is None:
+        cache_key = "popular-products"
+
     queryset = Product.objects.select_related('category').prefetch_related('seller'). \
         values('id', 'name', 'images__image', 'category__name'). \
         annotate(count=Count('offers__order_items__offer')).\
-        annotate(avg_price=Avg('offers__price')).order_by('-count')[:8]
+        annotate(avg_price=Avg('offers__price')).order_by('-count')[:qty]
 
-    return queryset
+    cached_data = cache.get_or_set(cache_key, queryset, cache_time)
+
+    return cached_data
 
 
-def get_limited_edition():
+def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
+        Tuple[Optional[dict], Optional[List[dict]]]:
+    """
+        Возвращает кешированный кортеж из предложения дня и списка товаров ограниченного тиража.
+        :param cache_time: время, на которое кешируется список.
+        :return: список популярных товаров.
+        """
     queryset = Product.objects.select_related('category').prefetch_related('seller').\
         filter(is_limited=True).values('id', 'name', 'images__image', 'category__name'). \
         annotate(avg_price=Avg('offers__price'))
 
-    day_offer = choice(list(queryset))
+    limited_list = cache.get_or_set("limited_list", queryset, cache_time)
 
-    # queryset = queryset.exclude(id=day_offer.id)
-    limited = [qs for qs in queryset if qs != day_offer]
-    # for item in queryset:
-    #     print(item)
+    # если нет достаточного кол-ва товаров ограниченного тиража
+    if len(limited_list) < 2:
+        return None, None
+
+    day_offer = cache.get_or_set("day_offer", choice(limited_list), cache_time)
+
+    limited = cache.get_or_set("limited",
+                               [qs for qs in limited_list if qs != day_offer],
+                               cache_time)
+
     return day_offer, limited
