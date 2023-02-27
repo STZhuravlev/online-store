@@ -55,7 +55,7 @@
           <div class="Section-content">
             <h2 class="ProductCard-title">Товары, участвующие в акции</h2>
             <div class="Cards">
-              {% for item in products %}
+              {% for item in page_obj %}
                 <div class="Card">
                   <a class="Card-picture" href="#">
                     <img src="/media/{{ item.images.first.image }}" alt="card.jpg"/>

@@ -1,3 +1,4 @@
+from random import randint
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
 from django.core.cache import cache
@@ -5,8 +6,8 @@ from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
 from product.services import get_category, get_queryset_for_category, \
-    apply_filter_to_catalog, BannersView, ImageView
-from .forms import FeedbackForm
+    apply_filter_to_catalog, BannersView, ImageView, upload_product_file
+from .forms import FeedbackForm, UploadProductFileJsonForm
 from shop.models import Seller
 from product.models import (
     Product,
@@ -15,7 +16,9 @@ from product.models import (
     HistoryView,
     ProductProperty,
     Feedback,
-    ProductImage)
+    ProductImage,
+    LoggingImportFileModel,
+)
 
 
 # Количество товаров из каталога, которые будут отображаться на странице
@@ -162,3 +165,42 @@ class IndexView(generic.TemplateView):
         context['banners'] = BannersView.get_banners()
         context['categories'] = get_category()
         return context
+
+
+class UploadProductFileView(generic.FormView):
+
+    """Добавление продукта, автора и т.п. через файл формата JSON """
+
+    template_name = 'product/upload_file.html'
+    form_class = UploadProductFileJsonForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = get_category()
+        return context
+
+    def form_valid(self, form, **kwargs):
+        file = self.request.FILES['file_json']
+        if file.name.endswith('.json'):
+            seller = Seller.objects.get(user=self.request.user)
+            file_name = f'{randint(1, 9999)}_{file.name}'
+
+            try:
+                upload_product_file(file=file, seller=seller, file_name=file_name)
+                get_logger_error = LoggingImportFileModel.objects.filter(file_name=file_name, seller=seller)
+
+                if get_logger_error:
+                    return render(self.request, 'product/logger_error.html', {'logger_error': get_logger_error,
+                                                                              'categories': get_category()})
+                return redirect('catalog-view')
+            except (TypeError, ValueError) as ex:
+                LoggingImportFileModel.objects.create(
+                    file_name=file_name,
+                    seller=seller,
+                    message=f'Ошибка парсинга файла: {ex} | {type(ex)}'
+                )
+                form.add_error(None, f'Ошибка: {ex} | {type(ex)}! Не корректно сформирован файл')
+                return render(self.request, 'product/upload_file.html', context={'form': form,
+                                                                                 'categories': get_category()})
+        form.add_error(None, 'Кодировка файла должна быть формата JSON')
+        return render(self.request, 'product/upload_file.html', context={'form': form, 'categories': get_category()})

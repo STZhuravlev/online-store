@@ -22,8 +22,8 @@ class PromoType(models.Model):
 class Promo(models.Model):
     """Описывает модель акций/скидок."""
     name = models.CharField(max_length=128, verbose_name=_('название акции'))
-    promo_type = models.OneToOneField(PromoType, related_name='promos',
-                                      on_delete=models.CASCADE)
+    promo_type = models.ForeignKey(PromoType, related_name='promos',
+                                   on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/promotions/",
                               verbose_name=_("изображение"), blank=True)
     description = models.TextField(verbose_name=_('описание'))
@@ -44,9 +44,6 @@ class Promo(models.Model):
     started = models.DateField(verbose_name=_('начало действия скидки'), blank=True, null=True)
     finished = models.DateField(verbose_name=_('окончание действия скидки'))
     is_active = models.BooleanField(default=False)
-    # product = models.ForeignKey('Promo2Product', related_name='promos',
-    #                             on_delete=models.CASCADE)
-    # product = models.ManyToManyField(Product, related_name='promos')
 
     def __str__(self):
         return self.name
@@ -54,6 +51,7 @@ class Promo(models.Model):
     class Meta:
         verbose_name = _("акция")
         verbose_name_plural = _("акции")
+        ordering = ['-id']
 
 
 class Promo2Product(models.Model):

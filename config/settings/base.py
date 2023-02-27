@@ -50,11 +50,14 @@ INSTALLED_APPS = [
     'django_extensions',
     'orders',
     'promotions',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,15 +132,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-# LANGUAGE_CODE = 'ru-RU'
+LANGUAGE_CODE = 'ru-ru'
+# LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
+LANGUAGES = [
+    ('ru', 'Русский'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale'), ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -149,6 +160,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+MEDIA_IMAGE_URL = 'images/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -166,3 +178,19 @@ MPTT_ADMIN_LEVEL_INDENT = 10
 CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_TASK_TRACK_STARTED = True
+
+# Количество акция, отображаемых на странице
+PROMO_PER_PAGE = 4
+# Количество продуктов в акции, отображаемых на странице
+PROMO_PRODUCTS_PER_PAGE = 4
+
+# Количество товаров из каталога, которые будут отображаться на странице
+CATALOG_PRODUCT_PER_PAGE = 6
+
+CACHE_STORAGE_TIME = 60 * 60 * 24
+
+ADMIN_SETTINGS_ID = 'admin_settings'
