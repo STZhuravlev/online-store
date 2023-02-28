@@ -4,6 +4,8 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.db.models import Prefetch
 from django.conf import settings
+import datetime
+
 
 from .forms import FeedbackForm
 from shop.models import Seller
@@ -151,6 +153,11 @@ class MainPageView(generic.TemplateView):
 
         # получает список популярных товаров
         context['popular'] = get_popular_products()
+
+        # передает дату, до которой действует предложение дня
+        next_day = datetime.datetime.today() + datetime.timedelta(days=1)
+        next_day = next_day.strftime('%d.%m.%Y')
+        context['next_day'] = next_day
 
         # получает предложение дня и список товаров ограниченного тиража
         day_offer, limited = get_limited_edition()

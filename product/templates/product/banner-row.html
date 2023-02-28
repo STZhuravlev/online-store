@@ -5,7 +5,7 @@
     <div class="BannersHome">
 
       {% for item in favorite %}
-        <a class="BannersHomeBlock" href="#">
+        <a class="BannersHomeBlock" href="{% url 'catalog-view' %}?category={{ item.id }}">
           <div class="BannersHomeBlock-row">
             <div class="BannersHomeBlock-block">
               <strong class="BannersHomeBlock-title">

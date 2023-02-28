@@ -1,5 +1,6 @@
 from typing import List, Tuple, Optional
 from random import sample, choice
+import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.db.models import QuerySet, Q, Avg, Max, Count, Min
@@ -253,6 +254,16 @@ def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
     :param cache_time: время, на которое кешируется список.
     :return: список популярных товаров.
     """
+    # заносит текущую дату в кэш
+    current_day = datetime.datetime.today().strftime("%d.%m.%Y")
+    cached_date = cache.get_or_set("current_day", current_day, cache_time)
+
+    # если наступили новые сутки, удаляем ключи
+    if cached_date != current_day:
+        keys = ["limited_list", "day_offer", "limited"]
+        delete_keys_from_cache(keys)
+        cache.set("current_day", current_day, cache_time)
+
     queryset = Product.objects.select_related('category').prefetch_related('seller').\
         filter(is_limited=True).values('id', 'name', 'images__image', 'category__name'). \
         annotate(avg_price=Avg('offers__price'))
@@ -270,3 +281,10 @@ def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
                                cache_time)
 
     return day_offer, limited
+
+
+def delete_keys_from_cache(cached_keys: List[str]):
+    """Удаляет список ключей из кеша."""
+    # print(caches.items())
+    cache.delete_many(cached_keys)
+    # print(caches)
