@@ -31,4 +31,5 @@ urlpatterns = [
     path('promos/', include('promotions.urls', namespace='promo')),
     path('', IndexView.as_view(), name='index')
 
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

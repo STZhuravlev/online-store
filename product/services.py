@@ -117,7 +117,7 @@ class BannersView:
     def get_context_data(self, qty: int = 3, **kwargs):
         """ Добавляет в контекст список баннеров. Список кэшируется. """
         context = super().get_context_data(**kwargs)
-        # TODO заменить в ключе имя на емейл
+        # заменить в ключе имя на емейл
         offers_cache_key = f'offers:{self.request.user.username}'
         # Получаем список баннеров и кэшируем его
         banner_list = self.get_banners(qty=qty)

@@ -49,7 +49,7 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             history_old = HistoryView.objects.get(product=self.object)
             history_old.save(update_fields=['view_at'])
         else:
-            history_new = HistoryView(product=self.object)
+            history_new = HistoryView(product=self.object, user=self.request.user)
             history_new.save()
         return context
 
