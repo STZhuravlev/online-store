@@ -136,6 +136,7 @@ def get_banners(qty: int = 3) -> List[Banner]:
     :return: Список из qty экземпляров модели Banner
     """
     banners = Banner.objects.filter(is_active=True)
+
     result = []
     if banners:  # делаем выборку
         # проверка, что кол-во баннеров в пределах от 1 до 3
@@ -145,6 +146,7 @@ def get_banners(qty: int = 3) -> List[Banner]:
         if banners.count() < qty:
             qty = banners.count()
         banners = list(banners)
+
         result = sample(banners, k=qty)
 
     return result
@@ -247,10 +249,10 @@ def get_popular_products(qty: int = 8, cache_key: str = None,
 def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
         Tuple[Optional[dict], Optional[List[dict]]]:
     """
-        Возвращает кешированный кортеж из предложения дня и списка товаров ограниченного тиража.
-        :param cache_time: время, на которое кешируется список.
-        :return: список популярных товаров.
-        """
+    Возвращает кешированный кортеж из предложения дня и списка товаров ограниченного тиража.
+    :param cache_time: время, на которое кешируется список.
+    :return: список популярных товаров.
+    """
     queryset = Product.objects.select_related('category').prefetch_related('seller').\
         filter(is_limited=True).values('id', 'name', 'images__image', 'category__name'). \
         annotate(avg_price=Avg('offers__price'))
