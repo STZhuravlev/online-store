@@ -13,6 +13,7 @@ from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCre
 from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
+from django.contrib.auth import views as aut_view
 # import redis
 # from django.core.cache import cache
 # from django.conf import settings
