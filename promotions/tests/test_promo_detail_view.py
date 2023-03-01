@@ -66,7 +66,6 @@ class PromoDetailViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('page_obj' in response.context)
-        print(response.context)
         print(response.context['page_obj'].object_list)
         # self.assertEqual(len(response.context['page_obj']), PROMO_PRODUCTS_PER_PAGE)
 

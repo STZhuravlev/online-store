@@ -63,6 +63,20 @@
                 <div class="row-block">
                   <a class="ControlPanel-title" href="{% url 'login' %}">Вход</a>
                   <a class="ControlPanel-title" href="{% url 'signup' %}">Регистрация</a>
+                  <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                {{ language.name_local }} ({{ language.code }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Go">
+                  </form>
                 </div>
               </div>
             </nav>
@@ -92,7 +106,7 @@
                     <a class="menu-link" href="{% url 'promotions:promo-list' %}">Акции</a>
                   </li>
                   <li class="menu-item">
-                    <a class="menu-link" href="comparison.html">Сравнение</a>
+                    <a class="menu-link" href="{% url 'comparison:comparison' %}">Сравнение</a>
                   </li>
                 </ul>
               </div>
@@ -104,12 +118,12 @@
                     <img class="CartBlock-img" src="{%  static "assets/img/icons/loon-icon.svg" %}" alt="loon-icon.svg" />
                   </button>
                   <div class="dropdown-content">
-                    <a class="dropdown-content-a" href="account.html">Личный кабинет</a>
+                    <a class="dropdown-content-a" href="{% url 'accaunt' %}">Личный кабинет</a>
                     <a class="dropdown-content-a" href="account.html">Административный раздел</a>
                     <a class="dropdown-content-a" href="account.html">Выход</a>
                   </div>
                 </div>
-                <a class="CartBlock-block" href="cart.html">
+                <a class="CartBlock-block" href="{% url 'cart:cart' %}">
                   <img class="CartBlock-img" src="{%  static "assets/img/icons/cart.svg" %}" alt="cart.svg" />
                   <span class="CartBlock-amount">0</span>
                 </a>
@@ -197,10 +211,10 @@
                 <a class="menu-link" href="{% url 'main-page' %}">Главная</a>
               </li>
               <li class="menu-item">
-                <a class="menu-link" href="catalog.html">Каталог</a>
+                <a class="menu-link" href="{% url 'catalog-view' %}">Каталог</a>
               </li>
               <li class="menu-item">
-                <a class="menu-link" href="comparison.html">Сравнение</a>
+                <a class="menu-link" href="{% url 'comparison:comparison' %}">Сравнение</a>
               </li>
               <li class="menu-item">
                 <a class="menu-link" href="account.html">Профиль</a>

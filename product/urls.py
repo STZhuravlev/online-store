@@ -7,7 +7,8 @@ from product.views import (
     HistoryViewsView,
     MainPageView,
     ProductCatalogView,
-    IndexView
+    IndexView,
+    UploadProductFileView
 )
 
 
@@ -20,4 +21,5 @@ urlpatterns = [
     path('catalog/', ProductCatalogView.as_view(), name='catalog-view'),
     path('history_view/', HistoryViewsView.as_view(), name='history_view'),
     path('index/', IndexView.as_view(), name='index'),
+    path('upload_file/', UploadProductFileView.as_view(), name='upload_file'),
 ]

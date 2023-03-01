@@ -1,30 +1,31 @@
-{#{% extends 'product/base-template-1.html' %}#}
+{% extends 'product/base.html' %}
 {% load i18n %}
+{% load static %}
 
-{#{% block content %}#}
 
-    <h1>Checkout</h1>
-
+{% block content %}
 
 
     <div class="Middle Middle_top">
         <div class="Section Section_column Section_columnRight Section_columnWide Order">
             <div class="wrap">
-
                 <div class="Section-column">
                     <div class="Section-columnSection">
                         <header class="Section-header">
-                            <strong class="Section-title">Прогресс заполнения
+                            <strong class="Section-title">{% trans "Прогресс заполнения" %}
                             </strong>
                         </header>
                         <div class="Section-columnContent">
                             <div class="NavigateProfile">
                                 <ul class="menu menu_vt">
-                                    <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="#step1">Шаг 1. Параметры заказа</a>
+                                    <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="#step1">{% trans "Шаг 1. Параметры пользователя" %}</a>
                                     </li>
-                                    <li class="menu-item"><a class="menu-link" href="#step3">Шаг 2. Оплата заказа</a>
+                                    <li class="menu-item"><a class="menu-link" href="#step2">{% trans "Шаг 2. Способ доставки" %}</a>
                                     </li>
-
+                                    <li class="menu-item"><a class="menu-link" href="#step3">{% trans "Шаг 3. Способ оплаты" %}</a>
+                                    </li>
+                                    <li class="menu-item"><a class="menu-link" href="#step4">{% trans "Шаг 4. Подтверждение заказа" %}</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -32,31 +33,71 @@
                 </div>
 
 
-                <div class="order-info">
-                    <h3>Your order</h3>
-                    <ul>
-                        {% for item in cart %}
-                            <li>
-                                {{ item.quantity }}x {{ item.product.name }}
-                                <span>${{ item.total_price }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <p>Total: ${{ cart.get_total_price }}</p>
+            <div class="Section-column">
+                <div class="Section-columnSection">
+                    <header class="Section-header">
+                        <strong class="Section-title">{% trans "Шаг 1. Параметры пользователя" %}
+                        </strong>
+                    </header>
+                    <div class="Section-columnContent">
+                        <div class="NavigateProfile">
+{#                            <div class="order-info">#}
+{#                                <h3>Your order</h3>#}
+{#                                <ul>#}
+{#                                    {% for item in cart %}#}
+{#                                        <li>#}
+{#                                            {{ item.quantity }}x {{ item.product.name }}#}
+{#                                            <span>${{ item.total_price }}</span>#}
+{#                                        </li>#}
+{#                                    {% endfor %}#}
+{#                                </ul>#}
+{#                                <p>Total: ${{ cart.get_total_price }}</p>#}
+{#                            </div>#}
+                            <div class="row">
+                                <div class="row-block">
+                                    <div class="form-group">
+                                        <form action="." method="post" class="order-form">
+                                                {% for field in form %}
+                                                {% if field.errors %}
+                                                    {{ field.errors }}
+                                                {% else %}
+                                                    <br>
+                                                {% endif %}
+                                                <label class="form-label" for="{{ field.name }}">{{field.label_tag}}
+                                                </label>
+                                                <div class="form-input" style="width: 270pt" id="{{ field.name }}" type="text">{{field}}</div>
+                                                {% if field.name == "email" %}
+                                                    </div>
+                                                </div>
+                                                <div class="row-block">
+                                                    <div class="form-group">
+                                                {% endif %}
+                                                {% endfor %}
+{#                                            <div class="form-group"><a class="btn btn_muted Order-btnReg" href="{%  url "cart:cart" %}">Я уже зарегистрирован</a>#}
+{#                                            </div>#}
+                                            <br>
+                                            <p><input type="submit" value="Submit"></p>
+                                            {% csrf_token %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form action="." method="post" class="order-form">
-                    {{ form.as_p }}
-                    <p><input type="submit" value="Place order"></p>
-                    {% csrf_token %}
-                </form>
-
-
+            </div>
+        </div>
+    </div>
+</div>
 
 {#                <div class="Section-content">#}
 {#                    <form class="form" action="#" method="post">#}
+
+
+
 {#                        <div class="Order-block Order-block_OPEN" id="step1">#}
 {#                            <header class="Section-header Section-header_sm">#}
-{#                                <h2 class="Section-title">Параметры заказа#}
+{#                                <h2 class="Section-title">Шаг 1. Параметры пользователя#}
 {#                                </h2>#}
 {#                            </header>#}
 {#                            <div class="row">#}
@@ -95,6 +136,10 @@
 {#                            <div class="Order-footer"><a class="btn btn_success Order-next" href="#step2">Дальше</a>#}
 {#                            </div>#}
 {#                        </div>#}
+
+
+
+
 {#                        <div class="Order-block" id="step2">#}
 {#                            <header class="Section-header Section-header_sm">#}
 {#                                <h2 class="Section-title">Шаг 2. Способ доставки#}
@@ -272,7 +317,4 @@
 {#                        </div>#}
 {#                    </form>#}
 {#                </div>#}
-            </div>
-        </div>
-    </div>
-{#{% endblock %}#}
+{% endblock %}

@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from promotions.models import PromoType, Promo
 from product.models import Category
-from promotions.views import PROMO_PER_PAGE
+from django.conf import settings
 
 
 class PromoListViewTest(TestCase):
@@ -66,7 +66,7 @@ class PromoListViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('is_paginated' in response.context)
         self.assertEqual(response.context['is_paginated'], True)
-        self.assertEqual(len(response.context['promotions']), PROMO_PER_PAGE)
+        self.assertEqual(len(response.context['promotions']), settings.PROMO_PER_PAGE)
 
     def test_pagination_second_page(self):
         """Тест, что пагинатор получает список акций и
