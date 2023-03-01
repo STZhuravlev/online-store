@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, tag, override_settings
 from django.urls import reverse
-
+from django.conf import settings
 from product.models import Category, Product, Offer, Banner
 from shop.models import Seller
 from orders.models import Order, OrderItem
 
 
+@tag("main-page")
+@override_settings(CACHES=settings.TEST_CACHES)
 class MainPageViewTest(TestCase):
     """ Тесты отображения главной страницы. """
     @classmethod
@@ -53,7 +55,7 @@ class MainPageViewTest(TestCase):
         self.assertTemplateUsed(response, 'product/index-2.html')
 
     def test_get_category(self):
-        """Тест на обработку списка активных категорий."""
+        """Тест получения списка активных категорий длиной 3."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("categories" in response.context)
@@ -73,13 +75,15 @@ class MainPageViewTest(TestCase):
     def test_get_category_empty(self):
         """Тест обработки пустого списка категорий."""
         self.update_category_activity()
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context['categories'], None)
+        self.assertTrue("categories" in response.context)
+        categories = response.context['categories']
+        count_in_context = len(categories)
+        self.assertEqual(count_in_context, 0)
 
     def test_get_banners(self):
-        """Тест, что получает список активных баннеров."""
+        """Тест, что получает список активных баннеров длиной 3."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("banners" in response.context)
@@ -88,27 +92,29 @@ class MainPageViewTest(TestCase):
 
     @staticmethod
     def update_banner_activity():
+        """Делает все баннеры неактивными."""
         banners = Banner.objects.all()
         for banner in banners:
             banner.is_active = False
         Banner.objects.bulk_update(banners, ['is_active'])
 
-    # def test_get_banners_empty(self):
-    #     """Тест, что получает пустой список баннеров."""
-    #     self.update_banner_activity()
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTrue("banners" in response.context)
-    #     banners = response.context['banners']
-    #     self.assertEqual(len(banners), 0)
+    def test_get_banners_empty(self):
+        """Тест отработки пустого списка баннеров."""
+        self.update_banner_activity()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("banners" in response.context)
+        banners = response.context['banners']
+        self.assertEqual(len(banners), 0)
 
     def test_get_favorite_categories(self):
-        """Тест, что получает список избранных категорий."""
+        """Тест, что получает список избранных категорий длиной 3."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue("favorite" in response.context)
         favorite = response.context['favorite']
         self.assertEqual(len(favorite), 3)
+        # проверка, что выбраны только category.is_leaf_node()
         wrong_category = Category.objects.get(name="category_2")
         self.assertNotIn(wrong_category, favorite)
 
@@ -118,7 +124,7 @@ class MainPageViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue("popular" in response.context)
         popular = response.context['popular']
-        # правильная сортировка
+        # список отсортирован по кол-ву продаж
         self.assertEqual(popular[0]['name'], 'product 2')
         self.assertEqual(popular[1]['name'], 'product 1')
         self.assertEqual(popular[2]['name'], 'product 3')
@@ -131,6 +137,7 @@ class MainPageViewTest(TestCase):
         day_offer = response.context['day_offer']
         self.assertTrue("limited" in response.context)
         limited = response.context['limited']
+        # предложение дня не в списке ограниченного тиража
         self.assertNotIn(day_offer, limited)
 
     def test_get_limited_edition(self):

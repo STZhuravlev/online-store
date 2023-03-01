@@ -261,7 +261,7 @@ def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
     # если наступили новые сутки, удаляем ключи
     if cached_date != current_day:
         keys = ["limited_list", "day_offer", "limited"]
-        delete_keys_from_cache(keys)
+        cache.delete_many(keys)
         cache.set("current_day", current_day, cache_time)
 
     queryset = Product.objects.select_related('category').prefetch_related('seller').\
@@ -281,10 +281,3 @@ def get_limited_edition(cache_time: int = settings.CACHE_STORAGE_TIME) -> \
                                cache_time)
 
     return day_offer, limited
-
-
-def delete_keys_from_cache(cached_keys: List[str]):
-    """Удаляет список ключей из кеша."""
-    # print(caches.items())
-    cache.delete_many(cached_keys)
-    # print(caches)

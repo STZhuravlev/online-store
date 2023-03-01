@@ -35,12 +35,6 @@
                   {{ item.category__name }}
                 </div>
                 <div class="Card-hover">
-{#                  <a class="Card-btn" href="#">#}
-{#                    <img src="assets/img/icons/card/bookmark.svg" alt="bookmark.svg"/>#}
-{#                  </a>#}
-                  <a class="Card-btn" href="{% url 'cart:cart-add' item.id %}">
-                    <img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/>
-                  </a>
                   <a class="Card-btn" href="{% url 'comparison:comparison-add' item.id %}">
                     <img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/>
                   </a>

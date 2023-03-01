@@ -23,19 +23,13 @@
           <div class="Card-description">
             <div class="Card-cost">
 {#            <span class="Card-priceOld">$115.00</span>#}
-{#            <span class="Card-price">$85.00</span>#}
               <span class="Card-price">{{ item.avg_price|floatformat:2 }} ₽</span>
             </div>
             <div class="Card-category">
               {{ item.category__name }}
             </div>
             <div class="Card-hover">
-{#              <a class="Card-btn" href="/cart/templates/cart/add.html">#}
-              <a class="Card-btn" href="{% url 'cart:cart-add' item.id %}">
-               <img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/>
-              </a>
               <a class="Card-btn" href="{% url 'comparison:comparison-add' item.id %}">
-{#              <a class="Card-btn" href="{% include 'comparison/add.html' with type='product' id=item.id %}">#}
                 <img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/>
               </a>
             </div>
