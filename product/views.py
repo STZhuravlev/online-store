@@ -188,13 +188,13 @@ class ProductCatalogView(generic.ListView):
         return context
 
     def get_queryset(self):
-        category_id = self.request.GET.get('category', '')
+        # category_id = self.request.GET.get('category', '')
         query_param = [f"{key}={value}" for key, value in self.request.GET.items() if key != 'page']
         if query_param:
             cache_key_2 = ''.join(query_param)
         else:
             cache_key_2 = 'blank'
-        cache_key = f'products:{category_id}'
+        # cache_key = f'products:{category_id}'
 
         # get queryset for selected category
         queryset = get_queryset_for_category(request=self.request)

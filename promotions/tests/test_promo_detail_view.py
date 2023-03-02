@@ -1,13 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 from django.utils import timezone
 from promotions.models import PromoType, Promo, Promo2Product
 from product.models import Product, Category, Offer
 from shop.models import Seller
-from promotions.services import PROMO_PRODUCTS_PER_PAGE
+# from promotions.services import PROMO_PRODUCTS_PER_PAGE
 
 
+@tag('promo-detail')
 class PromoDetailViewTest(TestCase):
     """ Тесты отображения детальной страницы акции. """
 

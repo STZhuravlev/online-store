@@ -5,7 +5,6 @@ from product.views import (
     CategoryView,
     FeedbackDetailView,
     HistoryViewsView,
-    MainPageView,
     ProductCatalogView,
     IndexView,
     UploadProductFileView
@@ -13,7 +12,7 @@ from product.views import (
 
 
 urlpatterns = [
-    path('', MainPageView.as_view(), name='main-page'),
+    # path('', MainPageView.as_view(), name='main-page'),
     # path('banners/', BannersView.as_view(), name='banners'),
     path('<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
     path('category/', CategoryView.as_view(), name='category'),

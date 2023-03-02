@@ -16,7 +16,7 @@ class Product(models.Model):
     seller = models.ManyToManyField("shop.Seller", through="Offer", verbose_name=_("продавец"))
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True,
-                             related_name="products", verbose_name=_("категория"))
+                                 related_name="products", verbose_name=_("категория"))
     is_limited = models.BooleanField(default=False, verbose_name=_('ограниченный тираж'))
 
     class Meta:
@@ -60,7 +60,6 @@ class Banner(models.Model):
     brief = models.CharField(max_length=512, verbose_name=_('краткое описание'))
     icon = models.ImageField(upload_to='images/banners/', verbose_name=_('изображение'))
     added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_("дата добавления"))
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners', verbose_name=_("продукт"))
     is_active = models.BooleanField(default=False, verbose_name=_("активность"))
 

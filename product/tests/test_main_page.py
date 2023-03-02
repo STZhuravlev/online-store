@@ -13,7 +13,7 @@ class MainPageViewTest(TestCase):
     """ Тесты отображения главной страницы. """
     @classmethod
     def setUpTestData(cls):
-        cls.url = '/product/'
+        cls.url = '/'
         cls.url_name = reverse('main-page')
 
         # Создаем структуру таблиц
