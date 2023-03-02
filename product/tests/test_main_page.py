@@ -248,9 +248,10 @@ def create_ordered_items():
     product_2 = Offer.objects.get(product__name="product 2")
     product_3 = Offer.objects.get(product__name="product 3")
 
-    order_1 = Order.objects.get(id=1)
-    order_2 = Order.objects.get(id=2)
-    order_3 = Order.objects.get(id=3)
+    orders = Order.objects.all()
+    order_1 = orders[0]
+    order_2 = orders[1]
+    order_3 = orders[2]
 
     ordered_items = [
         OrderItem(

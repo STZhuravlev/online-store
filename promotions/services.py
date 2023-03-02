@@ -39,7 +39,7 @@ def get_related_products(obj, request: HttpRequest, cache_key: str = None,
     :return:
     """
     if cache_key is None:
-        cache_key = f'product_in_{obj.name}'
+        cache_key = f'product_in_{obj.id}'
 
     product_list = obj.promo2products.first()
     if hasattr(product_list, 'product'):
