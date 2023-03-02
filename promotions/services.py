@@ -53,7 +53,14 @@ def get_related_products(obj, request: HttpRequest, cache_key: str = None,
         annotate(avg_price=Avg('offers__price'))
 
     cached_products = cache.get_or_set(cache_key, product_list, cache_time)
-    paginator = Paginator(cached_products, PROMO_PRODUCTS_PER_PAGE)
+
+    promo_product_per_page = request.session.get(settings.ADMIN_SETTINGS_ID)
+    if promo_product_per_page is None or promo_product_per_page.get('PROMO_PRODUCTS_PER_PAGE') is None:
+        count_per_page = settings.PROMO_PRODUCTS_PER_PAGE
+    else:
+        count_per_page = promo_product_per_page['PROMO_PRODUCTS_PER_PAGE']
+
+    paginator = Paginator(cached_products, count_per_page)
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 

@@ -4,11 +4,6 @@ from product.services import get_category
 from promotions.services import get_active_promotions, get_related_products
 from django.conf import settings
 
-# Количество акций, отображаемых на странице
-# PROMO_PER_PAGE = 4
-# Количество продуктов в акции, отображаемых на странице
-# PROMO_PRODUCTS_PER_PAGE = 4
-
 
 class PromoListView(ListView):
     template_name = 'promotions/promo-list.html'
