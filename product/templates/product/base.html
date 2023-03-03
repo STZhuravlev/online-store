@@ -88,7 +88,7 @@
         <div class="wrap">
           <div class="row Header-rowMain">
             <div class="row-block Header-logo">
-              <a class="logo" href="{% url 'index' %}">
+              <a class="logo" href="{% url 'main-page' %}">
                 <img class="logo-image" src="{%  static "assets/img/logo.png" %}" alt="logo.png" />
               </a>
             </div>
@@ -96,7 +96,7 @@
               <div class="menuModal" id="navigate">
                 <ul class="menu menu_main">
                   <li class="menu-item">
-                    <a class="menu-link" href="{% url 'index' %}">Главная</a>
+                    <a class="menu-link" href="{% url 'main-page' %}">Главная</a>
                   </li>
                   <li class="menu-item">
                     <span class="menu-label menu-label_success">Скидки</span>
@@ -201,14 +201,14 @@
     <footer class="Footer">
       <div class="wrap">
         <div class="row Footer-main">
-          <div class="row-block"><a class="logo Footer-logo" href="{% url 'index' %}">
+          <div class="row-block"><a class="logo Footer-logo" href="{% url 'main-page' %}">
             <img class="logo-image" src="{%  static "assets/img/logo_footer.png" %}" alt="logo_footer.png" /></a>
           </div>
           <div class="row-block">
             <strong class="Footer-title">Навигация</strong>
             <ul class="menu menu_vt Footer-menu">
               <li class="menu-item">
-                <a class="menu-link" href="{% url 'index' %}">Главная</a>
+                <a class="menu-link" href="{% url 'main-page' %}">Главная</a>
               </li>
               <li class="menu-item">
                 <a class="menu-link" href="{% url 'catalog-view' %}">Каталог</a>

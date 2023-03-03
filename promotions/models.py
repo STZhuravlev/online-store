@@ -51,7 +51,7 @@ class Promo(models.Model):
     class Meta:
         verbose_name = _("акция")
         verbose_name_plural = _("акции")
-        ordering = ['-id']
+        ordering = ['id']
 
 
 class Promo2Product(models.Model):

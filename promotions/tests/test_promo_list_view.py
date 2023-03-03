@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 from django.utils import timezone
 from promotions.models import PromoType, Promo
@@ -6,6 +6,7 @@ from product.models import Category
 from django.conf import settings
 
 
+@tag('promo-list')
 class PromoListViewTest(TestCase):
     """ Тесты отображения списка акций. """
 
