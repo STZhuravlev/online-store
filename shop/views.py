@@ -2,16 +2,19 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 # from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.models import Permission
+
 from product.models import HistoryView
 from users.forms import CustomUserChangeForm
 from users.models import CustomUser
-from django.views.generic import DetailView, View, ListView
+from django.views.generic import DetailView, View, ListView, CreateView
 from product.services import get_category
 from product.models import Offer
 from .models import Seller
 from orders.models import OrderItem
 from .service import SiteSettings
-from .forms import SiteSettingsForm
+from .forms import SiteSettingsForm, RegisterSellerForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -93,3 +96,19 @@ class AccauntEditView(View):
         else:
             return render(request, 'shop/accaunt_edit.html',
                           {'accaunt_form': accaunt_form,  'categories': get_category()})
+
+
+class RegisterSellerView(CreateView):
+
+    template_name = 'shop/register_seller.html'
+    form_class = RegisterSellerForm
+
+    def get_success_url(self):
+        return reverse('catalog-view')
+
+    def form_valid(self, form, **kwargs):
+        form.save(commit=False)
+        form.instance.user = self.request.user
+        permission = Permission.objects.get(codename='seller_rights')
+        self.request.user.user_permissions.add(permission)
+        return super().form_valid(form)
