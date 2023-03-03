@@ -34,25 +34,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="ProductCard-cart">
-                                <div class="ProductCard-cartElement ProductCard-cartElement_amount">
-                                </div>
-                                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=product.id %}
-                                </div>
-                                <div id="modal_open" class="my_modal">
-                                    <div class="my_modal-dialog">
-                                        <div class="my_modal-content">
-                                            <div class="my_modal-header">
-                                                <p class="my_modal-title">Поздравляем!</p>
-                                                <a href="#" title="Закрыть модальное окно" class="close">×</a>
-                                            </div>
-                                            <div class="my_modal-body">
-                                                <p>Товар успешно добавлен в корзину!</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="ProductCard-footer">
                                 <div class="ProductCard-tags">
                                     <strong class="ProductCard-tagsTitle">Тэги:
@@ -129,7 +110,7 @@
                                 <div class="Tabs-addComment">
                                     <form class="form"  method="post">
                                         <div class="form-group">{% csrf_token %}
-                                            {{ feedback_form.as_p }}
+                                            {{ form.as_p }}
 {#                                            <textarea class="form-textarea" name="review" id="review" placeholder="Отзыв"></textarea>#}
 {#                                            <input class="Choice" type="number">#}
                                         </div>
