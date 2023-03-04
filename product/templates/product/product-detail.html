@@ -64,11 +64,12 @@
                         </div>
                     </div>
                     <div class="Tabs Tabs_default">
-                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>Описание</span></a><a class="Tabs-link" href="#addit"><span>Характеристика</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы (3)</span></a>
+                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#sellers"><span>Продавцы</span></a><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>Описание</span></a><a class="Tabs-link" href="#addit"><span>Характеристика</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы (3)</span></a>
                         </div>
                         <div class="Tabs-wrap">
                             <div class="Tabs-block" id="description">
                                 <h2>{{ product.name}} Описание
+
                                 </h2>
                                 <p>{{ product.description }}
 
@@ -84,6 +85,19 @@
                                 </div>
                             </div>
                             <div class="Tabs-block" id="sellers">
+                                <h2>{{ product.name}}
+                                </h2>
+                                {% for offers in offer_seller %}
+                                    <ul>
+                                    <tr>Продавец: {{ offers.seller }} Цена: {{ offers.price }}<a href="{% url 'offer-detail' offers.id %}"> <button class="btn btn_primary"type="button"><span class="btn-content"> Перейти в магазин</span></button> </a>  </tr>
+                                    </ul>
+
+                                 {% endfor %}
+                                </ul>
+                                <div class="clearfix">
+                                </div>
+                                <div class="table">
+                                </div>
                                 <div class="Categories Categories_product">
                                 </div>
                             </div>
