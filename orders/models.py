@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from product.models import Product
+from product.models import Offer
 
 # STATUS_CHOICES = (
 #     ('W', _('ожидание ответа от продавца')),
@@ -25,7 +25,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50, verbose_name=_("имя"))
     last_name = models.CharField(max_length=50, verbose_name=_("фамилия"))
     email = models.EmailField(verbose_name=_("почта"))
-    product = models.ManyToManyField(Product, through="OrderItem", verbose_name=_("товар"))
+    offer = models.ManyToManyField(Offer, through="OrderItem", verbose_name=_("товар"))
     address = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("адрес"))
     number = models.IntegerField(validators=[MinValueValidator(100000), MaxValueValidator(89999999999)],
                                  verbose_name=_('номер телефона'))
@@ -41,6 +41,7 @@ class Order(models.Model):
                                               verbose_name=_('номер карты'), null=True)
     status_payment = models.CharField(max_length=50, verbose_name=_('статус платежа'), null=True, blank=True)
     payment_code = models.IntegerField(default=0, verbose_name=_('код оплаты'))
+    total = models.IntegerField(default=0, verbose_name=_('общая стоимость'))
 
     class Meta:
         ordering = ('-created',)
@@ -56,7 +57,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.PROTECT, verbose_name=_("заказ"))
-    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT, verbose_name=_("товар"))
+    offer = models.ForeignKey(Offer, related_name='order_items', on_delete=models.PROTECT, verbose_name=_("товар"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("цена"))
     quantity = models.PositiveIntegerField(default=1, verbose_name=_("количество"))
 

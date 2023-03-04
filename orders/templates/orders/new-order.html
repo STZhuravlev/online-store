@@ -58,7 +58,7 @@
                                     <div class="form-group">
                                         <form action="." method="post" class="order-form">
                                                 {% for field in form %}
-                                                {% if user.is_authenticated and field.name == "password1" or field.name == "password2" %}
+                                                {% if user.is_authenticated and field.name == "password1" or user.is_authenticated and field.name == "password2" %}
                                                     {{ form.field.as_hidden }}
                                                 {% else %}
                                                     {% if field.errors %}
@@ -83,29 +83,32 @@
                                             <p><input type="submit" value="Подтвердить"></p>
                                             {% csrf_token %}
                                             </form>
-                                            <p><input type="submit" data-toggle="modal" data-target="#myModal" value="Авторизироваться" /></p>
-                                                <div id="myModal" class="modal fade" style="background-color: rgba(120, 120, 120, 0.5)">
-                                                        <div class="wrapper" style="background-color: #f0f0f0; padding: 25px">
-                                                            <div class="header">
-                                                                <h3 class="sign-in">Вход</h3>
+                                            {% if not request.user.is_authenticated %}
+                                                <p><input type="submit" data-toggle="modal" data-target="#myModal" value="Авторизироваться" /></p>
+                                                    <div id="myModal" class="modal fade" style="background-color: rgba(120, 120, 120, 0.5)">
+                                                            <div class="wrapper" style="background-color: #f0f0f0; padding: 25px">
+                                                                <div class="header">
+                                                                    <h3 class="sign-in">Вход</h3>
+                                                                </div>
+                                                                <div class="clear"></div>
+                                                                <form method="post">{% csrf_token %}
+                                                                    <div>
+                                                                        <label class="form-label" for="{{ form.username.id_for_username }}">Е-mail</label>
+                                                                        <input type="text" name="email" class="form-control" required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="form-label" for="{{ form.password.id_for_password }}">Пароль</label>
+                                                                        <input type="password" name="password" class="form-control" checked required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <input type="submit" class="btn btn-primary" value="Войти" />
+                                                                    </div>
+                                                                </form>
                                                             </div>
-                                                            <div class="clear"></div>
-                                                            <form method="post">{% csrf_token %}
-                                                                <div>
-                                                                    <label class="form-label" for="{{ form.username.id_for_username }}">Е-mail</label>
-                                                                    <input type="text" name="username" class="form-control" required>
-                                                                </div>
-                                                                <div>
-                                                                    <label class="form-label" for="{{ form.password.id_for_password }}">Пароль</label>
-                                                                    <input type="password" name="password" class="form-control" checked required>
-                                                                </div>
-                                                                <div>
-                                                                    <input type="submit" class="btn btn-primary" value="Войти" />
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    <div class="modal" tabindex="-1">
-                                                </div>
+                                                        <div class="modal" tabindex="-1">
+                                                    </div>
+                                                    </div>
+                                            {% endif %}
 {#                                                <div id="myModal" class="modal fade" style="background-color: rgba(120, 120, 120, 0.5)">#}
 {#                                                    <div class="modal-dialog">#}
 {#                                                        <div class="modal-content">#}

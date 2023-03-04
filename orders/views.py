@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login
 # from django.contrib.auth.mixins import LoginRequiredMixin
+from product.models import Offer
 from .models import OrderItem, Order
 from users.models import CustomUser
 from product.services import get_category
@@ -13,7 +14,7 @@ from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCre
 from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
-from django.contrib.auth import views as aut_view
+# from django.contrib.auth import views as aut_view
 # import redis
 # from django.core.cache import cache
 # from django.conf import settings
@@ -46,11 +47,37 @@ class HistoryOrderDetailView(generic.DetailView):
         return context
 
 
+def modal(request):
+    user = authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
+    if user is not None:
+        login(request, user)
+        if request.user.first_name:
+            first_name = request.user.first_name
+        else:
+            first_name = None
+        if request.user.last_name:
+            last_name = request.user.last_name
+        else:
+            last_name = None
+        data = {'first_name': first_name,
+                'last_name': last_name,
+                'email': request.user.email,
+                }
+        form = OrderUserCreateForm(data)
+        return render(request, 'orders/new-order.html', {'form': form, 'categories': get_category()})
+    else:
+        form = OrderUserCreateForm()
+        return render(request, 'orders/new-order.html', {'form': form, 'categories': get_category()})
+
+
 def order_create(request):
     if request.method == 'POST':
+        if 'password' in request.POST:
+            modal(request)
         form = OrderUserCreateForm(request.POST)
         if form.is_valid():
-            if request.user.is_authenticated:
+            # if request.user.is_authenticated:
+            if not request.user.is_anonymous:
                 cache.set('first_name', form.cleaned_data.get('first_name'))
                 cache.set('last_name', form.cleaned_data.get('last_name'))
                 cache.set('email', request.user.email)
@@ -93,7 +120,6 @@ def order_create(request):
                         form._errors["password1"] = ErrorList([_(u"Пароли не совпадают")])
                         return render(request, 'orders/new-order.html',
                                       {'form': form, 'categories': get_category()})
-                # order = form.save()
             return redirect('order_create_delivery')
     else:
         if request.user.is_authenticated:
@@ -137,6 +163,13 @@ def order_type_payment(request):
 
 def order_create_payment(request):
     cart = Cart(request)
+    total = cart.get_total_price()
+    seller = []
+    for item in cart:
+        seller.append(Offer.objects.get(id=item).seller)
+        seller = set(seller)
+    if total < 2000 or len(seller) > 1:
+        total += 200
     if request.method == 'POST':
         form = OrderCardForm(request.POST)
         if form.is_valid():
@@ -148,7 +181,8 @@ def order_create_payment(request):
                                          city=cache.get('city'),
                                          address=cache.get('address'),
                                          payment=cache.get('payment'),
-                                         card_number=form.cleaned_data.get('card_number'))
+                                         card_number=form.cleaned_data.get('card_number'),
+                                         total=total)
             for item in cart.cart:
                 OrderItem.objects.create(order=order,
                                          product=item,

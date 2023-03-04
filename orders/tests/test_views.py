@@ -16,11 +16,11 @@ class HistoryTest(TestCase):
         seller = Seller.objects.create(user=user2, name='test2', description='test1',
                                        address='test', number=1234567)
         product = Product.objects.create(name='test', description='test')
-        Offer.objects.create(product=product, seller=seller, price=10.10)
+        offer = Offer.objects.create(product=product, seller=seller, price=10.10)
         order = Order.objects.create(first_name='test', last_name='test', email='test@test.ru',
                                      address='test', number=7654321, city='test',
                                      delivery='D', status='W')
-        OrderItem.objects.create(order=order, product=product, price=10.10)
+        OrderItem.objects.create(order=order, offer=offer, price=10.10)
 
     def setUp(self) -> None:
         self.client.login(email=self.user.email, password=self.user.password)
