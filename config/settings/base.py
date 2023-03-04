@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'mptt',
     'product',
     'shop',
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -154,12 +156,13 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale'), ]
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # пустая папка, сюда будет собирать статику collectstatic
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+MEDIA_IMAGE_URL = 'images/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -187,3 +190,15 @@ CACHES = {
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_TASK_TRACK_STARTED = True
+
+# Количество акция, отображаемых на странице
+PROMO_PER_PAGE = 4
+# Количество продуктов в акции, отображаемых на странице
+PROMO_PRODUCTS_PER_PAGE = 4
+
+# Количество товаров из каталога, которые будут отображаться на странице
+CATALOG_PRODUCT_PER_PAGE = 6
+
+CACHE_STORAGE_TIME = 60 * 60 * 24
+
+ADMIN_SETTINGS_ID = 'admin_settings'

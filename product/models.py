@@ -4,6 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Min
+
+from users.models import CustomUser
 
 
 class Product(models.Model):
@@ -14,6 +17,7 @@ class Product(models.Model):
     property = models.ManyToManyField("Property", through="ProductProperty", verbose_name=_("характеристики"))
     category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True,
                                  related_name="products", verbose_name=_("категория"))
+    is_limited = models.BooleanField(default=False, verbose_name=_('ограниченный тираж'))
 
     class Meta:
         verbose_name = _("продукт")
@@ -54,7 +58,7 @@ class Banner(models.Model):
     """ Баннеры. """
     title = models.CharField(max_length=128, verbose_name=_('заголовок'))
     brief = models.CharField(max_length=512, verbose_name=_('краткое описание'))
-    icon = models.ImageField(upload_to='files/', verbose_name=_('изображение'))
+    icon = models.ImageField(upload_to='images/banners/', verbose_name=_('изображение'))
     added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_("дата добавления"))
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='banners', verbose_name=_("продукт"))
     is_active = models.BooleanField(default=False, verbose_name=_("активность"))
@@ -98,6 +102,12 @@ class Category(MPTTModel):
             raise ValueError('Достигнута максимальная вложенность!')
         super(Category, self).save(*args, **kwargs)
 
+    def min_price(self):
+        """Возвращает минимальную стоимость товара в категории."""
+        result = Product.objects.select_related('category'). \
+            filter(category_id=self.pk).aggregate(min_price=Min('offers__price'))
+        return result['min_price']
+
 
 class Offer(models.Model):
     """Товар"""
@@ -105,6 +115,9 @@ class Offer(models.Model):
     seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT,
                                related_name='sellers', verbose_name=_("продавец"))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('цена'))
+    added_at = models.DateTimeField(auto_created=True, auto_now=True, verbose_name=_('время добавления'))
+    is_free_delivery = models.BooleanField(default=True, verbose_name=_('бесплатная доставка'))
+    is_present = models.BooleanField(default=True, verbose_name=_('в наличии'))
 
     def __str__(self):
         return self.product.name
@@ -129,7 +142,7 @@ class ProductImage(models.Model):
 
 class HistoryView(models.Model):
     """История просмотра товаров"""
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='views_user')
     view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
     product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='views')
 
@@ -167,3 +180,19 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class LoggingImportFileModel(models.Model):
+    """Модель логирование ошибок импорта файла"""
+
+    file_name = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Имя файла'))
+    seller = models.ForeignKey("shop.Seller", on_delete=models.PROTECT, related_name='seller_log')
+    message = models.CharField(max_length=255, verbose_name=_('Текст ошибки'))
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Логирование')
+        verbose_name_plural = _('Логирование')
+
+    def __str__(self):
+        return self.file_name
