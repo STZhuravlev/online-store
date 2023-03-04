@@ -34,25 +34,27 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="ProductCard-cart">
-                                <div class="ProductCard-cartElement ProductCard-cartElement_amount">
-                                </div>
-                                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=product.id %}
-                                </div>
-                                <div id="modal_open" class="my_modal">
-                                    <div class="my_modal-dialog">
-                                        <div class="my_modal-content">
-                                            <div class="my_modal-header">
-                                                <p class="my_modal-title">Поздравляем!</p>
-                                                <a href="#" title="Закрыть модальное окно" class="close">×</a>
-                                            </div>
-                                            <div class="my_modal-body">
-                                                <p>Товар успешно добавлен в корзину!</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="ProductCard-compare">{% include 'comparison/add.html' with type='product' id=product.id  %}
                             </div>
+{#                            <div class="ProductCard-cart">#}
+{#                                <div class="ProductCard-cartElement ProductCard-cartElement_amount">#}
+{#                                </div>#}
+{#                                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=product.id %}#}
+{#                                </div>#}
+{#                                <div id="modal_open" class="my_modal">#}
+{#                                    <div class="my_modal-dialog">#}
+{#                                        <div class="my_modal-content">#}
+{#                                            <div class="my_modal-header">#}
+{#                                                <p class="my_modal-title">Поздравляем!</p>#}
+{#                                                <a href="#" title="Закрыть модальное окно" class="close">×</a>#}
+{#                                            </div>#}
+{#                                            <div class="my_modal-body">#}
+{#                                                <p>Товар успешно добавлен в корзину!</p>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
                             <div class="ProductCard-footer">
                                 <div class="ProductCard-tags">
                                     <strong class="ProductCard-tagsTitle">Тэги:
