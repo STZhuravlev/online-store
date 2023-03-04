@@ -11,8 +11,8 @@ class HistoryTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = get_user_model().objects.create_user(email='test@test.ru', password='12345')
-        user2 = get_user_model().objects.create_user(email='test2@test.ru', password='123452')
+        cls.user = get_user_model().objects.create_user(email='test@test.ru', password='12345', phone='1111111111')
+        user2 = get_user_model().objects.create_user(email='test2@test.ru', password='123452', phone='2222222222')
         seller = Seller.objects.create(user=user2, name='test2', description='test1',
                                        address='test', number=1234567)
         product = Product.objects.create(name='test', description='test')

@@ -11,7 +11,17 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
+    password = None
 
     class Meta:
         model = CustomUser
-        fields = ('email',)
+        fields = ('email', 'name', 'phone', 'avatar')
+        error_messages = {
+            "name": {
+                "required": "Поле ФИО является обязательным для заполнения",
+            },
+            "email": {
+                "required": "Поле E-mail является обязательным для заполнения",
+                'invalid': 'Не верно указан email'
+            },
+        }

@@ -1,0 +1,18 @@
+{
+  "category": {
+    "Электроника": [
+      {
+        "name": "MacBook1",
+        "description": "Очень шустрый и классный pc",
+        "property": {"name": "Характеристики_1", "value": "Ого-го"},
+        "image": [
+          "https://www.apple.com/v/macbook-pro-14-and-16/b/images/overview/hero/intro__ewz1ro7xs14y_large.jpg",
+          "https://www.notebookcheck-ru.com/uploads/tx_nbc2/air13teaser.jpg"
+        ],
+        "offer": {
+          "price": 84000
+        }
+      }
+    ]
+  }
+}
