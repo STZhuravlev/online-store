@@ -99,6 +99,7 @@ class AccauntEditView(View):
 
 
 class RegisterSellerView(CreateView):
+    """Представление регистрации продавца"""
 
     template_name = 'shop/register_seller.html'
     form_class = RegisterSellerForm
