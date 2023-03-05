@@ -188,7 +188,7 @@ CACHES = {
     }
 }
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
 CELERY_TASK_TRACK_STARTED = True
 
 # Количество акция, отображаемых на странице
