@@ -1,14 +1,15 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase, tag
+from django.test import TestCase, tag, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from promotions.models import PromoType, Promo, Promo2Product
 from product.models import Product, Category, Offer
 from shop.models import Seller
-# from promotions.services import PROMO_PRODUCTS_PER_PAGE
+from django.conf import settings
 
 
 @tag('promo-detail')
+@override_settings(CACHES=settings.TEST_CACHES)
 class PromoDetailViewTest(TestCase):
     """ Тесты отображения детальной страницы акции. """
 
@@ -57,9 +58,15 @@ class PromoDetailViewTest(TestCase):
         """Тест на передачу в шаблон контекста"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        # self.assertTrue(response.context['categories'])
-        self.assertTrue(response.context['promo'])
-        self.assertTrue(response.context['page_obj'])
+        # контекст
+        self.assertTrue('categories' in response.context)
+        self.assertTrue('promo' in response.context)
+        self.assertTrue('page_obj' in response.context)
+        # содержимое контекста
+        category_count = Category.objects.filter(active=True).count()
+        self.assertEqual(len(response.context['categories']), category_count)
+        promo_name = Promo.objects.first().name
+        self.assertEqual(response.context['promo'].name, promo_name)
 
     def test_pagination_first_page(self):
         """Тест, что пагинатор получает все товары из каталога и
@@ -67,8 +74,14 @@ class PromoDetailViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('page_obj' in response.context)
-        print(response.context['page_obj'].object_list)
-        # self.assertEqual(len(response.context['page_obj']), PROMO_PRODUCTS_PER_PAGE)
+        # есть следующая страница 2
+        has_next_page = response.context['page_obj'].has_next()
+        self.assertTrue(has_next_page)
+        next_page_number = response.context['page_obj'].next_page_number()
+        self.assertEqual(next_page_number, 2)
+        # кол-во элементов на странице
+        product_list = response.context['page_obj'].object_list
+        self.assertEqual(len(product_list), settings.PROMO_PRODUCTS_PER_PAGE)
 
     def test_pagination_second_page(self):
         """Тест, что пагинатор получает все товары из каталога и
@@ -76,17 +89,34 @@ class PromoDetailViewTest(TestCase):
         response = self.client.get(self.url + '?page=2')
         self.assertEqual(response.status_code, 200)
         self.assertTrue('page_obj' in response.context)
-        print(response.context['page_obj'])
-        print(response.context['page_obj'].object_list)
-        # self.assertEqual(len(response.context['page_obj']), 2)
+        # нет следующей страницы
+        has_next_page = response.context['page_obj'].has_next()
+        self.assertFalse(has_next_page)
+        # есть предыдущая страница 1
+        has_previous_page = response.context['page_obj'].has_previous()
+        self.assertTrue(has_previous_page)
+        previous_page_number = response.context['page_obj'].previous_page_number()
+        self.assertEqual(previous_page_number, 1)
+        # кол-во элементов на странице
+        number_elements = Product.objects.all().count() - settings.PROMO_PRODUCTS_PER_PAGE
+        product_list = response.context['page_obj'].object_list
+        self.assertEqual(len(product_list), number_elements)
 
     def test_correct_product_list(self):
         """Тест, что передаются только товары, связанные с акцией"""
-        # привязываем к акции один товар
-        product = Product.objects.first()
+        # привязываем к акции два товара
+        product_1 = Product.objects.first()
+        product_2 = Product.objects.last()
         promo = Promo.objects.first()
         promo2product = Promo2Product.objects.create(promo=promo)
-        promo2product.product.add(product)
+        promo2product.product.add(product_1)
+        promo2product.product.add(product_2)
+        products_in_promo = Promo2Product.objects.first().product.all()
+        # запрос
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(len(response.context['page_obj']), 1)
+        # есть контекст
+        self.assertTrue('page_obj' in response.context)
+        # кол-во элементов на странице
+        product_list = response.context['page_obj'].object_list
+        self.assertEqual(len(product_list), len(products_in_promo))

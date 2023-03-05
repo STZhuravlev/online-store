@@ -7,10 +7,6 @@ from product.models import Product
 from promotions.models import Promo
 
 
-# Количество продуктов в акции, отображаемых на странице
-PROMO_PRODUCTS_PER_PAGE = 4
-
-
 def get_active_promotions(cache_key: str = None,
                           cache_time: int = settings.CACHE_STORAGE_TIME) -> QuerySet:
     """
@@ -50,7 +46,7 @@ def get_related_products(obj, request: HttpRequest, cache_key: str = None,
             select_related('category')
 
     product_list = product_list.values('id', 'name', 'images__image', 'category__name').\
-        annotate(avg_price=Avg('offers__price'))
+        annotate(avg_price=Avg('offers__price')).order_by('id')
 
     cached_products = cache.get_or_set(cache_key, product_list, cache_time)
 
