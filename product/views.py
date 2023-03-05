@@ -61,8 +61,6 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
         context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=self.object)
         context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
-        for item in context['offer_seller']:
-            print(item.price)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=self.object)
             history_old.save(update_fields=['view_at'])
