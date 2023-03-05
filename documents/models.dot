@@ -1,6 +1,10 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
+<<<<<<< HEAD
+  // Created: 2023-01-19 18:06
+=======
   // Created: 2023-02-02 14:31
+>>>>>>> 20-catalog-filtration-sorting
   // Cli Options: -a
 
   fontname = "Roboto"
@@ -689,9 +693,15 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
+<<<<<<< HEAD
+    <FONT FACE="Roboto">image</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">ImageField</FONT>
+=======
     <FONT COLOR="#7B7B7B" FACE="Roboto">image</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">ImageField</FONT>
+>>>>>>> 20-catalog-filtration-sorting
     </TD></TR>
   
   

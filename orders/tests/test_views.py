@@ -60,6 +60,7 @@ class HistoryTest(TestCase):
 
     def test_order_create_payment(self):
         order = Order.objects.all().last()
+
         url = reverse('order_create_payment', kwargs={'pk': order.pk})
         data = {'payment': 'C'}
         response = self.client.post(url, data=data, follow=True)

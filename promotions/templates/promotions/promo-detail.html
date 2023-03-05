@@ -58,7 +58,7 @@
               {% for item in page_obj %}
                 <div class="Card">
                   <a class="Card-picture" href="#">
-                    <img src="/media/{{ item.images.first.image }}" alt="card.jpg"/>
+                    <img src="/media/{{ item.images__image }}" alt="card.jpg"/>
                   </a>
                   <div class="Card-content">
                     <strong class="Card-title">
@@ -69,7 +69,7 @@
                         <span class="Card-price">${{ item.avg_price|floatformat:"2" }}</span>
                       </div>
                       <div class="Card-category">
-                          {{ item.category.name }}
+                          {{ item.category__name }}
                       </div>
                       <div class="Card-hover">
                         <a class="Card-btn" href="#">
