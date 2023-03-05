@@ -64,9 +64,9 @@ def get_queryset_for_category(request: HttpRequest) -> QuerySet:
     else:  # if category isn't passed in query-string
         queryset = Product.objects. \
             select_related('category').prefetch_related('seller').all()
-    # select required fields and add average price on seller
-    # queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
-    #     annotate(avg_price=Avg('offers__price')).order_by('avg_price')
+
+    queryset = queryset.order_by('id')
+
     return queryset
 
 
@@ -124,9 +124,9 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     elif sort_by == 'dprice':
         queryset = queryset.annotate(avg_price=Avg('offers__price')).order_by('-avg_price')
     elif sort_by == 'arate':
-        queryset = queryset.annotate(rating=Avg('feedback__rating')).order_by('rating')
+        queryset = queryset.annotate(rating=Avg('feedback__rating', default=0)).order_by('rating')
     elif sort_by == 'drate':
-        queryset = queryset.annotate(rating=Avg('feedback__rating')).order_by('-rating')
+        queryset = queryset.annotate(rating=Avg('feedback__rating', default=0)).order_by('-rating')
     elif sort_by == 'anew':
         queryset = queryset.annotate(date=Max('offers__added_at')).order_by('date')
     elif sort_by == 'dnew':
