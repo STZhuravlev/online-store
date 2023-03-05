@@ -64,6 +64,7 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
         context['feedback'] = Feedback.objects.all().filter(product=self.kwargs['pk'])
         context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
+        context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=Product.objects.get(id=self.kwargs['pk']))
             history_old.save(update_fields=['view_at'])
@@ -215,14 +216,14 @@ class ProductCatalogView(generic.ListView):
         return cached_data
 
 
-class IndexView(generic.TemplateView):
-    template_name = 'product/index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['banners'] = BannersView.get_banners()
-        context['categories'] = get_category()
-        return context
+# class IndexView(generic.TemplateView):
+#     template_name = 'product/index.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['banners'] = BannersView.get_banners()
+#         context['categories'] = get_category()
+#         return context
 
 
 class UploadProductFileView(PermissionRequiredMixin, generic.FormView):
