@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from product.models import Product, ProductProperty
 from django.views import View
 from product.services import get_category
-
+from product.models import Offer
 
 class Comparison(View):
 

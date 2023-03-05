@@ -54,13 +54,15 @@
                             </div>
                         </div>
                         <div class="ProductCard-cart">
+                        {% include 'comparison/remove.html' with type='product' id=coms.id %}
 
-                            <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=coms.id %}
+                            <div class="ProductCard-cartElement"><a href="{% url 'product-detail' coms.id %}"><button class="btn btn_primary"type="button"><span class="btn-content"> К детальному просмотру</span></button> </a></a>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                     {% endfor %}
+
 
                 </div>
             </div>
