@@ -37,6 +37,15 @@
                   </li>
                   <li class="menu-item"><a class="menu-link" href="{% url 'history_view' %}">История просмотра</a>
                   </li>
+                  {% if request.user.seller_status == 'not_active' %}
+                      <li class="menu-item" id="seller-create"><a class="menu-link" href="{% url 'requisition_seller' %}">Стать продавцом</a>
+                      </li>
+                  {% elif request.user.seller_status == 'active' %}
+                      <li class="menu-item" id="seller-create"><a class="menu-link" href="{% url 'register_seller' %}">Создать магазин</a>
+                      </li>
+                  {% else %}
+                      <p class="menu-item">Заявка на рассмотрении</p>
+                  {% endif %}
                 </ul>
               </div>
             </div>

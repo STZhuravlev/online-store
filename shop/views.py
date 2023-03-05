@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 # from django.contrib.auth.forms import PasswordChangeForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.models import Permission
 
@@ -113,3 +113,9 @@ class RegisterSellerView(CreateView):
         permission = Permission.objects.get(codename='seller_rights')
         self.request.user.user_permissions.add(permission)
         return super().form_valid(form)
+
+
+class RequisitionSellerView(View):
+
+    def get(self, request):
+        return HttpResponse('Ваша заявка на создание магазина на рассмотрении!')
