@@ -218,6 +218,11 @@ def get_favorite_categories(qty: int = 3,
     if not categories:
         return categories
 
+    # если кол-во категорий меньше qty, qty = кол-ву категорий
+    length = len(categories)
+    if length < qty:
+        qty = length
+
     cached_data = cache.get_or_set("favorite_categories",
                                    sample(categories, qty),
                                    cache_time)
