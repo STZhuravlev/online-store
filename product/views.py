@@ -28,7 +28,6 @@ from product.services import (
     apply_filter_to_catalog,
     apply_sorting_to_catalog,
     get_banners,
-    BannersView,
     ImageView,
     get_favorite_categories,
     get_popular_products,
@@ -61,6 +60,7 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
         context['feedback'] = Feedback.objects.all().filter(product=self.object.id)
         context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=self.object)
+        context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
         if histiry_view_list:
             history_old = HistoryView.objects.get(product=self.object)
             history_old.save(update_fields=['view_at'])
@@ -96,20 +96,21 @@ class CategoryView(generic.ListView):
         return context
 
 
-class FeedbackDetailView(generic.CreateView):
+class FeedbackDetailView(generic.DetailView, generic.CreateView):
 
     """Детальное отображение продукта, отзывов и добавления отзыва"""
 
-    model = Feedback
+    model = Offer
     form_class = FeedbackForm
     template_name = 'product/offer-detail.html'
+    context_object_name = 'offer'
 
     def get_success_url(self):
         return reverse('offer-detail', kwargs={'pk': self.object.product.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['offer'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['offers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         context['categories'] = get_category()
         context['product_image'] = ProductImage.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         context['feedback'] = Feedback.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
@@ -215,14 +216,14 @@ class ProductCatalogView(generic.ListView):
         return cached_data
 
 
-class IndexView(generic.TemplateView):
-    template_name = 'product/index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['banners'] = BannersView.get_banners()
-        context['categories'] = get_category()
-        return context
+# class IndexView(generic.TemplateView):
+#     template_name = 'product/index.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['banners'] = BannersView.get_banners()
+#         context['categories'] = get_category()
+#         return context
 
 
 class UploadProductFileView(generic.FormView):

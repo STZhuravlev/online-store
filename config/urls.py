@@ -17,7 +17,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-# from product.views import IndexView
 from product.views import MainPageView
 
 
@@ -32,7 +31,6 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('i18n', include('django.conf.urls.i18n')),
     path('promos/', include('promotions.urls', namespace='promo')),
-    # path('', IndexView.as_view(), name='index'),
     path('', MainPageView.as_view(), name='main-page'),
 
 
