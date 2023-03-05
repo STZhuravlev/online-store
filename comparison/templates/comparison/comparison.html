@@ -8,9 +8,11 @@
             <div class="Product">
                 <div class="ProductCard">
                     {%  for com in goods_item %}
+                        {% for coms in com %}
+
                     <div class="ProductCard-desc">
                         <div class="ProductCard-header">
-                            <h2 class="ProductCard-title">{{ com.name }}
+                            <h2 class="ProductCard-title">{{ coms.name }}
                             </h2>
                             <div class="ProductCard-look">
                                 <div class="ProductCard-photo">
@@ -28,7 +30,7 @@
                                                     <th class="hed">{% trans "Значение" %}</th>
                                                 </tr>
                                             </table>
-                                            {% for product in com.property.all %}
+                                            {% for product in coms.property.all %}
                                             <table>
 
 
@@ -53,13 +55,15 @@
                             </div>
                         </div>
                         <div class="ProductCard-cart">
+                        {% include 'comparison/remove.html' with type='product' id=coms.id %}
 
-                            <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=com.id %}
+                            <div class="ProductCard-cartElement"><a href="{% url 'product-detail' coms.id %}"><button class="btn btn_primary"type="button"><span class="btn-content"> К детальному просмотру</span></button> </a></a>
                             </div>
                         </div>
-
+                        {% endfor %}
                     </div>
                     {% endfor %}
+
 
                 </div>
             </div>

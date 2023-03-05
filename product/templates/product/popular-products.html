@@ -29,9 +29,7 @@
               {{ item.category__name }}
             </div>
             <div class="Card-hover">
-              <a class="Card-btn" href="{% url 'comparison:comparison-add' item.id %}">
-                <img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/>
-              </a>
+              {% include 'comparison/add.html' with type='product' id=item.id  %}
             </div>
           </div>
         </div>

@@ -34,25 +34,27 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="ProductCard-cart">
-                                <div class="ProductCard-cartElement ProductCard-cartElement_amount">
-                                </div>
-                                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=product.id %}
-                                </div>
-                                <div id="modal_open" class="my_modal">
-                                    <div class="my_modal-dialog">
-                                        <div class="my_modal-content">
-                                            <div class="my_modal-header">
-                                                <p class="my_modal-title">{% trans "Поздравляем!" %}</p>
-                                                <a href="#" title="Закрыть модальное окно" class="close">×</a>
-                                            </div>
-                                            <div class="my_modal-body">
-                                                <p>{% trans "Товар успешно добавлен в корзину!" %}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="ProductCard-compare">{% include 'comparison/add.html' with type='product' id=product.id  %}
                             </div>
+{#                            <div class="ProductCard-cart">#}
+{#                                <div class="ProductCard-cartElement ProductCard-cartElement_amount">#}
+{#                                </div>#}
+{#                                <div class="ProductCard-cartElement">{%  include 'cart/add.html' with id=product.id %}#}
+{#                                </div>#}
+{#                                <div id="modal_open" class="my_modal">#}
+{#                                    <div class="my_modal-dialog">#}
+{#                                        <div class="my_modal-content">#}
+{#                                            <div class="my_modal-header">#}
+{#                                                <p class="my_modal-title">Поздравляем!</p>#}
+{#                                                <a href="#" title="Закрыть модальное окно" class="close">×</a>#}
+{#                                            </div>#}
+{#                                            <div class="my_modal-body">#}
+{#                                                <p>Товар успешно добавлен в корзину!</p>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
                             <div class="ProductCard-footer">
                                 <div class="ProductCard-tags">
                                     <strong class="ProductCard-tagsTitle">{% trans "Тэги:" %}
@@ -62,7 +64,7 @@
                         </div>
                     </div>
                     <div class="Tabs Tabs_default">
-                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#addit"><span>{% trans "Характеристика" %}</span></a><a class="Tabs-link" href="#reviews"><span>{% trans "Отзывы" %} (3)</span></a>
+                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#sellers"><span>{% trans "Продавцы" %}</span></a><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#addit"><span>{% trans "Характеристика" %}</span></a><a class="Tabs-link" href="#reviews"><span>{% trans "Отзывы" %} (3)</span></a>
                         </div>
                         <div class="Tabs-wrap">
                             <div class="Tabs-block" id="description">
@@ -82,6 +84,19 @@
                                 </div>
                             </div>
                             <div class="Tabs-block" id="sellers">
+                                <h2>{{ product.name}}
+                                </h2>
+                                {% for offers in offer_seller %}
+                                    <ul>
+                                    <tr>Продавец: {{ offers.seller }} Цена: {{ offers.price }}<a href="{% url 'offer-detail' offers.id %}"> <button class="btn btn_primary"type="button"><span class="btn-content"> Перейти в магазин</span></button> </a>  </tr>
+                                    </ul>
+
+                                 {% endfor %}
+                                </ul>
+                                <div class="clearfix">
+                                </div>
+                                <div class="table">
+                                </div>
                                 <div class="Categories Categories_product">
                                 </div>
                             </div>

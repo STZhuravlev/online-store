@@ -13,7 +13,7 @@
       <div class="Middle-header">
         <ul class="breadcrumbs Middle-breadcrumbs">
           <li class="breadcrumbs-item">
-            <a href="{% url 'index' %}">{% trans "Главная" %}</a>
+            <a href="{% url 'main-page' %}">{% trans "Главная" %}</a>
           </li>
           <li class="breadcrumbs-item breadcrumbs-item_current">
             <span>
@@ -168,12 +168,10 @@
 {#                    <a class="Card-btn" href="#">#}
 {#                      <img src="{% static "assets/img/icons/card/bookmark.svg" %}" alt="bookmark.svg"/>#}
 {#                    </a>#}
-                    <a class="Card-btn" href="#">
-                      <img src="{% static "assets/img/icons/card/cart.svg" %}" alt="cart.svg"/>
-                    </a>
-                    <a class="Card-btn" href="#">
-                      <img src="{% static "assets/img/icons/card/change.svg" %}" alt="change.svg"/>
-                    </a>
+{#                    <a class="Card-btn" href="#">#}
+{#                      <img src="{% static "assets/img/icons/card/cart.svg" %}" alt="cart.svg"/>#}
+{#                    </a>#}
+                    {% include 'comparison/add.html' with type='product' id=item.id  %}
                   </div>
                 </div>
               </div>

@@ -9,17 +9,19 @@ class Comparison(View):
 
     def get(self, request):
         com = request.session.get('comparison')
+        goods_item = list()
         if com is None:
             return redirect('/')
-        goods_item = Product.objects.prefetch_related(Prefetch(
-            'property',
-            queryset=ProductProperty.objects.select_related(
-                'product',
+        for item in com:
+            goods_items = Product.objects.filter(id=item['id']).prefetch_related(Prefetch(
                 'property',
-            )))
+                queryset=ProductProperty.objects.select_related(
+                    'product',
+                    'property',
+                    )))
+            goods_item.append(goods_items)
         categories = get_category()
         content = {'goods_item': goods_item, 'categories': categories}
-
         return render(request, 'comparison/comparison.html', content)
 
 
@@ -31,7 +33,7 @@ class ComparisonAdd(View):
             request.session['comparison'] = list(request.session['comparison'])
         item_exist = next(
                 (item for item in request.session['comparison'] if item['type'] == request.POST.get('type')
-                 and item['id'] == 'id'), False)
+                 and item['id'] == id), False)
         add_data = {
                 'type': request.POST.get('type'),
                 'id': id
@@ -39,7 +41,7 @@ class ComparisonAdd(View):
         if not item_exist:
             request.session['comparison'].append(add_data)
             request.session.modified = True
-        return redirect('/')
+        return redirect('comparison:comparison')
 
 
 class ComparisonRemove(View):
@@ -52,7 +54,7 @@ class ComparisonRemove(View):
                 if not request.session['comparison']:
                     del request.session['comparison']
         request.session.modified = True
-        return redirect('/')
+        return redirect('comparison:comparison')
 
 
 class ComparisonDelete(View):
