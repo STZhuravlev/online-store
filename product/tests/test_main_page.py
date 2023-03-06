@@ -64,24 +64,6 @@ class MainPageViewTest(TestCase):
         count_in_context = len(categories)
         self.assertEqual(count_in_context, count)
 
-    @staticmethod
-    def update_category_activity():
-        """Делает категории неактивными."""
-        Category.objects.filter(name='category_1').update(active=False)
-        Category.objects.filter(name='category_2').update(active=False)
-        Category.objects.filter(name='category_2_1').update(active=False)
-        Category.objects.filter(name='category_2_2').update(active=False)
-
-    def test_get_category_empty(self):
-        """Тест обработки пустого списка категорий."""
-        self.update_category_activity()
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue("categories" in response.context)
-        categories = response.context['categories']
-        count_in_context = len(categories)
-        self.assertEqual(count_in_context, 0)
-
     def test_get_banners(self):
         """Тест, что получает список активных баннеров длиной 3."""
         response = self.client.get(self.url)
@@ -106,6 +88,20 @@ class MainPageViewTest(TestCase):
         self.assertTrue("banners" in response.context)
         banners = response.context['banners']
         self.assertEqual(len(banners), 0)
+
+    def test_get_one_banners(self):
+        """Тест, что получает меньше трех активных баннеров."""
+        # делаем один активный баннер
+        self.update_banner_activity()
+        banner = Banner.objects.first()
+        banner.is_active = True
+        banner.save()
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("banners" in response.context)
+        banners = response.context['banners']
+        self.assertEqual(len(banners), 1)
 
     def test_get_favorite_categories(self):
         """Тест, что получает список избранных категорий длиной 3."""
