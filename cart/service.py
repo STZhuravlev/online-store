@@ -19,37 +19,37 @@ class Cart:
         """
         Добавить товар в корзину или обновить его кол-во
         """
-        product_id = str(offer.product.id)
-        if product_id not in self.cart:
-            self.cart[product_id] = {'quantity': 0,
-                                     'price': str(offer.price)}
+        offer_id = str(offer.id)
+        if offer_id not in self.cart:
+            self.cart[offer_id] = {'quantity': 0,
+                                   'price': str(offer.price)}
         if update_quantity:
-            self.cart[product_id]['quantity'] = quantity
+            self.cart[offer_id]['quantity'] = quantity
         else:
-            self.cart[product_id]['quantity'] += quantity
+            self.cart[offer_id]['quantity'] += quantity
         self.save()
 
     def save(self):
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
 
-    def remove(self, product):
+    def remove(self, offer):
         """
         Удаление товара из корзины.
         """
-        product_id = str(product.id)
-        if product_id in self.cart:
-            del self.cart[product_id]
+        offer_id = str(offer.id)
+        if offer_id in self.cart:
+            del self.cart[offer_id]
             self.save()
 
     def __iter__(self):
         """
         Перебор элементов в корзине и получение продуктов из базы данных.
         """
-        product_ids = self.cart.keys()
-        products = Offer.objects.filter(id__in=product_ids)
-        for product in products:
-            self.cart[str(product.id)]['product'] = product
+        offer_ids = self.cart.keys()
+        offers = Offer.objects.filter(id__in=offer_ids)
+        for offer in offers:
+            self.cart[str(offer.id)]['product'] = offer
 
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
@@ -76,15 +76,15 @@ class Cart:
         self.session.modified = True
 
     def add_quantity(self, offer):
-        product_id = str(offer.product.id)
+        offer_id = str(offer.id)
         quantity = 1
-        self.cart[product_id]['quantity'] += quantity
+        self.cart[offer_id]['quantity'] += quantity
         self.save()
 
     def remove_quantity(self, offer):
-        product_id = str(offer.product.id)
+        offer_id = str(offer.id)
         quantity = 1
-        self.cart[product_id]['quantity'] -= quantity
-        if self.cart[product_id]['quantity'] == 0:
-            del self.cart[product_id]
+        self.cart[offer_id]['quantity'] -= quantity
+        if self.cart[offer_id]['quantity'] == 0:
+            del self.cart[offer_id]
         self.save()

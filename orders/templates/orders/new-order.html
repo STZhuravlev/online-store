@@ -58,27 +58,71 @@
                                     <div class="form-group">
                                         <form action="." method="post" class="order-form">
                                                 {% for field in form %}
-                                                {% if field.errors %}
-                                                    {{ field.errors }}
+                                                {% if user.is_authenticated and field.name == "password1" or user.is_authenticated and field.name == "password2" %}
+                                                    {{ form.field.as_hidden }}
                                                 {% else %}
-                                                    <br>
-                                                {% endif %}
-                                                <label class="form-label" for="{{ field.name }}">{{field.label_tag}}
-                                                </label>
-                                                <div class="form-input" style="width: 270pt" id="{{ field.name }}" type="text">{{field}}</div>
-                                                {% if field.name == "email" %}
+                                                    {% if field.errors %}
+                                                        {{ field.errors }}
+                                                    {% else %}
+                                                        <br>
+                                                    {% endif %}
+                                                    <label class="form-label" for="{{ field.name }}">{{field.label_tag}}
+                                                    </label>
+                                                    <div class="form-input" style="width: 270pt" id="{{ field.name }}" type="text">{{field}}</div>
+                                                    {% if field.name == "email" %}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row-block">
-                                                    <div class="form-group">
+                                                    <div class="row-block">
+                                                        <div class="form-group">
+                                                    {% endif %}
                                                 {% endif %}
                                                 {% endfor %}
 {#                                            <div class="form-group"><a class="btn btn_muted Order-btnReg" href="{%  url "cart:cart" %}">Я уже зарегистрирован</a>#}
 {#                                            </div>#}
                                             <br>
-                                            <p><input type="submit" value="Submit"></p>
+                                            <p><input type="submit" value="Подтвердить"></p>
                                             {% csrf_token %}
-                                        </form>
+                                            </form>
+                                            {% if not request.user.is_authenticated %}
+                                                <p><input type="submit" data-toggle="modal" data-target="#myModal" value="Авторизироваться" /></p>
+                                                    <div id="myModal" class="modal fade" style="background-color: rgba(120, 120, 120, 0.5)">
+                                                            <div class="wrapper" style="background-color: #f0f0f0; padding: 25px">
+                                                                <div class="header">
+                                                                    <h3 class="sign-in">Вход</h3>
+                                                                </div>
+                                                                <div class="clear"></div>
+                                                                <form method="post">{% csrf_token %}
+                                                                    <div>
+                                                                        <label class="form-label" for="{{ form.username.id_for_username }}">Е-mail</label>
+                                                                        <input type="text" name="email" class="form-control" required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="form-label" for="{{ form.password.id_for_password }}">Пароль</label>
+                                                                        <input type="password" name="password" class="form-control" checked required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <input type="submit" class="btn btn-primary" value="Войти" />
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        <div class="modal" tabindex="-1">
+                                                    </div>
+                                                    </div>
+                                            {% endif %}
+{#                                                <div id="myModal" class="modal fade" style="background-color: rgba(120, 120, 120, 0.5)">#}
+{#                                                    <div class="modal-dialog">#}
+{#                                                        <div class="modal-content">#}
+{#                                                            <div class="modal-header">#}
+{#                                                                <button class="close" data-dismiss="modal">x</button>#}
+{#                                                                <h4 class="modal-title">Заголовок окна</h4>#}
+{#                                                            </div>#}
+{#                                                            <div class="modal-body">Текст</div>#}
+{#                                                            <div class="modal-footer">#}
+{#                                                                <button class="btn btn-danger" data-dismiss="modal">Закрыть</button>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </div>#}
                                     </div>
                                 </div>
                             </div>
@@ -89,232 +133,15 @@
         </div>
     </div>
 </div>
+{#<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>#}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg320mUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-{#                <div class="Section-content">#}
-{#                    <form class="form" action="#" method="post">#}
+{#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"#}
+{#integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">#}
 
-
-
-{#                        <div class="Order-block Order-block_OPEN" id="step1">#}
-{#                            <header class="Section-header Section-header_sm">#}
-{#                                <h2 class="Section-title">Шаг 1. Параметры пользователя#}
-{#                                </h2>#}
-{#                            </header>#}
-{#                            <div class="row">#}
-{#                                <div class="row-block">#}
-{#                                    <div class="form-group">#}
-{#                                        <label class="form-label" for="name">ФИО#}
-{#                                        </label>#}
-{#                                        <input class="form-input" id="name" name="name" type="text" value="Иванов Иван Иванович" />#}
-{#                                    </div>#}
-{#                                    <div class="form-group">#}
-{#                                        <label class="form-label" for="phone">Телефон#}
-{#                                        </label>#}
-{#                                        <input class="form-input" id="phone" name="phone" type="text" value="+70000000000" />#}
-{#                                    </div>#}
-{#                                    <div class="form-group">#}
-{#                                        <label class="form-label" for="mail">E-mail#}
-{#                                        </label>#}
-{#                                        <input class="form-input" id="mail" name="mail" type="text" value="" data-validate="require" />#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="row-block">#}
-{#                                    <div class="form-group">#}
-{#                                        <label class="form-label" for="password">Пароль#}
-{#                                        </label>#}
-{#                                        <input class="form-input" id="password" name="password" type="password" placeholder="Тут можно изменить пароль" />#}
-{#                                    </div>#}
-{#                                    <div class="form-group">#}
-{#                                        <label class="form-label" for="passwordReply">Подтверждение пароля#}
-{#                                        </label>#}
-{#                                        <input class="form-input" id="passwordReply" name="passwordReply" type="password" placeholder="Введите пароль повторно" />#}
-{#                                    </div>#}
-{#                                    <div class="form-group"><a class="btn btn_muted Order-btnReg" href="#">Я уже зарегистрирован</a>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                            <div class="Order-footer"><a class="btn btn_success Order-next" href="#step2">Дальше</a>#}
-{#                            </div>#}
-{#                        </div>#}
-
-
-
-
-{#                        <div class="Order-block" id="step2">#}
-{#                            <header class="Section-header Section-header_sm">#}
-{#                                <h2 class="Section-title">Шаг 2. Способ доставки#}
-{#                                </h2>#}
-{#                            </header>#}
-{#                            <div class="form-group">#}
-{#                                <div>#}
-{#                                    <label class="toggle">#}
-{#                                        <input type="radio" name="delivery" value="ordinary" checked="checked" /><span class="toggle-box"></span><span class="toggle-text">Обычная доставка</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <div>#}
-{#                                    <label class="toggle">#}
-{#                                        <input type="radio" name="delivery" value="express" /><span class="toggle-box"></span><span class="toggle-text">Экспресс доставка</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                            <div class="form-group">#}
-{#                                <label class="form-label" for="city">Город#}
-{#                                </label>#}
-{#                                <input class="form-input" id="city" name="city" type="text" />#}
-{#                            </div>#}
-{#                            <div class="form-group">#}
-{#                                <label class="form-label" for="address">Адрес#}
-{#                                </label>#}
-{#                                <textarea class="form-textarea" name="address" id="address"></textarea>#}
-{#                            </div>#}
-{#                            <div class="Order-footer"><a class="btn btn_success Order-next" href="#step3">Дальше</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="Order-block" id="step3">#}
-{#                            <header class="Section-header Section-header_sm">#}
-{#                                <h2 class="Section-title">Шаг 3. Способ оплаты#}
-{#                                </h2>#}
-{#                            </header>#}
-{#                            <div class="form-group">#}
-{#                                <div>#}
-{#                                    <label class="toggle">#}
-{#                                        <input type="radio" name="pay" value="online" checked="checked" /><span class="toggle-box"></span><span class="toggle-text">Онлайн картой</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <div>#}
-{#                                    <label class="toggle">#}
-{#                                        <input type="radio" name="pay" value="someone" /><span class="toggle-box"></span><span class="toggle-text">Онлайн со случайного чужого счета</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                            <div class="Order-footer"><a class="btn btn_success Order-next" href="#step4">Дальше</a>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                        <div class="Order-block" id="step4">#}
-{#                            <header class="Section-header Section-header_sm">#}
-{#                                <h2 class="Section-title">Шаг 4. Подтверждение заказа#}
-{#                                </h2>#}
-{#                            </header>#}
-{#                            <!--+div.Order.-confirmation-->#}
-{#                            <div class="Order-infoBlock">#}
-{#                                <div class="Order-personal">#}
-{#                                    <div class="row">#}
-{#                                        <div class="row-block">#}
-{#                                            <div class="Order-info">#}
-{#                                                <div class="Order-infoType">ФИО:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">Иванов Иван Иванович#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Order-info">#}
-{#                                                <div class="Order-infoType">Телефон:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">+7000000000#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Order-info">#}
-{#                                                <div class="Order-infoType">E-mail:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">send@test.test#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="row-block">#}
-{#                                            <div class="Order-info Order-info_delivery">#}
-{#                                                <div class="Order-infoType">Тип доставки:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">Обычная доставка#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Order-info">#}
-{#                                                <div class="Order-infoType">Город:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">Москва#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Order-info">#}
-{#                                                <div class="Order-infoType">Адрес:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">Ул. Академика Арцимовича, д. 10, кв. 10#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Order-info Order-info_pay">#}
-{#                                                <div class="Order-infoType">Оплата:#}
-{#                                                </div>#}
-{#                                                <div class="Order-infoContent">Онлайн картой#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="Cart Cart_order">#}
-{#                                    <div class="Cart-product">#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">Ноутбук</a>#}
-{#                                                <div class="Cart-desc">Это супер ноутбук, 3 гб. 4 ядра#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_price">#}
-{#                                                <div class="Cart-price">80.00$#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_amount">1 шт.#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                    <div class="Cart-product">#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src="assets/img/content/sale/product.png" alt="product.png" /></a>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">Планшет</a>#}
-{#                                                <div class="Cart-desc">Это планшет с современным железом. Процессор последнего поколения#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_price">#}
-{#                                                <div class="Cart-price">40.99$#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_amount">1 шт.#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                    <div class="Cart-product">#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="#">Ноутбук</a>#}
-{#                                                <div class="Cart-desc">Это супер ноутбук, 3 гб. 4 ядра#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                            <div class="Cart-block Cart-block_price">#}
-{#                                                <div class="Cart-price">80.00$#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="Cart-block Cart-block_row">#}
-{#                                            <div class="Cart-block Cart-block_amount">1 шт.#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                    <div class="Cart-total">#}
-{#                                        <div class="Cart-block Cart-block_total">#}
-{#                                            <strong class="Cart-title">Итого:#}
-{#                                            </strong><span class="Cart-price">200.99$</span>#}
-{#                                        </div>#}
-{#                                        <div class="Cart-block">#}
-{#                                            <button class="btn btn_primary btn_lg" type="submit">Оплатить#}
-{#                                            </button>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </form>#}
-{#                </div>#}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+crossorigin="anonymous"></script>
 {% endblock %}

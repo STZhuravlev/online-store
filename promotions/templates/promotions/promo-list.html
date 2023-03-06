@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}<title>Megano - Акции</title> {% endblock %}
+{% block title %}<title>Megano - {% trans "Акции" %}</title> {% endblock %}
 
 {% block content %}
     <div class="Middle Middle_top">
@@ -11,9 +11,9 @@
                 <div class="Middle-header">
 
                     <ul class="breadcrumbs Middle-breadcrumbs">
-                        <li class="breadcrumbs-item"><a href="index.html">Главная</a>
+                        <li class="breadcrumbs-item"><a href="index.html">{% trans "Главная" %}</a>
                         </li>
-                        <li class="breadcrumbs-item breadcrumbs-item_current"><span>Акции и скидки</span>
+                        <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Акции и скидки" %}</span>
                         </li>
                     </ul>
                 </div>
@@ -54,7 +54,7 @@
                   </div>
                 </div>
               {% empty %}
-                На данный момент нет действующих акций
+                {% trans "На данный момент нет действующих акций" %}
               {% endfor %}
             </div>
 

@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Истории просмотров</title>
+    <title>{% trans "Истории просмотров" %}</title>
 </head>
 <body>
 
 {% for history in history_list %}
     <div>
-        <p>Наименование товара - {{ history.product }}</p>
-        <p>Описание товара - {{ history.product.description }}</p>
-        <p>Свойства товара - {{ history.product.property }}</p>
-        <p>Категория товара - {{ history.product.category }}</p>
-        <p>Продавец - {{ history.product.seller }}</p>
-        <p>Дата просмотра - {{ history.view_at }}</p>
+        <p>{% trans "Наименование товара" %} - {{ history.product }}</p>
+        <p>{% trans "Описание товара" %} - {{ history.product.description }}</p>
+        <p>{% trans "Свойства товара" %} - {{ history.product.property }}</p>
+        <p>{% trans "Категория товара" %} - {{ history.product.category }}</p>
+        <p>{% trans "Продавец" %} - {{ history.product.seller }}</p>
+        <p>{% trans "Дата просмотра" %} - {{ history.view_at }}</p>
         <hr>
     </div>
 {% endfor %}

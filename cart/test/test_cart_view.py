@@ -15,8 +15,8 @@ class TestCart(TestCase):
         self.client.login(email=self.user.email, password=self.user.password)
 
     def test_cart_get(self):
-        responce = self.client.get('/cart/cart')
-        self.assertEqual(responce.status_code, 200)
+        response = self.client.get('/cart/cart')
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(len(self.session[settings.CART_SESSION_ID]), 0)
 
     def test_cart_add(self):

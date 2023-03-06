@@ -57,19 +57,18 @@
 {#                            </div>#}
                             <div class="ProductCard-footer">
                                 <div class="ProductCard-tags">
-                                    <strong class="ProductCard-tagsTitle">Тэги:
+                                    <strong class="ProductCard-tagsTitle">{% trans "Тэги:" %}
                                     </strong><a href="{% url 'category' %}">{{ product.category.name }}</a> {# </a>,<a href="#">Дизайн</a>,<a href="#">Игры</a> #}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="Tabs Tabs_default">
-                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#sellers"><span>Продавцы</span></a><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>Описание</span></a><a class="Tabs-link" href="#addit"><span>Характеристика</span></a><a class="Tabs-link" href="#reviews"><span>Отзывы (3)</span></a>
+                        <div class="Tabs-links"><a class="Tabs-link_ACTIVE Tabs-link" href="#sellers"><span>{% trans "Продавцы" %}</span></a><a class="Tabs-link_ACTIVE Tabs-link" href="#description"><span>{% trans "Описание" %}</span></a><a class="Tabs-link" href="#addit"><span>{% trans "Характеристика" %}</span></a><a class="Tabs-link" href="#reviews"><span>{% trans "Отзывы" %} (3)</span></a>
                         </div>
                         <div class="Tabs-wrap">
                             <div class="Tabs-block" id="description">
-                                <h2>{{ product.name}} Описание
-
+                                <h2>{{ product.name}} {% trans "Описание" %}
                                 </h2>
                                 <p>{{ product.description }}
 
@@ -115,7 +114,7 @@
                             </div>
                             <div class="Tabs-block" id="reviews">
                                 <header class="Section-header">
-                                    <h3 class="Section-title">1 отзыв
+                                    <h3 class="Section-title">1 {% trans "отзыв" %}
                                     </h3>
                                 </header>
                                 <div class="Comments">
@@ -139,7 +138,7 @@
                                     {% endfor %}
                                 </div>
                                 <header class="Section-header Section-header_product">
-                                    <h3 class="Section-title">Добавить отзыв
+                                    <h3 class="Section-title">{% trans "Добавить отзыв" %}
                                     </h3>
                                 </header>
                                 <div class="Tabs-addComment">
@@ -151,7 +150,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <button class="btn btn_muted" type="submit">Отправить отзыв
+                                            <button class="btn btn_muted" type="submit">{% trans "Отправить отзыв" %}
                                             </button>
                                         </div>
                                     </form>
