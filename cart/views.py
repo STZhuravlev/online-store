@@ -11,11 +11,11 @@ class CartAdd(View):
 
     def post(self, request, id):
         cart = Cart(request)
-        product = get_object_or_404(Offer, id=id)
+        offer = get_object_or_404(Offer, id=id)
         form = CartAddProductForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            cart.add(offer=product,
+            cart.add(offer=offer,
                      quantity=cd['quantity'],
                      update_quantity=cd['update'])
         return redirect('cart:cart')
@@ -25,8 +25,8 @@ class CartRemove(View):
 
     def post(self, request, id):
         cart = Cart(request)
-        product = get_object_or_404(Offer, id=id)
-        cart.remove(product)
+        offer = get_object_or_404(Offer, id=id)
+        cart.remove(offer)
         return redirect('cart:cart')
 
 
@@ -41,16 +41,16 @@ class CartDelete(View):
 class AddQuantity(View):
     def post(self, request, id):
         cart = Cart(request)
-        product = get_object_or_404(Offer, id=id)
-        cart.add_quantity(product)
+        offer = get_object_or_404(Offer, id=id)
+        cart.add_quantity(offer)
         return redirect('cart:cart')
 
 
 class RemoveQuantity(View):
     def post(self, request, id):
         cart = Cart(request)
-        product = get_object_or_404(Offer, id=id)
-        cart.remove_quantity(product)
+        offer = get_object_or_404(Offer, id=id)
+        cart.remove_quantity(offer)
         return redirect('cart:cart')
 
 

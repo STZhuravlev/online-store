@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}<title>Megano - Акции</title> {% endblock %}
+{% block title %}<title>Megano - {% trans "Акции" %}</title> {% endblock %}
 
 {% block content %}
     <div class="Middle Middle_top">
@@ -11,10 +11,10 @@
           <div class="Middle-header">
             <ul class="breadcrumbs Middle-breadcrumbs">
               <li class="breadcrumbs-item">
-                <a href="index.html">Главная</a>
+                <a href="index.html">{% trans "Главная" %}</a>
               </li>
               <li class="breadcrumbs-item breadcrumbs-item_current">
-                <span>Информация об акции</span>
+                <span>{% trans "Информация об акции" %}</span>
               </li>
             </ul>
           </div>
@@ -37,7 +37,7 @@
                   <div class="ProductCard-info">
                     <div class="ProductCard-cost">
                       <div class="ProductCard-price">
-                        <small>Условия акции</small>
+                        <small>{% trans "Условия акции" %}</small>
                       </div>
                     </div>
                   </div>
@@ -53,7 +53,7 @@
       <div class="Section">
         <div class="wrap">
           <div class="Section-content">
-            <h2 class="ProductCard-title">Товары, участвующие в акции</h2>
+            <h2 class="ProductCard-title">{% trans "Товары, участвующие в акции" %}</h2>
             <div class="Cards">
               {% for item in page_obj %}
                 <div class="Card">

@@ -13,11 +13,11 @@
       <div class="Middle-header">
         <ul class="breadcrumbs Middle-breadcrumbs">
           <li class="breadcrumbs-item">
-            <a href="{% url 'main-page' %}">Главная</a>
+            <a href="{% url 'main-page' %}">{% trans "Главная" %}</a>
           </li>
           <li class="breadcrumbs-item breadcrumbs-item_current">
             <span>
-               Каталог товаров
+               {% trans "Каталог товаров" %}
             </span>
           </li>
         </ul>
@@ -30,7 +30,7 @@
       <div class="Section-column">
         <div class="Section-columnSection">
           <header class="Section-header">
-            <strong class="Section-title">Фильтры
+            <strong class="Section-title">{% trans "Фильтры" %}
             </strong>
           </header>
           <div class="Section-columnContent">
@@ -42,7 +42,7 @@
                   <input type="hidden" name="category" value="{{ current_category }}">
                   <input class="range-line" id="price" name="price" type="text"
                          data-type="double" data-min="50" data-max="500000" data-from="0" data-to="250000"/>
-                  <div class="range-price">Цена:&#32;
+                  <div class="range-price">{% trans "Цена:" %}&#32;
                     <div class="rangePrice">
                     </div>
                   </div>
@@ -54,7 +54,7 @@
               </div>
               <div class="form-group">
                 <select class="form-select" name="seller">
-                  <option value="seller" selected="selected" disabled="disabled">Продавец
+                  <option value="seller" selected="selected" disabled="disabled">{% trans "Продавец" %}
                   </option>
                   {% for seller in sellers %}
                     <option value="{{ seller.name }}">{{ seller.name }}
@@ -66,21 +66,21 @@
               <div class="form-group">
                 <label class="toggle">
                   <input type="checkbox" name="stock"/><span class="toggle-box"></span>
-                    <span class="toggle-text">Только товары в наличии</span>
+                    <span class="toggle-text">{% trans "Только товары в наличии" %}</span>
                 </label>
               </div>
               <div class="form-group">
                 <label class="toggle">
                   <input type="checkbox" name="deliv"/>
                   <span class="toggle-box"></span>
-                  <span class="toggle-text">С бесплатной доставкой</span>
+                  <span class="toggle-text">{% trans "С бесплатной доставкой" %}</span>
                 </label>
               </div>
               <div class="form-group">
                 <br>
                 <button class="buttons btn btn_square btn_dark btn_narrow"
                         type="submit">
-                        Применить фильтры
+                        {% trans "Применить фильтры" %}
                 </button>
               </div>
             </form>
@@ -106,7 +106,7 @@
 
       <div class="Section-content">
         <div class="Sort">
-          <div class="Sort-title">Сортировать по:
+          <div class="Sort-title">{% trans "Сортировать по:" %}
           </div>
           <div class="Sort-variants">
             {% if request.GET.sort == 'dpop' %}

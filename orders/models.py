@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from product.models import Offer
 
-STATUS_CHOICES = (
-    ('W', _('ожидание ответа от продавца')),
-    ('A', _('продавец принял заказ')),
-    ('M', _('упаковка на складе')),
-    ('S', _('в пути')),
-    ('F', _('прибыл в пункт выдачи')),
-)
+# STATUS_CHOICES = (
+#     ('W', _('ожидание ответа от продавца')),
+#     ('A', _('продавец принял заказ')),
+#     ('M', _('упаковка на складе')),
+#     ('S', _('в пути')),
+#     ('F', _('прибыл в пункт выдачи')),
+# )
 DELIVERY_CHOICES = (
     ('D', _('доставка')),
     ('A', _('экспресс доставка')),
@@ -34,12 +34,14 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name=_("дата обновления"))
     paid = models.BooleanField(default=False, verbose_name=_("статус оплаты"))
     delivery = models.CharField(max_length=1, choices=DELIVERY_CHOICES, default='D', verbose_name=_('тип доставки'))
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='W', verbose_name=_('статус заказа'))
-    payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'))
+    status = models.CharField(max_length=50, verbose_name=_('статус заказа'), null=True, blank=True)
+    payment = models.CharField(max_length=1, choices=TYPE_CHOICES, default='C', verbose_name=_('тип оплаты'),
+                               null=True, blank=True)
     card_number = models.PositiveIntegerField(validators=[MinValueValidator(10000000), MaxValueValidator(99999999)],
                                               verbose_name=_('номер карты'), null=True)
     status_payment = models.CharField(max_length=50, verbose_name=_('статус платежа'), null=True, blank=True)
     payment_code = models.IntegerField(default=0, verbose_name=_('код оплаты'))
+    total = models.IntegerField(default=0, verbose_name=_('общая стоимость'))
 
     class Meta:
         ordering = ('-created',)

@@ -8,6 +8,7 @@
 # Check out: http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 services:
   - name: redis:latest
+    alias: broker
   - name: postgres:latest
     alias: db
 
@@ -55,7 +56,9 @@ flake8:
 test:
   variables:
     DATABASE_URL: "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@db:5432/$POSTGRES_DB"
+    REDIS_URL: "redis://broker:6379/0"
   script:
     - mkdir -p media/images
     - python manage.py makemigrations
+    - celery -A config worker -l info --detach
     - python manage.py test
