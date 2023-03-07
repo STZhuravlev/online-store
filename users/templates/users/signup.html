@@ -17,6 +17,8 @@
                 <form  method="post" enctype="multipart/form-data">{% csrf_token %}
                     <label class="form-label" for="{{ form.email.id_for_email }}"> E-mail</label>
                     {{ form.email }}
+                    <label class="form-label" for="{{ form.phone.id_for_phone }}"> Номер телефона</label>
+                    {{ form.phone }}
                     <label class="form-label" for="{{ form.password1.id_for_password1 }}">Пароль </label>
                     {{ form.password1 }}
                     <label class="form-label" for="{{ form.password2.id_for_password2 }}">Подтверждение пароля </label>
