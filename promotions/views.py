@@ -7,8 +7,6 @@ from django.conf import settings
 
 class PromoListView(ListView):
     template_name = 'promotions/promo-list.html'
-    # paginate_by = PROMO_PER_PAGE
-    # queryset = get_active_promotions()
     context_object_name = 'promotions'
 
     def get_context_data(self, *, object_list=None, **kwargs):
