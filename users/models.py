@@ -13,11 +13,6 @@ class CustomUser(AbstractUser):
         if filesize > megabyte_limit*1024*1024:
             raise ValidationError(f"Максимальный размер файла не должен превышать {megabyte_limit} МБ")
 
-    STATUS_CHOICE = [
-        ('active', _("Активна")),
-        ('not_active', _("Не активна")),
-        ('pending', _("На рассмотрении")),
-    ]
     username = None
     email = models.EmailField(_('email address'), unique=True)
     avatar = models.ImageField(upload_to="images/avatar", null=True, blank=True, validators=[validate_image],
@@ -26,8 +21,6 @@ class CustomUser(AbstractUser):
     phoneNumberRegex = RegexValidator(regex=r"^\d{10}$", message="Номер должен содержать 10 цифр")
     phone = models.CharField(validators=[phoneNumberRegex], max_length=10, unique=True,
                              blank=True, verbose_name=_('телефон'))
-    seller_status = models.CharField(max_length=10, choices=STATUS_CHOICE,blank=True, null=False, default='b',
-                                     verbose_name=_('Статус продавца'))
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
