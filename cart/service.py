@@ -75,6 +75,9 @@ class Cart:
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
 
+    def get_total_quantity(self):
+      return sum(item['quantity'] for item in self.cart.values())
+
     def add_quantity(self, offer):
         offer_id = str(offer.id)
         quantity = 1
