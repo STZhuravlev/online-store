@@ -1,6 +1,8 @@
 import os.path
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
     TestCase
@@ -134,6 +136,11 @@ class TestUploadFileView(SettingsTest):
 
     """Тестирование ипрот файла"""
 
+    def setUp(self):
+        self.user = get_user_model().objects.first()
+        self.group = Group(name='Продавец')
+        self.group.save()
+
     def test_get_upload_file(self):
 
         url = reverse('upload_file')
@@ -141,7 +148,8 @@ class TestUploadFileView(SettingsTest):
         self.assertEqual(response.status_code, 200)
 
     def test_post_upload_file(self):
-
+        self.user.groups.add(self.group)
+        self.user.save()
         self.client.login(email='test1@test.ru', password='test1234')
         file_json = SimpleUploadedFile(
             name='file_json.json',
@@ -151,6 +159,7 @@ class TestUploadFileView(SettingsTest):
 
         url = reverse('upload_file')
         response_post = self.client.post(url, {'file_json': file_json})
+        print(f'СТАТУС {response_post.status_code}')
         self.assertEqual(response_post.status_code, 302)
         print(f'[TEST][INFO] - response_post status_code {response_post.status_code}')
         print(f'[TEST][INFO] - Product {Product.objects.last()}')

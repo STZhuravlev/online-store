@@ -31,7 +31,6 @@ from product.services import (
     apply_filter_to_catalog,
     apply_sorting_to_catalog,
     get_banners,
-    BannersView,
     ImageView,
     get_favorite_categories,
     get_popular_products,
