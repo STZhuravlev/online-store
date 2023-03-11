@@ -42,7 +42,8 @@ class SiteSettingsView(PermissionRequiredMixin, View):
     def get(self, request):
         site = SiteSettings(request)
         form = SiteSettingsForm()
-        name = ['PROMO_PER_PAGE', 'PROMO_PRODUCTS_PER_PAGE', 'CATALOG_PRODUCT_PER_PAGE', 'CACHE_STORAGE_TIME']
+        name = ['PROMO_PER_PAGE', 'PROMO_PRODUCTS_PER_PAGE', 'CATALOG_PRODUCT_PER_PAGE',
+                'CACHE_STORAGE_TIME', 'DELIVERY_PRICE']
         return render(request, 'shop/site_settings.html', {'site': site, 'form': form, 'name': name})
 
     def post(self, request):
