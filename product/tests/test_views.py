@@ -1,8 +1,7 @@
 import os.path
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
     TestCase
