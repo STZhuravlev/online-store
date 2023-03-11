@@ -1,6 +1,6 @@
 from random import randint
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 import datetime
 from django.shortcuts import render, redirect  # noqa F401
@@ -226,13 +226,15 @@ class ProductCatalogView(generic.ListView):
 #         return context
 
 
-class UploadProductFileView(PermissionRequiredMixin, generic.FormView):
+class UploadProductFileView(UserPassesTestMixin, generic.FormView):
 
     """Добавление продукта, автора и т.п. через файл формата JSON """
 
     template_name = 'product/upload_file.html'
-    permission_required = ('users.seller_rights', )
     form_class = UploadProductFileJsonForm
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Продавец').exists()
 
     def handle_no_permission(self):
         return HttpResponse('Нету доступа')

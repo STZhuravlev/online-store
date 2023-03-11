@@ -30,11 +30,6 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name = _('пользователь')
         verbose_name_plural = _('пользователи')
-        permissions = [
-            ('can make a purchase', 'может совершать покупку'),
-            ('can_settings_site', 'Может настраивать сайт'),
-            ('seller_rights', 'Права продавца'),
-        ]
 
     def __str__(self):
         return self.email

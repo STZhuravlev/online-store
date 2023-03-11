@@ -1,5 +1,4 @@
 from django import forms
-from .models import Seller, SellerLogo
 
 names = (('PROMO_PER_PAGE', 'PROMO_PER_PAGE'), ('PROMO_PRODUCTS_PER_PAGE', 'PROMO_PRODUCTS_PER_PAGE'),
          ('CATALOG_PRODUCT_PER_PAGE', 'CATALOG_PRODUCT_PER_PAGE'), ('CACHE_STORAGE_TIME', 'CACHE_STORAGE_TIME'), )
@@ -8,11 +7,3 @@ names = (('PROMO_PER_PAGE', 'PROMO_PER_PAGE'), ('PROMO_PRODUCTS_PER_PAGE', 'PROM
 class SiteSettingsForm(forms.Form):
     name = forms.ChoiceField(choices=names)
     value = forms.IntegerField(label='Значение')
-
-
-class RegisterSellerForm(forms.ModelForm):
-    """Форма регистрации продавца"""
-
-    class Meta:
-        model = Seller
-        exclude = ['user']
