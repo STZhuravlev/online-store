@@ -14,6 +14,7 @@ from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCre
 from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
+from django.conf import settings
 # from django.contrib.auth import views as aut_view
 # import redis
 # from django.core.cache import cache
@@ -164,10 +165,16 @@ def order_create_payment(request):
     cart = Cart(request)
     total = cart.get_total_price()
     seller = []
+    delivery_price = request.session.get(settings.ADMIN_SETTINGS_ID)
+    if delivery_price is None or delivery_price.get('DELIVERY_PRICE') is None:
+        delivery_prices = settings.DELIVERY_PRICE
+    else:
+        delivery_prices = delivery_price['DELIVERY_PRICE']
     for item in cart:
-        seller.append(Offer.objects.get(id=item).seller)
+        print(item['product'].id)
+        seller.append(Offer.objects.get(id=item['product'].id).seller)
         seller = set(seller)
-    if total < 2000 or len(seller) > 1:
+    if total < delivery_prices or len(seller) > 1:
         total += 200
     if request.method == 'POST':
         form = OrderCardForm(request.POST)
