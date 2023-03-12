@@ -167,7 +167,7 @@ class Feedback(models.Model):
         (5, '5 🌟'),
     ]
 
-    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.PROTECT)
+    offer = models.ForeignKey(Offer, verbose_name=_('товар'), on_delete=models.PROTECT, blank=True, null=True)
     author = models.ForeignKey(get_user_model(), verbose_name=_('автор'), on_delete=models.PROTECT)
     publication_date = models.DateTimeField(auto_now=True, verbose_name=_("дата публикации"))
     rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)], choices=grate_list,
@@ -180,7 +180,7 @@ class Feedback(models.Model):
         verbose_name_plural = _('отзывы')
 
     def __str__(self):
-        return self.product.name
+        return self.offer.product.name
 
 
 class LoggingImportFileModel(models.Model):

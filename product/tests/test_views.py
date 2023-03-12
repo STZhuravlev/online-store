@@ -37,8 +37,8 @@ class SettingsTest(TestCase):
                                        address='test', number=1234567)
         category = Category.objects.create(name='test')
         product = Product.objects.create(name='Утюг', description='классный утюг', category=category)
-        Offer.objects.create(product=product, seller=seller, price=10.10)
-        Feedback.objects.create(product=product, author=user, description='MyFeedbackTest', rating=3)
+        offer = Offer.objects.create(product=product, seller=seller, price=10.10)
+        Feedback.objects.create(offer=offer, author=user, description='MyFeedbackTest', rating=3)
 
 
 # class EntryTest(SettingsTest):
@@ -85,9 +85,9 @@ class FeedbackViewTest(SettingsTest):
     """Тестирование добавления отзыва к товару"""
 
     def setUp(self):
-        self.product = Product.objects.first()
+        self.offer = Offer.objects.first()
         self.user = get_user_model().objects.first()
-        self.url = reverse('offer-detail', args=(self.product.id,))
+        self.url = reverse('offer-detail', args=(self.offer.id,))
 
         self.feedback_image = '_aCwkDco.jpg'
 
@@ -112,7 +112,7 @@ class FeedbackViewTest(SettingsTest):
         self.client.login(email='test1@test.ru', password='test1234')
 
         data = {
-            'product_id': self.product.id,
+            'offer_id': self.offer.id,
             'author_id': self.user.id,
             'description': 'test_description',
             'image': self.feedback_image,

@@ -149,7 +149,7 @@ class HistoryViewAdmin(admin.ModelAdmin):
 
 
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ['product', 'author', 'publication_date', 'rating', 'description', 'image']
+    list_display = ['offer', 'author', 'publication_date', 'rating', 'description', 'image']
 
 
 admin.site.register(Product, ProductAdmin)
