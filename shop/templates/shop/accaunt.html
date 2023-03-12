@@ -46,7 +46,11 @@
           <div class="Account">
             <div class="Account-group">
               <div class="Account-column">
-                <div class="Account-avatar"><img src="{{ MEDIA_URL }}{{ request.user.avatar.url }}" alt="card.jpg"/>
+                <div class="Account-avatar"><img src="{% if request.user.avatar %}
+                    {{ MEDIA_URL }}{{ request.user.avatar.url }}
+                    {% else %}
+                        <p>Нету фото</p>
+                    {% endif %}" alt="card.jpg"/>
                 </div>
               </div>
               <div class="Account-column">

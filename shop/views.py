@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 # from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
+
 from product.models import HistoryView
 from users.forms import CustomUserChangeForm
 from users.models import CustomUser
@@ -13,7 +14,7 @@ from orders.models import OrderItem
 from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 class SellerInfo(DetailView):
@@ -36,8 +37,10 @@ class SellerInfo(DetailView):
         return context
 
 
-class SiteSettingsView(PermissionRequiredMixin, View):
-    permission_required = 'users.can_settings_site'
+class SiteSettingsView(UserPassesTestMixin, View):
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Администратор').exists()
 
     def get(self, request):
         site = SiteSettings(request)

@@ -53,7 +53,12 @@
                     <label class="form-label" for="avatar">Аватар
                     </label>
                     <div class="Profile-avatar">
-                      <label class="Profile-fileLabel" for="avatar"><div class="Profile-img"><img src="{{ MEDIA_URL }}{{ request.user.avatar.url }}" alt="аватарка"/>
+                      <label class="Profile-fileLabel" for="avatar"><div class="Profile-img"><img src="
+                        {% if request.user.avatar %}
+                            {{ MEDIA_URL }}{{ request.user.avatar.url }}
+                        {% else %}
+                            <p>Нету фото</p>
+                        {% endif %}" alt="аватарка"/>
                       </div>
                       </label>
                       <input class="Profile-file form-input" id="avatar" name="avatar" type="file" data-validate="onlyImgAvatar"/>

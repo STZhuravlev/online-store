@@ -1,4 +1,7 @@
 from random import randint
+
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
 import datetime
 from django.shortcuts import render, redirect  # noqa F401
 from django.views import generic
@@ -52,17 +55,17 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
-        context['drawing'] = ImageView.get_image(product_id=self.object.id)
+        context['drawing'] = ImageView.get_image(product_id=self.kwargs['pk'])
         context['property'] = Product.objects.\
             prefetch_related(
             Prefetch('property', queryset=ProductProperty.objects.select_related(
-                'product', 'property').filter(product=self.object.id)))
-        context['feedback'] = Feedback.objects.all().filter(product=self.object.id)
+                'product', 'property').filter(product=self.kwargs['pk'])))
+        context['feedback'] = Feedback.objects.all().filter(product=self.kwargs['pk'])
         context['feedback_form'] = FeedbackForm()
-        histiry_view_list = HistoryView.objects.filter(product=self.object)
+        histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
         context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
         if histiry_view_list:
-            history_old = HistoryView.objects.get(product=self.object)
+            history_old = HistoryView.objects.get(product=Product.objects.get(id=self.kwargs['pk']))
             history_old.save(update_fields=['view_at'])
         else:
             history_new = HistoryView(product=self.object, user=self.request.user)
@@ -75,11 +78,7 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             form.instance.image = self.request.FILES['image']
         form.instance.author = self.request.user
         form.instance.product_id = self.kwargs['pk']
-        form.save()
         return super().form_valid(form)
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class CategoryView(generic.ListView):
@@ -227,12 +226,18 @@ class ProductCatalogView(generic.ListView):
 #         return context
 
 
-class UploadProductFileView(generic.FormView):
+class UploadProductFileView(UserPassesTestMixin, generic.FormView):
 
     """Добавление продукта, автора и т.п. через файл формата JSON """
 
     template_name = 'product/upload_file.html'
     form_class = UploadProductFileJsonForm
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Продавец').exists()
+
+    def handle_no_permission(self):
+        return HttpResponse('Нету доступа')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
