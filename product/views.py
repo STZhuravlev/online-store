@@ -133,6 +133,7 @@ class HistoryViewsView(generic.ListView):
         context = super().get_context_data(**kwargs)
         history_list = HistoryView.objects.all()[:5]
         context['history_list'] = history_list
+        context['categories'] = get_category()
         return context
 
 
