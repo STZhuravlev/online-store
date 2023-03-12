@@ -60,8 +60,6 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             prefetch_related(
             Prefetch('property', queryset=ProductProperty.objects.select_related(
                 'product', 'property').filter(product=self.kwargs['pk'])))
-        context['feedback'] = Feedback.objects.all().filter(product=self.kwargs['pk'])
-        context['feedback_form'] = FeedbackForm()
         histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
         context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
         if histiry_view_list:
@@ -71,14 +69,6 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             history_new = HistoryView(product=self.object, user=self.request.user)
             history_new.save()
         return context
-
-    def form_valid(self, form, **kwargs):
-        form.save(commit=False)
-        if self.request.FILES:
-            form.instance.image = self.request.FILES['image']
-        form.instance.author = self.request.user
-        form.instance.product_id = self.kwargs['pk']
-        return super().form_valid(form)
 
 
 class CategoryView(generic.ListView):
@@ -105,14 +95,14 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
     context_object_name = 'offer'
 
     def get_success_url(self):
-        return reverse('offer-detail', kwargs={'pk': self.object.product.pk})
+        return reverse('offer-detail', kwargs={'pk': self.kwargs['pk']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['offers'] = Offer.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['offers'] = Offer.objects.filter(id=self.kwargs['pk'])
         context['categories'] = get_category()
         context['product_image'] = ProductImage.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
-        context['feedback'] = Feedback.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['feedback'] = Feedback.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
         return context
 
     def form_valid(self, form, **kwargs):
@@ -120,7 +110,7 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         if self.request.FILES:
             form.instance.image = self.request.FILES['image']
         form.instance.author = self.request.user
-        form.instance.product_id = self.kwargs['pk']
+        form.instance.offer_id = self.kwargs['pk']
         return super().form_valid(form)
 
 
@@ -237,7 +227,7 @@ class UploadProductFileView(UserPassesTestMixin, generic.FormView):
         return self.request.user.groups.filter(name='Продавец').exists()
 
     def handle_no_permission(self):
-        return HttpResponse('Нету доступа')
+        return HttpResponse('Нет доступа')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
