@@ -44,15 +44,15 @@
               </div>
               <div class="Cart-block Cart-block_amount" >
                 <div class="Cart-amount">
-                  <div class="Amount" >
-                    <button class=""  formaction="{% url 'cart:remove-quantity' id=product.id %}" type="submit">{% csrf_token %}
+                  <div class="Cart-block_amount" >
+                    <button class="Cart-btn custom_button "  formaction="{% url 'cart:remove-quantity' id=product.id %}" type="submit">{% csrf_token %}-
                     </button>
                  {{ item.quantity }}
 {#                      <input class="Amount-input form-input" name="amount" type="number" value="1"/>#}
 
 {#                      {%  include 'cart/add_quantity.html' with id=product.id %}#}
 
-                    <button class="" formaction="{% url 'cart:add-quantity' id=product.id %}" type="submit">{% csrf_token %}
+                    <button class="Cart-btn  custom_button" formaction="{% url 'cart:add-quantity' id=product.id %}" type="submit">{% csrf_token %}+
                     </button>
                   </div>
                 </div>
@@ -70,7 +70,7 @@
               <strong class="Cart-title">{% trans "Итого:" %}
               </strong><span class="Cart-price">{{ cart.get_total_price }}</span>
             </div>
-            <div class="Cart-block"><a class="btn btn_success btn_lg" href="order.html">{% trans "Оформить заказ" %}</a>
+            <div class="Cart-block"><a class="btn btn_success btn_lg" href="{% url 'order_create' %}">{% trans "Оформить заказ" %}</a>
             </div>
           </div>
         </form>

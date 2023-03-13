@@ -64,7 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -95,7 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'cart.contex_processor.Cart'
+                'cart.contex_processor.cart',
             ],
         },
     },
@@ -202,3 +202,5 @@ CATALOG_PRODUCT_PER_PAGE = 6
 CACHE_STORAGE_TIME = 60 * 60 * 24
 
 ADMIN_SETTINGS_ID = 'admin_settings'
+
+DELIVERY_PRICE = 2000
