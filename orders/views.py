@@ -15,6 +15,7 @@ from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
 from django.conf import settings
+from random import randint
 # from django.contrib.auth import views as aut_view
 # import redis
 # from django.core.cache import cache
@@ -44,6 +45,7 @@ class HistoryOrderDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
+        context['offers'] = OrderItem.objects.filter(order=kwargs['object'])
         return context
 
 
@@ -165,17 +167,21 @@ def order_create_payment(request):
     cart = Cart(request)
     total = cart.get_total_price()
     seller = []
-    delivery_price = request.session.get(settings.ADMIN_SETTINGS_ID)
-    if delivery_price is None or delivery_price.get('DELIVERY_PRICE') is None:
-        delivery_prices = settings.DELIVERY_PRICE
+    elem = request.session.get(settings.ADMIN_SETTINGS_ID)
+    if elem is None or elem.get('DELIVERY_PRICE') is None:
+        delivery_price = settings.DELIVERY_PRICE
     else:
-        delivery_prices = delivery_price['DELIVERY_PRICE']
+        delivery_price = elem['DELIVERY_PRICE']
+    if elem is None or elem.get('DELIVERY_STOCK') is None:
+        delivery_stock = settings.DELIVERY_STOCK
+    else:
+        delivery_stock = elem['DELIVERY_STOCK']
     for item in cart:
         print(item['product'].id)
         seller.append(Offer.objects.get(id=item['product'].id).seller)
         seller = set(seller)
-    if total < delivery_prices or len(seller) > 1:
-        total += 200
+    if total < delivery_price or len(seller) > 1:
+        total += delivery_stock
     if request.method == 'POST':
         form = OrderCardForm(request.POST)
         if form.is_valid():
@@ -191,7 +197,7 @@ def order_create_payment(request):
                                          total=total)
             for item in cart.cart:
                 OrderItem.objects.create(order=order,
-                                         product=item,
+                                         offer=Offer.objects.get(id=int(item)),
                                          price=float(cart.cart[item]['price']),
                                          quantity=cart.cart[item]['quantity'],
                                          )
@@ -200,7 +206,13 @@ def order_create_payment(request):
             tasks.payment.delay(order.pk)
             return redirect('wait-payment', pk=order.pk)
     else:
-        form = OrderCardForm()
+        if cache.get('payment') == 'F':
+            form = OrderCardForm({'card_number': randint(10000000, 99999999)})
+            return render(request, 'orders/order.html',
+                          {'form': form, 'categories': get_category(), 'rand': True})
+        else:
+            form = OrderCardForm()
+
     return render(request, 'orders/order.html',
                   {'form': form, 'categories': get_category()})
 

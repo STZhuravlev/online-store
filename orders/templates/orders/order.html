@@ -46,8 +46,11 @@
                                                 {% for field in form %}
                                                 <label class="form-label" for="{{ field.name }}">{{field.label_tag}}
                                                 </label>
-                                                <div class="form-input" style="width: 270pt" id="{{ field.name }}" type="text">{{field}}</div>
+                                                <div class="form-input" style="width: 270pt" id="{{ field.name }}" type="text">{{ field }}</div>
                                                 {% endfor %}
+                                                {% if rand %}
+                                                <input type="button" onclick="location.reload (); return false" value={% trans "Сгенерировать" %} >
+                                                {% endif %}
                                             <br>
                                             <input type="submit" value="Submit">
                                             {% csrf_token %}

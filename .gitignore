@@ -144,3 +144,6 @@ dmypy.json
 # static and media files
 staticfiles/
 mediafiles/
+
+# cache
+cache_files/*

@@ -4,11 +4,11 @@
 {% load mptt_tags %}
 
 {% block content %}
-<h2>Добавление продукта через файл JSON</h2>
+<h2>{% trans "Добавление продукта через файл" %} JSON</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Добавить файл</button>
+    <button type="submit">{% trans "Добавить файл" %}</button>
 </form>
     <h1></h1>
     <h1></h1>

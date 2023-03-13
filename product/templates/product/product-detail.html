@@ -88,7 +88,7 @@
                                 </h2>
                                 {% for offers in offer_seller %}
                                     <ul>
-                                    <tr>Продавец: {{ offers.seller }} Цена: {{ offers.price }}<a href="{% url 'offer-detail' offers.id %}"> <button class="btn btn_primary"type="button"><span class="btn-content"> Перейти в магазин</span></button> </a>  </tr>
+                                    <tr>{% trans "Продавец" %}: {{ offers.seller }} {% trans "Цена" %}: {{ offers.price }}<a href="{% url 'offer-detail' offers.id %}"> <button class="btn btn_primary"type="button"><span class="btn-content"> {% trans "Перейти к товару" %}</span></button> </a> <a href="{% url 'seller-info' offers.seller.id %}"> <button class="btn btn_primary"type="button"><span class="btn-content"> {% trans "Перейти к продавцу" %}</span></button> </a> </tr>
                                     </ul>
 
                                  {% endfor %}

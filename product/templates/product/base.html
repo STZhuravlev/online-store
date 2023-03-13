@@ -61,22 +61,13 @@
             <nav class="row-block">
               <div class="row ControlPanel-rowSplit">
                 <div class="row-block">
-                  <a class="ControlPanel-title" href="{% url 'login' %}">{% trans "Вход" %}</a>
-                  <a class="ControlPanel-title" href="{% url 'signup' %}">{% trans "Регистрация" %}</a>
-                  <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-                    <input name="next" type="hidden" value="{{ redirect_to }}">
-                    <select name="language">
-                        {% get_current_language as LANGUAGE_CODE %}
-                        {% get_available_languages as LANGUAGES %}
-                        {% get_language_info_list for LANGUAGES as languages %}
-                        {% for language in languages %}
-                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                                {{ language.name_local }} ({{ language.code }})
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" value="Go">
-                  </form>
+                    {% if user.is_authenticated %}
+                      <a class="ControlPanel-title" href="{% url 'accaunt' %}">{% trans "Личный кабинет" %}</a>
+                      <a class="ControlPanel-title" href="{% url 'logout' %}">{% trans "Выйти" %}</a>
+                    {% else %}
+                      <a class="ControlPanel-title" href="{% url 'login' %}">{% trans "Вход" %}</a>
+                      <a class="ControlPanel-title" href="{% url 'signup' %}">{% trans "Регистрация" %}</a>
+                    {% endif %}
                 </div>
               </div>
             </nav>
@@ -182,7 +173,7 @@
                   <input class="search-input" id="id_name" name="title" type="text" placeholder="Ищем" />
                   <button class="search-button" type="submit" id="search">
                     <img src="{%  static "assets/img/icons/search.svg" %}" alt="search.svg" />
-                    Поиск
+                    {% trans "Поиск" %}
                   </button>
                 </form>
               </div>
@@ -221,6 +212,20 @@
               </li>
             </ul>
           </div>
+            <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <select name="language">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Go">
+              </form>
           <div class="row-block">
             <strong class="Footer-title">{% trans "Контакты" %}</strong>
             <p>{% trans "Номер:" %} 8.800.200.600<br>{% trans "Почта:" %} xxx@meg.com<br></p>

@@ -101,8 +101,13 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context = super().get_context_data(**kwargs)
         context['offers'] = Offer.objects.filter(id=self.kwargs['pk'])
         context['categories'] = get_category()
-        context['product_image'] = ProductImage.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['product_image'] = ProductImage.objects.filter(
+            product=Offer.objects.get(id=self.kwargs['pk']).product
+        ).first()
         context['feedback'] = Feedback.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
+        context['all_property'] = ProductProperty.objects.filter(
+            product=Offer.objects.get(id=self.kwargs['pk']).product
+        )
         return context
 
     def form_valid(self, form, **kwargs):

@@ -8,12 +8,12 @@
     <div class="Middle-top">
       <div class="wrap">
         <div class="Middle-header">
-          <h1 class="Middle-title">Профиль
+          <h1 class="Middle-title">{% trans "Профиль" %}
           </h1>
           <ul class="breadcrumbs Middle-breadcrumbs">
-            <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">home</a>
+            <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">{% trans "домой" %}</a>
             </li>
-            <li class="breadcrumbs-item breadcrumbs-item_current"><span>Профиль</span>
+            <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "Профиль" %}</span>
             </li>
           </ul>
         </div>
@@ -24,19 +24,19 @@
         <div class="Section-column">
           <div class="Section-columnSection">
             <header class="Section-header">
-              <strong class="Section-title">Навигация
+              <strong class="Section-title">{% trans "Навигация" %}
               </strong>
             </header>
             <div class="Section-columnContent">
               <div class="NavigateProfile">
                 <ul class="menu menu_vt">
-                  <li class="menu-item"><a class="menu-link" href="{% url 'accaunt' %}">Личный кабинет</a>
+                  <li class="menu-item"><a class="menu-link" href="{% url 'accaunt' %}">{% trans "Личный кабинет" %}</a>
                   </li>
-                  <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="{% url 'accaunt_edit' %}">Профиль</a>
+                  <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="{% url 'accaunt_edit' %}">{% trans "Профиль" %}</a>
                   </li>
-                  <li class="menu-item"><a class="menu-link" href="historyorder.html">История заказов</a>
+                  <li class="menu-item"><a class="menu-link" href="{% url 'history' %}">{% trans "История заказов" %}</a>
                   </li>
-                  <li class="menu-item"><a class="menu-link" href="{% url 'history_view' %}">История просмотра</a>
+                  <li class="menu-item"><a class="menu-link" href="{% url 'history_view' %}">{% trans "История просмотра" %}</a>
                   </li>
                 </ul>
               </div>
@@ -50,7 +50,7 @@
               <div class="row">
                 <div class="row-block">
                   <div class="form-group">
-                    <label class="form-label" for="avatar">Аватар
+                    <label class="form-label" for="avatar">{% trans "Аватар" %}
                     </label>
                     <div class="Profile-avatar">
                       <label class="Profile-fileLabel" for="avatar"><div class="Profile-img"><img src="
@@ -82,7 +82,7 @@
                 </div>
                 <div class="row-block">
                   <div class="form-group">
-                    <label class="form-label" for="phone">Телефон
+                    <label class="form-label" for="phone">{% trans "Телефон" %}
                     </label>
 
                      {{ accaunt_form.phone }}
@@ -93,7 +93,7 @@
                       {% endif %}
                   </div>
                   <div class="form-group">
-                    <label class="form-label" for="{{ form.email.id_for_email }}">E-mail
+                    <label class="form-label" for="{{ form.email.id_for_email }}">{% trans "Почта" %}
                     </label>
                     {{ accaunt_form.email }}
                       {% if accaunt_form.email.errors %}
@@ -103,21 +103,21 @@
                       {% endif %}
                   </div>
                   <div class="form-group">
-                    <label class="form-label" for="password">Пароль
+                    <label class="form-label" for="password">{% trans "Пароль" %}
                     </label>
 {#                      {{ password_change_form.new_password1 }}#}
                     <input class="form-input" id="password" name="password" type="password" placeholder="Тут можно изменить пароль"/>
                   </div>
                   <div class="form-group">
 
-                    <label class="form-label" for="passwordReply">Подтверждение пароля
+                    <label class="form-label" for="passwordReply">{% trans "Подтверждение пароля" %}
                     </label>
 {#                       {{ password_change_form.new_password2 }}#}
                     <input class="form-input" id="passwordReply" name="passwordReply" type="password" placeholder="Введите пароль повторно"/>
                   </div>
                   <div class="form-group">
                     <div class="Profile-btn">
-                      <button class="btn btn_success" type="submit">Сохранить
+                      <button class="btn btn_success" type="submit">{% trans "Сохранить" %}
                       </button>
                     </div>
                       {% if messages %}
