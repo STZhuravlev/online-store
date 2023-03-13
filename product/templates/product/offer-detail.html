@@ -228,7 +228,7 @@
                             </header>
                             <div class="Comment-content">{{ feedback.description }}
                                 <br>{% if feedback.image %}
-                                    <img src="/media/{{ feedback.image }}" width="300" height="400">
+                                        <img src="/media/{{ feedback.image }}" width="300" height="400">
                                 {% endif %}
                             </div>
                         </div>
@@ -240,9 +240,8 @@
                     </h3>
                 </header>
                 <div class="Tabs-addComment">
-                    <form class="form"  method="post">
-
-                        <div class="form-group">
+                    <form class="form" method="post" enctype=multipart/form-data>
+                        <div class="form-group" >
                             {% csrf_token %}
                             {{ form.as_p }}
 {#                                            <textarea class="form-textarea" name="review" id="review" placeholder="Отзыв"></textarea>#}

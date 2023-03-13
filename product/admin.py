@@ -123,8 +123,9 @@ class ProductImageAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(ProductImageAdmin, self).get_form(request, obj, **kwargs)
-        product = ProductImage.objects.filter(product__seller__user=request.user)
-        form.base_fields['product'].queryset = product
+        if not request.user.is_superuser:
+            product = Product.objects.filter(seller__user=request.user)
+            form.base_fields['product'].queryset = product
         return form
 
     def get_queryset(self, request):
