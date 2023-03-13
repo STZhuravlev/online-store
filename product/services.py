@@ -124,9 +124,9 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     elif sort_by == 'dprice':
         queryset = queryset.annotate(avg_price=Avg('offers__price')).order_by('-avg_price')
     elif sort_by == 'arate':
-        queryset = queryset.annotate(rating=Avg('feedback__rating', default=0)).order_by('rating')
+        queryset = queryset.annotate(rating=Avg('offers__feedback__rating', default=0)).order_by('rating')
     elif sort_by == 'drate':
-        queryset = queryset.annotate(rating=Avg('feedback__rating', default=0)).order_by('-rating')
+        queryset = queryset.annotate(rating=Avg('offers__feedback__rating', default=0)).order_by('-rating')
     elif sort_by == 'anew':
         queryset = queryset.annotate(date=Max('offers__added_at')).order_by('date')
     elif sort_by == 'dnew':
