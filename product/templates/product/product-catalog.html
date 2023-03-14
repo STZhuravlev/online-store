@@ -148,7 +148,7 @@
           {% for item in catalog %}
             <div class="Card">
               <a class="Card-picture" href="{% url 'product-detail' item.id %}">
-                <img src="/media/{{ item.images__image }}" alt="card.jpg"/>
+                <img src="/media/{{ item.images.first.image }}" alt="card.jpg"/>
               </a>
               <div class="Card-content">
                 <strong class="Card-title">
@@ -162,7 +162,7 @@
                     <span class="Card-price">{{ item.avg_price|floatformat:2 }} ₽</span>
                   </div>
                   <div class="Card-category">
-                      {{ item.category__name }}
+                      {{ item.category.name }}
                   </div>
                   <div class="Card-hover">
 {#                    <a class="Card-btn" href="#">#}

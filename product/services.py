@@ -104,9 +104,6 @@ def apply_filter_to_catalog(request: HttpRequest, queryset: QuerySet) -> QuerySe
     if stock == 'on':
         queryset = queryset.filter(offers__is_present=True)
 
-    # queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
-    #     annotate(avg_price=Avg('offers__price'))
-
     return queryset
 
 
@@ -136,8 +133,9 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     elif sort_by == 'dpop':
         queryset = queryset.annotate(count=Count('offers__order_items__offer')).order_by('-count')
 
-    queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
-        annotate(avg_price=Avg('offers__price'))
+    # queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
+    #     annotate(avg_price=Avg('offers__price'))
+    queryset = queryset.annotate(avg_price=Avg('offers__price'))
 
     return queryset
 
@@ -254,8 +252,11 @@ def get_popular_products(qty: int = 8, cache_key: str = None,
     if cache_key is None:
         cache_key = "popular-products"
 
-    queryset = Product.objects.select_related('category').prefetch_related('seller'). \
-        values('id', 'name', 'images__image', 'category__name'). \
+    # queryset = Product.objects.select_related('category').prefetch_related('seller'). \
+    #     values('id', 'name', 'images__image', 'category__name'). \
+    #     annotate(count=Count('offers__order_items__offer')).\
+    #     annotate(avg_price=Avg('offers__price')).order_by('-count')[:qty]
+    queryset = Product.objects.select_related('category').prefetch_related('seller').\
         annotate(count=Count('offers__order_items__offer')).\
         annotate(avg_price=Avg('offers__price')).order_by('-count')[:qty]
 
