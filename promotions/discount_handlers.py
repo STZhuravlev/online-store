@@ -2,7 +2,7 @@
 from decimal import Decimal
 from promotions.models import Promo
 from product.models import Offer
-from cart.service import Cart
+# from cart.service import Cart
 
 
 def discount_on_product(product_info: dict, promo: Promo) -> Decimal:
@@ -74,38 +74,6 @@ def discount_on_amount(product_info: dict, promo: Promo) -> Decimal:
         return price * qty * promo.discount / 100
     elif promo.fix_discount != 0:
         return promo.fix_discount
-
-
-def is_full_cart_discount(cart: Cart, promo: Promo) -> bool:
-    """
-    Проверяет, может ли быть применена к товарам в корзине,
-    скидка на всю корзину.
-    :param cart: Корзина со списком товаров в ней.
-    :param promo: Информация об акции.
-    :return:
-    """
-    if promo.amount == 0 and promo.quantity == 0:
-        return False
-
-    # общая сумма товаров в корзине
-    total_price = sum(
-        [product['quantity'] * Decimal(product['price'])
-         for product in cart.cart]
-    )
-    # необходимо купить N наименований товара на заданную сумму
-    if promo.amount != 0 and promo.quantity != 0:
-        if len(cart.cart) >= promo.quantity and total_price >= promo.amount:
-            return True
-    # необходимо купить товаров на заданную сумму
-    elif promo.amount != 0:
-        if total_price >= promo.amount:
-            return True
-    # необходимо купить N наименований товара не зависимо от суммы
-    elif promo.quantity != 0:
-        if len(cart.cart) >= promo.quantity:
-            return True
-
-    return False
 
 
 def discount_on_cart(product_info: dict, promo: Promo) -> Decimal:
