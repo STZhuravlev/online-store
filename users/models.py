@@ -20,10 +20,10 @@ class CustomUser(AbstractUser):
     name = models.CharField(max_length=100, null=True, blank=False, verbose_name=_('имя пользователя'))
     phoneNumberRegex = RegexValidator(regex=r"^\d{10}$", message="Номер должен содержать 10 цифр")
     phone = models.CharField(validators=[phoneNumberRegex], max_length=10, unique=True,
-                             blank=True, verbose_name=_('телефон'))
+                             verbose_name=_('телефон'))
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['phone']
 
     objects = CustomUserManager()
 
