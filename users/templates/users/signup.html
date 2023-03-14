@@ -15,17 +15,30 @@
                 </div>
                 <div class="clear"></div>
                 <form  method="post" enctype="multipart/form-data">{% csrf_token %}
-                    <label class="form-label" for="{{ form.email.id_for_email }}"> E-mail</label>
-                    {{ form.email }}
-                    <label class="form-label" for="{{ form.password1.id_for_password1 }}">Пароль </label>
-                    {{ form.password1 }}
-                    <label class="form-label" for="{{ form.password2.id_for_password2 }}">Подтверждение пароля </label>
-                    {{ form.password2 }}
+                        {% for field in form %}
+                {{ field.label_tag }}{{ field }}
+                            {% if field.errors %}
+                            {% for error in field.errors %}
+                                <span class="form-error">{{ error }}<p></p></span>
+                                {% endfor %}
+{#                    <label class="form-label" for="{{ form.email.id_for_email }}"> E-mail</label>#}
+{#                    {{ form.email }}{{ error }}#}
+{#                    <label class="form-label" for="{{ form.phone.id_for_phone }}"> Номер телефона</label>#}
+{#                    {{ form.phone }}{{ error }}#}
+{#                    <label class="form-label" for="{{ form.password1.id_for_password1 }}">Пароль </label>#}
+{#                    {{ form.password1 }}{{ error }}#}
+{#                    <label class="form-label" for="{{ form.password2.id_for_password2 }}">Подтверждение пароля </label>#}
+{#                    {{ form.password2 }}{{ error }}#}
+                            {% endif %}
+                                {% endfor %}
                     <input  type="submit" value="Зарегистрироваться">
                     <a class="registr" href="{% url 'login' %}">
                         Вход
                     </a>
                     <div class="clear"></div>
+                     {% for error in form.error %}
+
+                        {% endfor %}
                 </form>
             </div>
 
