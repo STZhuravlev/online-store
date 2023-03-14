@@ -121,9 +121,9 @@ class MainPageViewTest(TestCase):
         self.assertTrue("popular" in response.context)
         popular = response.context['popular']
         # список отсортирован по кол-ву продаж
-        self.assertEqual(popular[0]['name'], 'product 2')
-        self.assertEqual(popular[1]['name'], 'product 1')
-        self.assertEqual(popular[2]['name'], 'product 3')
+        self.assertEqual(popular[0].name, 'product 2')
+        self.assertEqual(popular[1].name, 'product 1')
+        self.assertEqual(popular[2].name, 'product 3')
 
     def test_get_day_offer(self):
         """Тест на получения товара дня."""
