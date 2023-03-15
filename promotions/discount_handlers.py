@@ -14,9 +14,9 @@ def discount_on_product(product_info: dict, promo: Promo) -> Decimal:
     """
     price = Decimal(product_info['price'])
     if promo.discount != 0:
-        return price * promo.discount / 100
+        return price * product_info['quantity'] * promo.discount / 100
     elif promo.fix_discount != 0:
-        return promo.fix_discount
+        return promo.fix_discount * product_info['quantity']
 
     return Decimal(0)
 
@@ -66,14 +66,14 @@ def discount_on_amount(product_info: dict, promo: Promo) -> Decimal:
     :return: Величина скидки на товар по данной акции.
     """
     qty = product_info['quantity']
-    if promo.quantity == 0 or qty <= promo.quantity:
-        return Decimal(0)
 
     price = Decimal(product_info['price'])
-    if promo.discount != 0:
+    if promo.discount != 0 and qty >= promo.quantity:
         return price * qty * promo.discount / 100
-    elif promo.fix_discount != 0:
+    elif promo.fix_discount != 0 and qty >= promo.quantity:
         return promo.fix_discount
+
+    return Decimal(0)
 
 
 def discount_on_cart(product_info: dict, promo: Promo) -> Decimal:
@@ -85,9 +85,7 @@ def discount_on_cart(product_info: dict, promo: Promo) -> Decimal:
     """
     price = Decimal(product_info['price'])
     if promo.discount != 0:
-        return price * promo.discount
-    elif promo.fix_discount != 0:
-        return promo.fix_discount
+        return price * product_info['quantity'] * promo.discount / 100
 
     return Decimal(0)
 

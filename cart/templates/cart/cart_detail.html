@@ -72,7 +72,7 @@
               <strong class="Cart-title">{% trans "Скидка:" %}
               </strong><span class="Cart-price">{{ cart.due }}</span>
               <strong class="Cart-title">{% trans "К оплате:" %}
-              </strong><span class="Cart-price">{{ cart.get_total_price }} - {{ cart.due }}</span>
+              </strong><span class="Cart-price">{{ cart.total }}</span>
             </div>
             <div class="Cart-block"><a class="btn btn_success btn_lg" href="{% url 'order_create' %}">{% trans "Оформить заказ" %}</a>
             </div>

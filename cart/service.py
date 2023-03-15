@@ -5,8 +5,7 @@ from django.shortcuts import get_object_or_404
 from product.models import Offer
 from decimal import Decimal
 from promotions.discount_handlers import DISCOUNT_HANDLERS
-from promotions.discount import promos_for_product
-from promotions.models import Promo
+from promotions.discount import promos_for_product, is_full_cart_discount
 
 
 class Cart:
@@ -109,6 +108,9 @@ class Cart:
         # return self.get_total_price() - total_discount
         return total_discount
 
+    def total(self):
+        return self.get_total_price() - self.due()
+
     def _get_best_discount(self, offer_id: str) -> Decimal:
         """
             Вычисляет приоритетную скидку.
@@ -136,7 +138,7 @@ class Cart:
 
         # Получаем список акций для этого продукта
         promo_list = promos_for_product(product_id)
-        print(f"Список акций для товара {product_id}:", promo_list)
+        # print(f"Список акций для товара {product_id}:", promo_list)
 
         # для каждой акции вычисляем скидку
         for promo in promo_list:
@@ -148,45 +150,16 @@ class Cart:
             discount = Decimal(0)
             if promo_code in DISCOUNT_HANDLERS:
                 handler = DISCOUNT_HANDLERS[promo_code]
-                if promo_code in (1, 3, 4):
+                if promo_code == 5:
+                    qty = len(self.cart)
+                    total_price = self.get_total_price()
+                    if is_full_cart_discount(qty=qty, total_price=total_price, promo=promo):
+                        discount = handler(self.cart[offer_id], promo)
+                elif promo_code in (1, 3, 4):
                     discount = handler(self.cart[offer_id], promo)
-                elif promo_code in (2, 5):
-                    discount = Decimal(0)
             result.append(discount)
 
-            price = float(self.cart[offer_id]['price'])
-            print(f"Акция: {promo}, товар {offer}, цена {price}, скидка {discount}")
+            # price = float(self.cart[offer_id]['price'])
+            # print(f"Акция: {promo}, товар {offer}, цена {price}, скидка {discount}")
 
         return result
-
-
-def is_full_cart_discount(cart: Cart, promo: Promo) -> bool:
-    """
-    Проверяет, может ли быть применена к товарам в корзине,
-    скидка на всю корзину.
-    :param cart: Корзина со списком товаров в ней.
-    :param promo: Информация об акции.
-    :return:
-    """
-    if promo.amount == 0 and promo.quantity == 0:
-        return False
-
-    # общая сумма товаров в корзине
-    total_price = sum(
-        [product['quantity'] * Decimal(product['price'])
-         for product in cart.cart]
-    )
-    # необходимо купить N наименований товара на заданную сумму
-    if promo.amount != 0 and promo.quantity != 0:
-        if len(cart.cart) >= promo.quantity and total_price >= promo.amount:
-            return True
-    # необходимо купить товаров на заданную сумму
-    elif promo.amount != 0:
-        if total_price >= promo.amount:
-            return True
-    # необходимо купить N наименований товара не зависимо от суммы
-    elif promo.quantity != 0:
-        if len(cart.cart) >= promo.quantity:
-            return True
-
-    return False
