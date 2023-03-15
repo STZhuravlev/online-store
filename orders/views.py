@@ -108,6 +108,7 @@ def order_create(request):
                                           {'form': form, 'categories': get_category()})
                         user = get_user_model().objects.create_user(first_name=form.cleaned_data.get('first_name'),
                                                                     last_name=form.cleaned_data.get('last_name'),
+                                                                    phone=form.cleaned_data.get('number'),
                                                                     email=form.cleaned_data.get('email'),
                                                                     password=form.cleaned_data.get('password1'))
                         user.save()
