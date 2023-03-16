@@ -5,7 +5,6 @@ from .service import Cart
 from .forms import CartAddProductForm
 from django.conf import settings
 from product.services import get_category
-from promotions.discount import promos_for_product
 
 
 class CartAdd(View):
@@ -59,15 +58,7 @@ class CartView(View):
 
     def get(self, request):
         cart = Cart(request)
-        # for item in cart.cart:
-        #     print('item_id', item)
-        #     id = int(item)
-        #     offer = get_object_or_404(Offer, id=id)
-        #     print('offer', offer)
-        #     print('product_id', offer.product.id)
-        #     promos_for_product(offer.product.id)
 
-        # get_discount_for_all_products(cart)
         categories = get_category()
         context = {
             'cart': cart,

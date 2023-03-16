@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.db.models import Avg, Count, Max
 from django.test import TestCase, tag, override_settings
 from django.urls import reverse
@@ -114,23 +112,25 @@ class ProductCatalogViewTest(TestCase):
     def test_get_products_for_child_category(self):
         """Тест, что выводятся все товары для заданной категории.
         Отображается заданное кол-во товаров."""
-        response = self.client.get(self.url + '?category=3')
+        category = Category.objects.get(name='SSD')
+        response = self.client.get(self.url + f'?category={category.id}')
         self.assertEqual(response.status_code, 200)
 
         # в контекст передается id категории
         self.assertTrue('current_category' in response.context)
         current_category = response.context['current_category']
-        self.assertEqual(current_category, '3')
+        self.assertEqual(current_category, str(category.id))
 
         # передаются продукты
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
-        products_in_category = Product.objects.filter(category_id=3)
+        products_in_category = Product.objects.filter(category_id=category.id)
         self.assertEqual(list(catalog), list(products_in_category))
 
     def test_calculate_avg_price(self):
         """Тест, что указывается средняя по всем продавцам цена товара."""
-        response = self.client.get(self.url + '?category=3')
+        category = Category.objects.get(name='SSD')
+        response = self.client.get(self.url + f'?category={category.id}')
         self.assertEqual(response.status_code, 200)
 
         # переданные продукты
@@ -147,14 +147,14 @@ class ProductCatalogViewTest(TestCase):
     def test_get_products_for_parent_category(self):
         """Тест, что выводятся все товары для заданной родительской категории.
         Отображается заданное кол-во товаров."""
-        response = self.client.get(self.url + '?category=2')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}')
         self.assertEqual(response.status_code, 200)
 
         # переданные товары
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         # товары в БД
-        category = Category.objects.get(name='Components')
         queryset = Product.objects. \
             select_related('category'). \
             prefetch_related('seller'). \
@@ -163,7 +163,8 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_price(self):
         """Тест фильтрации по цене."""
-        response = self.client.get(self.url + '?category=2&price=1000;1110')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&price=1000;1110')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -175,7 +176,8 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_title_with_results(self):
         """Тест фильтрации по названию, совпадения найдены."""
-        response = self.client.get(self.url + '?category=2&title=Product')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&title=Product')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -187,7 +189,8 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_title_without_results(self):
         """Тест фильтрации по названию, совпадения не найдены."""
-        response = self.client.get(self.url + '?category=2&title=MSI')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&title=MSI')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -196,7 +199,8 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_seller_with_results(self):
         """Тест фильтрации по продавцу, совпадения найдены."""
-        response = self.client.get(self.url + '?category=2&seller=Shop2')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&seller=Shop2')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -206,18 +210,20 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_seller_without_results(self):
         """Тест фильтрации по продавцу, совпадения не найдены."""
-        response = self.client.get(self.url + '?category=4&seller=Shop2')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&seller=Shop2')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category').\
-            prefetch_related('seller').filter(seller__name='Shop2', category=4)
+            prefetch_related('seller').filter(seller__name='Shop2', category=category.id)
         self.assertEqual(list(catalog), list(queryset))
 
     def test_filter_by_in_stock(self):
         """Тест фильтрации по наличию в магазине."""
-        response = self.client.get(self.url + '?category=2&stock=on')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&stock=on')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -228,7 +234,8 @@ class ProductCatalogViewTest(TestCase):
 
     def test_filter_by_free_delivery(self):
         """Тест фильтрации по наличию бесплатной доставки."""
-        response = self.client.get(self.url + '?category=2&deliv=on')
+        category = Category.objects.get(name='Components')
+        response = self.client.get(self.url + f'?category={category.id}&deliv=on')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
@@ -239,91 +246,103 @@ class ProductCatalogViewTest(TestCase):
 
     def test_sorting_by_price_desc(self):
         """Тест сортировке по цене по убыванию."""
-        response = self.client.get(self.url + '?category=4&sort=dprice')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=dprice')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(avg_price=Avg('offers__price')).order_by('-avg_price')
+            filter(category_id=category.id).annotate(avg_price=Avg('offers__price')).order_by('-avg_price')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_price_asc(self):
         """Тест сортировке по цене по возрастанию."""
-        response = self.client.get(self.url + '?category=4&sort=aprice')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=aprice')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(avg_price=Avg('offers__price')).order_by('avg_price')
+            filter(category_id=category.id).annotate(avg_price=Avg('offers__price')).order_by('avg_price')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_popularity_desc(self):
         """Тест сортировке по популярности по убыванию."""
-        response = self.client.get(self.url + '?category=4&sort=dpop')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=dpop')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(count=Count('offers__order_items__offer')).order_by('-count')
+            filter(category_id=category.id).annotate(count=Count('offers__order_items__offer')).\
+            order_by('-count')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_popularity_asc(self):
         """Тест сортировке по популярности по возрастанию."""
-        response = self.client.get(self.url + '?category=4&sort=apop')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=apop')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(count=Count('offers__order_items__offer')).order_by('count')
+            filter(category_id=category.id).annotate(count=Count('offers__order_items__offer')).\
+            order_by('count')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_novelty_desc(self):
         """Тест сортировке по новизне по убыванию."""
-        response = self.client.get(self.url + '?category=4&sort=dnew')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=dnew')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(date=Max('offers__added_at')).order_by('-date')
+            filter(category_id=category.id).annotate(date=Max('offers__added_at')).\
+            order_by('-date')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_novelty_asc(self):
         """Тест сортировке по новизне по убыванию."""
-        response = self.client.get(self.url + '?category=4&sort=anew')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=anew')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(date=Max('offers__added_at')).order_by('date')
+            filter(category_id=category.id).annotate(date=Max('offers__added_at')).\
+            order_by('date')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_rating_desc(self):
         """Тест сортировке по рейтингу по убыванию."""
-        response = self.client.get(self.url + '?category=4&sort=drate')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=drate')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(rating=Avg('offers__feedback__rating', default=0)).\
+            filter(category_id=category.id).annotate(rating=Avg('offers__feedback__rating', default=0)).\
             order_by('-rating')
         self.assertEqual(list(catalog), list(queryset))
 
     def test_sorting_by_rating_asc(self):
         """Тест сортировке по рейтингу по возрастанию."""
-        response = self.client.get(self.url + '?category=4&sort=arate')
+        category = Category.objects.get(name='Processors')
+        response = self.client.get(self.url + f'?category={category.id}&sort=arate')
         self.assertEqual(response.status_code, 200)
 
         self.assertTrue('catalog' in response.context)
         catalog = response.context['catalog']
         queryset = Product.objects.select_related('category'). \
-            filter(category_id=4).annotate(rating=Avg('offers__feedback__rating', default=0)).\
+            filter(category_id=category.id).annotate(rating=Avg('offers__feedback__rating', default=0)).\
             order_by('rating')
         self.assertEqual(list(catalog), list(queryset))
 
