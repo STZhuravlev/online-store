@@ -49,36 +49,76 @@ class HistoryOrderDetailView(generic.DetailView):
         return context
 
 
-def modal(request):
-    user = authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
-    if user is not None:
-        login(request, user)
-        if request.user.first_name:
-            first_name = request.user.first_name
-        else:
-            first_name = None
-        if request.user.last_name:
-            last_name = request.user.last_name
-        else:
-            last_name = None
-        data = {'first_name': first_name,
-                'last_name': last_name,
-                'email': request.user.email,
-                }
-        form = OrderUserCreateForm(data)
-        return render(request, 'orders/new-order.html', {'form': form, 'categories': get_category()})
+def order_valid_post_check(request, form):
+    if not request.user.is_anonymous:
+        cache.set('first_name', form.cleaned_data.get('first_name'))
+        cache.set('last_name', form.cleaned_data.get('last_name'))
+        cache.set('email', request.user.email)
+        cache.set('number', form.cleaned_data.get('number'))
     else:
-        form = OrderUserCreateForm()
-        return render(request, 'orders/new-order.html', {'form': form, 'categories': get_category()})
+        # Если пользователь не авторизован, но существует
+        if CustomUser.objects.filter(email=form.cleaned_data['email']).exists():
+            form._errors["email"] = ErrorList([_(u"Пользователь уже существует")])
+            # Выводить форму входа
+            return render(request, 'orders/new-order.html',
+                          {'form': form, 'categories': get_category()})
+        # Если пользователь не авторизован и не существует
+        else:
+            if form.cleaned_data.get('password1') == form.cleaned_data.get('password2'):
+                if form.cleaned_data.get('password1') == '':
+                    form._errors["email"] = ErrorList(
+                        [_(u"Данный пользователь не зарегистрирован, Введите пароль")]
+                    )
+                    return render(request, 'orders/new-order.html',
+                                  {'form': form, 'categories': get_category()})
+                if len(form.cleaned_data.get('password1')) < 8:
+                    form._errors["password1"] = ErrorList(
+                        [_(u"Пароль должен быть длиннее 8 символов")]
+                    )
+                    return render(request, 'orders/new-order.html',
+                                  {'form': form, 'categories': get_category()})
+                user = get_user_model().objects.create_user(phone=form.cleaned_data.get('number'),
+                                                            email=form.cleaned_data.get('email'),
+                                                            password=form.cleaned_data.get('password1'))
+                user.save()
+                user = authenticate(email=form.cleaned_data.get('email'),
+                                    password=form.cleaned_data.get('password1'))
+                login(request, user)
+                cache.set('first_name', form.cleaned_data.get('first_name'))
+                cache.set('last_name', form.cleaned_data.get('last_name'))
+                cache.set('email', request.user.email)
+                cache.set('number', form.cleaned_data.get('number'))
+            else:
+                form._errors["password1"] = ErrorList([_(u"Пароли не совпадают")])
+                return render(request, 'orders/new-order.html',
+                              {'form': form, 'categories': get_category()})
+    return redirect('order_create_delivery')
 
 
-def order_create(request):
+def order_password(request, form):
+    if form.cleaned_data.get('password1') == '':
+        form._errors["email"] = ErrorList(
+            [_(u"Данный пользователь не зарегистрирован, Введите пароль")]
+        )
+        return render(request, 'orders/new-order.html',
+                      {'form': form, 'categories': get_category()})
+    if len(form.cleaned_data.get('password1')) < 8:
+        form._errors["password1"] = ErrorList(
+            [_(u"Пароль должен быть длиннее 8 символов")]
+        )
+        return render(request, 'orders/new-order.html',
+                      {'form': form, 'categories': get_category()})
+
+
+def order_create(request): # noqa: max-complexity: 13
     if request.method == 'POST':
         if 'password' in request.POST:
-            modal(request)
+            user = authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
+            if user is not None:
+                login(request, user)
+                return redirect('order_create')
         form = OrderUserCreateForm(request.POST)
         if form.is_valid():
-            # if request.user.is_authenticated:
             if not request.user.is_anonymous:
                 cache.set('first_name', form.cleaned_data.get('first_name'))
                 cache.set('last_name', form.cleaned_data.get('last_name'))
@@ -106,9 +146,7 @@ def order_create(request):
                             )
                             return render(request, 'orders/new-order.html',
                                           {'form': form, 'categories': get_category()})
-                        user = get_user_model().objects.create_user(first_name=form.cleaned_data.get('first_name'),
-                                                                    last_name=form.cleaned_data.get('last_name'),
-                                                                    phone=form.cleaned_data.get('number'),
+                        user = get_user_model().objects.create_user(phone=form.cleaned_data.get('number'),
                                                                     email=form.cleaned_data.get('email'),
                                                                     password=form.cleaned_data.get('password1'))
                         user.save()
@@ -126,11 +164,12 @@ def order_create(request):
             return redirect('order_create_delivery')
     else:
         if request.user.is_authenticated:
-            data = {'first_name': request.user.first_name,
-                    'last_name': request.user.last_name,
+            data = {'number': request.user.phone,
                     'email': request.user.email,
                     }
             form = OrderUserCreateForm(data)
+            if request.user.phone:
+                form.fields['number'].widget.attrs['readonly'] = True
             form.fields['email'].widget.attrs['readonly'] = True
         else:
             form = OrderUserCreateForm
