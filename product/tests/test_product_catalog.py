@@ -1,13 +1,15 @@
 from decimal import Decimal
 
-from django.db.models import Avg
+from django.db.models import Avg, Count, Max
 from django.test import TestCase, tag, override_settings
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from product.models import Category, Product, Offer
+from product.models import Category, Product, Offer, Feedback
 from shop.models import Seller
+from orders.models import Order, OrderItem
+from .test_main_page import create_orders
 
 
 @tag("catalog")
@@ -31,6 +33,12 @@ class ProductCatalogViewTest(TestCase):
 
         # --- предложения
         create_offers()
+
+        # --- заказанные товары
+        create_ordered_items()
+
+        # --- отзывы к товарам
+        set__feedback()
 
     def test_url_exists_at_correct_location(self):
         """Тест на доступность страницы по url"""
@@ -229,8 +237,99 @@ class ProductCatalogViewTest(TestCase):
             prefetch_related('seller').filter(offers__is_free_delivery=True)
         self.assertEqual(list(catalog), list(queryset))
 
+    def test_sorting_by_price_desc(self):
+        """Тест сортировке по цене по убыванию."""
+        response = self.client.get(self.url + '?category=4&sort=dprice')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(avg_price=Avg('offers__price')).order_by('-avg_price')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_price_asc(self):
+        """Тест сортировке по цене по возрастанию."""
+        response = self.client.get(self.url + '?category=4&sort=aprice')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(avg_price=Avg('offers__price')).order_by('avg_price')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_popularity_desc(self):
+        """Тест сортировке по популярности по убыванию."""
+        response = self.client.get(self.url + '?category=4&sort=dpop')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(count=Count('offers__order_items__offer')).order_by('-count')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_popularity_asc(self):
+        """Тест сортировке по популярности по возрастанию."""
+        response = self.client.get(self.url + '?category=4&sort=apop')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(count=Count('offers__order_items__offer')).order_by('count')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_novelty_desc(self):
+        """Тест сортировке по новизне по убыванию."""
+        response = self.client.get(self.url + '?category=4&sort=dnew')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(date=Max('offers__added_at')).order_by('-date')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_novelty_asc(self):
+        """Тест сортировке по новизне по убыванию."""
+        response = self.client.get(self.url + '?category=4&sort=anew')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(date=Max('offers__added_at')).order_by('date')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_rating_desc(self):
+        """Тест сортировке по рейтингу по убыванию."""
+        response = self.client.get(self.url + '?category=4&sort=drate')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(rating=Avg('offers__feedback__rating', default=0)).\
+            order_by('-rating')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_sorting_by_rating_asc(self):
+        """Тест сортировке по рейтингу по возрастанию."""
+        response = self.client.get(self.url + '?category=4&sort=arate')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category'). \
+            filter(category_id=4).annotate(rating=Avg('offers__feedback__rating', default=0)).\
+            order_by('rating')
+        self.assertEqual(list(catalog), list(queryset))
+
 
 # ====== Методы для формирования таблиц БД
+
 
 def create_category():
     """Создаются категории: 3 родительских, 2 дочерних, 4 активных, 1 родительская неактивная"""
@@ -308,3 +407,115 @@ def create_offers():
               in enumerate(products)]
 
     Offer.objects.bulk_create(offers)
+
+
+def set__feedback():
+    """Добавляет отзывы."""
+    # Рейтинг: Product 5 = 5, Product 4 = 4.5, Product 6 = 4
+    # пользователи
+    user_1 = get_user_model().objects.first()
+    user_2 = get_user_model().objects.last()
+
+    # товары
+    offers = Offer.objects.filter(product__category__name='Processors')
+    product_1 = offers[0]
+    product_2 = offers[1]
+    product_3 = offers[2]
+
+    # отзывы
+    feedbacks = [
+        Feedback(
+            author=user_1,
+            offer=product_1,
+            rating=5,
+            description='test'
+        ),
+        Feedback(
+            author=user_1,
+            offer=product_2,
+            rating=5,
+            description='test'
+        ),
+        Feedback(
+            author=user_1,
+            offer=product_3,
+            rating=5,
+            description='test'
+        ),
+        Feedback(
+            author=user_2,
+            offer=product_1,
+            rating=4,
+            description='test'
+        ),
+        Feedback(
+            author=user_2,
+            offer=product_2,
+            rating=5,
+            description='test'
+        ),
+        Feedback(
+            author=user_2,
+            offer=product_3,
+            rating=3,
+            description='test'
+        ),
+    ]
+
+    Feedback.objects.bulk_create(feedbacks)
+
+
+def create_ordered_items():
+    # Создаем 3 заказа.
+    # Повторяемость в заказах: Product 5, Product 4, Product 6
+    create_orders()
+    """Созадет товары в заказах."""
+    offers = Offer.objects.filter(product__category__name='Processors')
+    product_1 = offers[0]
+    product_2 = offers[1]
+    product_3 = offers[2]
+
+    orders = Order.objects.all()
+    order_1 = orders[0]
+    order_2 = orders[1]
+    order_3 = orders[2]
+
+    ordered_items = [
+        OrderItem(
+            order=order_1,
+            offer=product_1,
+            price=1000.00,
+            quantity=1
+        ),
+        OrderItem(
+            order=order_1,
+            offer=product_2,
+            price=2000.00,
+            quantity=1
+        ),
+        OrderItem(
+            order=order_1,
+            offer=product_3,
+            price=3000.00,
+            quantity=1
+        ),
+        OrderItem(
+            order=order_2,
+            offer=product_1,
+            price=1100.00,
+            quantity=1
+        ),
+        OrderItem(
+            order=order_2,
+            offer=product_2,
+            price=2100.00,
+            quantity=1
+        ),
+        OrderItem(
+            order=order_3,
+            offer=product_2,
+            price=2200.00,
+            quantity=1
+        ),
+    ]
+    OrderItem.objects.bulk_create(ordered_items)
