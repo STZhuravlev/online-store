@@ -103,7 +103,7 @@ class ProductCatalogViewTest(TestCase):
         number_elements = Product.objects.all().count() - settings.CATALOG_PRODUCT_PER_PAGE
         self.assertEqual(len(catalog), number_elements)
 
-    def test_get_products_for_category(self):
+    def test_get_products_for_child_category(self):
         """Тест, что выводятся все товары для заданной категории.
         Отображается заданное кол-во товаров."""
         response = self.client.get(self.url + '?category=3')
@@ -136,8 +136,101 @@ class ProductCatalogViewTest(TestCase):
                 avg = Offer.objects.filter(product_id=product.id).aggregate(avg_price=Avg('price'))
                 self.assertEqual(price, avg['avg_price'])
 
+    def test_get_products_for_parent_category(self):
+        """Тест, что выводятся все товары для заданной родительской категории.
+        Отображается заданное кол-во товаров."""
+        response = self.client.get(self.url + '?category=2')
+        self.assertEqual(response.status_code, 200)
 
-# Методы для формирования таблиц БД
+        # переданные товары
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        # товары в БД
+        category = Category.objects.get(name='Components')
+        queryset = Product.objects. \
+            select_related('category'). \
+            prefetch_related('seller'). \
+            filter(category__tree_id=category.tree_id).all()
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_filter_by_price(self):
+        """Тест фильтрации по цене."""
+        response = self.client.get(self.url + '?category=2&price=1000;1110')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        prices = [item.avg_price for item in catalog]
+        min_price, max_price = min(prices), max(prices)
+        self.assertTrue(min_price >= 1000)
+        self.assertTrue(max_price <= 1110)
+
+    def test_filter_by_title_with_results(self):
+        """Тест фильтрации по названию, совпадения найдены."""
+        response = self.client.get(self.url + '?category=2&title=Product')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        names = [item.name for item in catalog]
+        for i, name in enumerate(names):
+            with self.subTest(i=i):
+                self.assertIn('Product'.lower(), name)
+
+    def test_filter_by_title_without_results(self):
+        """Тест фильтрации по названию, совпадения не найдены."""
+        response = self.client.get(self.url + '?category=2&title=MSI')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        self.assertEqual(list(catalog), [])
+
+    def test_filter_by_seller_with_results(self):
+        """Тест фильтрации по продавцу, совпадения найдены."""
+        response = self.client.get(self.url + '?category=2&seller=Shop2')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.prefetch_related('seller').filter(seller__name='Shop2')
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_filter_by_seller_without_results(self):
+        """Тест фильтрации по продавцу, совпадения не найдены."""
+        response = self.client.get(self.url + '?category=4&seller=Shop2')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category').\
+            prefetch_related('seller').filter(seller__name='Shop2', category=4)
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_filter_by_in_stock(self):
+        """Тест фильтрации по наличию в магазине."""
+        response = self.client.get(self.url + '?category=2&stock=on')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category').\
+            prefetch_related('seller').filter(offers__is_present=True)
+        self.assertEqual(list(catalog), list(queryset))
+
+    def test_filter_by_free_delivery(self):
+        """Тест фильтрации по наличию бесплатной доставки."""
+        response = self.client.get(self.url + '?category=2&deliv=on')
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('catalog' in response.context)
+        catalog = response.context['catalog']
+        queryset = Product.objects.select_related('category').\
+            prefetch_related('seller').filter(offers__is_free_delivery=True)
+        self.assertEqual(list(catalog), list(queryset))
+
+
+# ====== Методы для формирования таблиц БД
 
 def create_category():
     """Создаются категории: 3 родительских, 2 дочерних, 4 активных, 1 родительская неактивная"""
@@ -197,7 +290,9 @@ def create_offers():
     products = Product.objects.all()
     offers = [Offer(product=product,
                     seller=seller,
-                    price=1000+i*10)
+                    price=1000+i*10,
+                    is_present=False,
+                    is_free_delivery=False)
               for i, product
               in enumerate(products)]
 
