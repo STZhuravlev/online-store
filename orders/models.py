@@ -42,6 +42,7 @@ class Order(models.Model):
     status_payment = models.CharField(max_length=50, verbose_name=_('статус платежа'), null=True, blank=True)
     payment_code = models.IntegerField(default=0, verbose_name=_('код оплаты'))
     total = models.IntegerField(default=0, verbose_name=_('общая стоимость'))
+    comment = models.CharField(max_length=500, blank=True, null=True, verbose_name=_("адрес"))
 
     class Meta:
         ordering = ('-created',)

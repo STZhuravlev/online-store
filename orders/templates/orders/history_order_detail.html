@@ -32,6 +32,18 @@
                                                 </div>
                                             </div>
                                             <div class="Order-info Order-info_delivery">
+                                                <div class="Order-infoType">{% trans "Имя:" %}
+                                                </div>
+                                                <div class="Order-infoContent">{{ order.first_name }}
+                                                </div>
+                                            </div>
+                                            <div class="Order-info Order-info_delivery">
+                                                <div class="Order-infoType">{% trans "Фамилия:" %}
+                                                </div>
+                                                <div class="Order-infoContent">{{ order.last_name }}
+                                                </div>
+                                            </div>
+                                            <div class="Order-info Order-info_delivery">
                                                 <div class="Order-infoType">{% trans "Город:" %}
                                                 </div>
                                                 <div class="Order-infoContent">{{ order.city }}
@@ -54,12 +66,6 @@
                                                     {% endif %}
                                                 </div>
                                             </div>
-                                            <div class="Order-info">
-                                                <div class="Order-infoType">{% trans "Общая стоимость:" %}
-                                                </div>
-                                                <div class="Order-infoContent"><span class="Order-price">{{ order.total }}$</span>
-                                                </div>
-                                            </div>
                                             <div class="Order-info Order-info_delivery">
                                                 <div class="Order-infoType">{% trans "Тип оплаты" %}
                                                 </div>
@@ -71,24 +77,32 @@
                                                     {% endif %}
                                                 </div>
                                             </div>
+                                            <div class="Order-info Order-info_delivery">
+                                                <div class="Order-infoType">{% trans "Статус заказа" %}
+                                                </div>
+                                                <div class="Order-infoContent">
+                                                    {{ order.status }}
+                                                </div>
+                                            </div>
                                             {% if order.status == 'Оплата прошла успешно' %}
                                             <div class="Order-info Order-info">
                                                 <div class="Order-infoType">{% trans "Оплата прошла:" %}
                                                 </div>
-                                                <div class="Order-infoContent">{{ order.status }}
+                                                <div class="Order-infoContent">{{ order.status_payment }}
                                                 </div>
                                             </div>
                                             {% else %}
                                             <div class="Order-info Order-info_error">
                                                 <div class="Order-infoType">{% trans "Оплата не прошла:" %}
                                                 </div>
-                                                <div class="Order-infoContent">{{ order.status }}
+                                                <div class="Order-infoContent">{{ order.status_payment }}
                                                 </div>
                                             </div>
                                             {% endif %}
                                         </div>
                                 </div>
                             </div>
+                            <h3>{% trans "Товары в заказе" %}</h3>
                             <div class="Cart Cart_order">
                                 {% for offer in offers %}
                                     <div class="Cart-product">

@@ -23,9 +23,10 @@
                                 </li>
                                 <li class="menu-item">{% trans "Шаг 3. Способ оплаты" %}
                                 </li>
-                                <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="#step4">{% trans "Шаг 4. Подтверждение заказа" %}</a>
+                                <li class="menu-item">{% trans "Шаг 4. Подтверждение заказа" %}
                                 </li>
-
+                                <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="#step1">{% trans "Шаг 5. Оплата" %}</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -52,15 +53,6 @@
                                                 <input type="button" onclick="location.reload (); return false" value={% trans "Сгенерировать" %} >
                                                 {% endif %}
                                             <br>
-                                        <h1>{% trans "Информация о заказе" %}</h1>
-                                        <h4>{% trans "Имя" %}: {{ data.first_name }}</h4>
-                                        <p>{% trans "Фамилия" %}: {{ data.last_name }}</p>
-                                        <p>{% trans "Почта" %}: {{ data.email }}</p>
-                                        <p>{% trans "Номер телефона" %}: {{ data.number }}</p>
-                                        <p>{% trans "Тип доставки" %}: {{ data.delivery }}</p>
-                                        <p>{% for i in cart %}
-                                            {{ i }}
-                                        {% endfor %}
                                             <input type="submit" value={% trans "Подтвердить" %}>
                                             {% csrf_token %}
                                         </form>

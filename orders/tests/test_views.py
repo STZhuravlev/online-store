@@ -56,6 +56,12 @@ class HistoryTest(TestCase):
         response = self.client.post(url, data=data, follow=True)
         self.assertEqual(response.status_code, 200)
 
+    def test_order_comment(self):
+        url = reverse('order_create_comment')
+        data = {'comment': 'test'}
+        response = self.client.post(url, data=data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
     def test_order_create_payment(self):
         offer = Offer.objects.get(price=10.10)
         url = reverse('order_create_payment')

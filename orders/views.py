@@ -1,5 +1,3 @@
-import copy
-
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.shortcuts import get_object_or_404
@@ -11,7 +9,13 @@ from product.models import Offer
 from .models import OrderItem, Order
 from users.models import CustomUser
 from product.services import get_category
-from .forms import OrderUserCreateForm, OrderPaymentCreateForm, OrderDeliveryCreateForm, OrderCardForm
+from .forms import (
+    OrderUserCreateForm,
+    OrderPaymentCreateForm,
+    OrderDeliveryCreateForm,
+    OrderCardForm,
+    OrderCommentForm,
+)
 from cart.service import Cart
 from . import tasks
 from django.core.cache import cache
@@ -136,7 +140,7 @@ def order_type_payment(request):
         form = OrderPaymentCreateForm(request.POST)
         if form.is_valid():
             cache.set('payment', form.cleaned_data.get('payment'))
-            return redirect('order_create_payment')
+            return redirect('order_create_comment')
     else:
         form = OrderPaymentCreateForm
     return render(request, 'orders/order-payment.html',
@@ -149,7 +153,7 @@ def delivery_const(elem, elem_value, setting_value):
     return elem[elem_value]
 
 
-def order_create_payment(request):
+def order_create_comment(request):
     cart = Cart(request)
     total = cart.get_total_price()
     seller = []
@@ -157,19 +161,34 @@ def order_create_payment(request):
     delivery_price = delivery_const(elem, 'DELIVERY_PRICE', settings.DELIVERY_PRICE)
     delivery_stock = delivery_const(elem, 'DELIVERY_STOCK', settings.DELIVERY_STOCK)
     delivery_express = delivery_const(elem, 'DELIVERY_EXPRESS', settings.DELIVERY_EXPRESS)
-    data = {'first_name': cache.get('first_name'), 'last_name': cache.get('last_name'), 'email': cache.get('email'),
-            'number': cache.get('number'), 'delivery': cache.get('delivery'), 'city': cache.get('city'),
-            'address': cache.get('address'), 'payment': cache.get('payment'), 'total': total,
-            }
     if cache.get('delivery') == 'A':
         total += delivery_express
     else:
         for item in cart:
-            print(item['product'].id)
             seller.append(Offer.objects.get(id=item['product'].id).seller)
             seller = set(seller)
         if total < delivery_price or len(seller) > 1:
             total += delivery_stock
+    status = 'Ожидание ответа от продавца'
+    cache.set('total', total)
+    cache.set('status', status)
+    data = {'first_name': cache.get('first_name'), 'last_name': cache.get('last_name'), 'email': cache.get('email'),
+            'number': cache.get('number'), 'delivery': cache.get('delivery'), 'city': cache.get('city'),
+            'address': cache.get('address'), 'payment': cache.get('payment'), 'total': total, 'status': status
+            }
+    if request.method == 'POST':
+        form = OrderCommentForm(request.POST)
+        if form.is_valid():
+            cache.set('comment', form.cleaned_data.get('comment'))
+            return redirect('order_create_payment')
+    else:
+        form = OrderCommentForm
+    return render(request, 'orders/order-comment.html',
+                  {'form': form, 'categories': get_category(), 'data': data})
+
+
+def order_create_payment(request):
+    cart = Cart(request)
     if request.method == 'POST':
         form = OrderCardForm(request.POST)
         if form.is_valid():
@@ -178,11 +197,12 @@ def order_create_payment(request):
                                          email=cache.get('email'),
                                          number=cache.get('number'),
                                          delivery=cache.get('delivery'),
+                                         status=cache.get('status'),
                                          city=cache.get('city'),
                                          address=cache.get('address'),
                                          payment=cache.get('payment'),
                                          card_number=form.cleaned_data.get('card_number'),
-                                         total=total)
+                                         total=cache.get('total'))
             for item in cart.cart:
                 OrderItem.objects.create(order=order,
                                          offer=Offer.objects.get(id=int(item)),
@@ -197,12 +217,12 @@ def order_create_payment(request):
         if cache.get('payment') == 'F':
             form = OrderCardForm({'card_number': randint(10000000, 99999999)})
             return render(request, 'orders/order.html',
-                          {'form': form, 'categories': get_category(), 'rand': True, 'data': data})
+                          {'form': form, 'categories': get_category(), 'rand': True})
         else:
             form = OrderCardForm()
 
     return render(request, 'orders/order.html',
-                  {'form': form, 'categories': get_category(), 'data': data})
+                  {'form': form, 'categories': get_category()})
 
 
 def wait_payment(request, pk):

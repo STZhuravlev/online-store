@@ -30,3 +30,7 @@ class OrderPaymentCreateForm(forms.Form):
 
 class OrderCardForm(forms.Form):
     card_number = forms.CharField(min_length=8, max_length=9, required=True, label='Номер карты',)
+
+
+class OrderCommentForm(forms.Form):
+    comment = forms.CharField(max_length=500, widget=forms.Textarea, required=True, label='Комментарий к заказу',)
