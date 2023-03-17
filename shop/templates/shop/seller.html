@@ -10,9 +10,9 @@
               <h1 class="Middle-title">{{ seller.name }}
               </h1>
               <ul class="breadcrumbs Middle-breadcrumbs">
-                <li class="breadcrumbs-item"><a href="index.html">home</a>
+                <li class="breadcrumbs-item"><a href="{% url 'main-page' %}">{% trans "домой" %}</a>
                 </li>
-                <li class="breadcrumbs-item breadcrumbs-item_current"><span>About Us</span>
+                <li class="breadcrumbs-item breadcrumbs-item_current"><span>{% trans "о нас" %}</span>
                 </li>
               </ul>
             </div>
@@ -25,7 +25,7 @@
                 <div class="media media_middle">
                   <div class="media-image"><img src="{% static 'assets/img/icons/contacts/phone.svg' %}" alt="phone.svg"/>
                   </div>
-                  <div class="media-content">Phone:&#32;
+                  <div class="media-content">{% trans "Телефон" %}:&#32;
                     <nobr>{{ seller.number }}</nobr>
                   </div>
                 </div>
@@ -50,7 +50,7 @@
             <div class="Section-content">
               <div class="row row_verticalCenter row_maxHalf">
                 <div class="row-block">
-                  <div class="pict">{% trans "Логотип" %}: <img src="../../{{ seller.logo.image }}" alt="Изображение продавца">
+                  <div class="pict">{% trans "Логотип" %}: <img src="../../{{ seller.logo.image }}" alt={% trans "Изображение продавца" %}>
                   </div>
                 </div>
                 <div class="row-block">
@@ -59,12 +59,12 @@
                 </div>
               </div>
               <header class="Section-header">
-                <h2 class="Section-title">Popular Offers
+                <h2 class="Section-title">{% trans "Популярные товары" %}
                 </h2>
               </header>
               <div class="Cards">
               {% for offer in popular %}
-                <div class="Card"><a class="Card-picture" href="#"><img src="{{ offer.product.images.first }}" alt="card.jpg"/></a>
+                <div class="Card"><a class="Card-picture" href="{% url 'offer-detail' offer.id %}"><img src="{{ offer.product.images.first }}" alt="card.jpg"/></a>
                   <div class="Card-content">
                     <strong class="Card-title"><a href="#">{{ offer.product.description }}</a>
                     </strong>
@@ -73,11 +73,8 @@
                       </div>
                       <div class="Card-category">{{ offer.product.category }}
                       </div>
-                      <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/bookmark.svg' %}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/></a>
-                      </div>
+                      <div class="Card-hover">{% include 'comparison/add.html' with type='product' id=offer.product.id  %}</div>
                     </div>
-                  </div>
-                  <div class="Card-sale">-60%
                   </div>
                 </div>
               {% endfor %}
