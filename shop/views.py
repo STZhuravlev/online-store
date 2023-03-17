@@ -15,6 +15,7 @@ from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import UserPassesTestMixin
+import os
 
 
 class SellerInfo(DetailView):
@@ -97,3 +98,12 @@ class AccauntEditView(View):
         else:
             return render(request, 'shop/accaunt_edit.html',
                           {'accaunt_form': accaunt_form,  'categories': get_category()})
+
+
+class UrlsView(View):
+
+    def get(self, request):
+        path = os.path.join(os.path.dirname(__file__), 'urls.txt')
+        with open(path, 'r') as file:
+            data = file.readlines()
+            return render(request, 'shop/urls.html', {'data': data})
