@@ -1,7 +1,6 @@
 # Модуль для описания обработчиков для вычисления скидок для всех типов акций
 from decimal import Decimal
 from promotions.models import Promo
-from product.models import Offer
 
 
 def discount_on_product(product_info: dict, promo: Promo) -> Decimal:
