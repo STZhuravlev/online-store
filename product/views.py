@@ -1,6 +1,6 @@
 from random import randint
 
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 import datetime
 from django.shortcuts import render, redirect  # noqa F401
@@ -101,8 +101,13 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context = super().get_context_data(**kwargs)
         context['offers'] = Offer.objects.filter(id=self.kwargs['pk'])
         context['categories'] = get_category()
-        context['product_image'] = ProductImage.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        context['product_image'] = ProductImage.objects.filter(
+            product=Offer.objects.get(id=self.kwargs['pk']).product
+        ).first()
         context['feedback'] = Feedback.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
+        context['all_property'] = ProductProperty.objects.filter(
+            product=Offer.objects.get(id=self.kwargs['pk']).product
+        )
         return context
 
     def form_valid(self, form, **kwargs):
@@ -216,15 +221,13 @@ class ProductCatalogView(generic.ListView):
 #         return context
 
 
-class UploadProductFileView(UserPassesTestMixin, generic.FormView):
+class UploadProductFileView(PermissionRequiredMixin, generic.FormView):
 
     """Добавление продукта, автора и т.п. через файл формата JSON """
 
     template_name = 'product/upload_file.html'
+    permission_required = ('product.add_product', )
     form_class = UploadProductFileJsonForm
-
-    def test_func(self):
-        return self.request.user.groups.filter(name='Продавец').exists()
 
     def handle_no_permission(self):
         return HttpResponse('Нет доступа')

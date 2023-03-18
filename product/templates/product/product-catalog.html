@@ -4,7 +4,7 @@
 {% load mptt_tags %}
 {% load products_custom_tags %}
 
-{% block title %}<title>Megano - Каталог</title> {% endblock %}
+{% block title %}<title>Megano - {% trans "Каталог" %}</title> {% endblock %}
 
 {% block content %}
 <div class="Middle Middle_top">
@@ -111,33 +111,33 @@
           <div class="Sort-variants">
             {% if request.GET.sort == 'dpop' %}
               <a class="Sort-sortBy Sort-sortBy_dec" href="?{% add_query_params request sort='apop' %}">
-                Популярности
+                {% trans "Популярности" %}
               </a>
             {% else %}
               <a class="Sort-sortBy Sort-sortBy_dec" href="?{% add_query_params request sort='dpop' %}">
-                Популярности
+                {% trans "Популярности" %}
               </a>
             {% endif %}
 
             {% if request.GET.sort == 'aprice' %}
-              <a class="Sort-sortBy" href="?{% add_query_params request sort='dprice' %}">Цене</a>
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='dprice' %}">{% trans "Цене" %}</a>
             {% else %}
-              <a class="Sort-sortBy" href="?{% add_query_params request sort='aprice' %}">Цене</a>
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='aprice' %}">{% trans "Цене" %}</a>
             {% endif %}
 
             {% if request.GET.sort == 'drate' %}
-              <a class="Sort-sortBy" href="?{% add_query_params request sort='arate' %}">Отзывам</a>
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='arate' %}">{% trans "Отзывам" %}</a>
             {% else %}
-              <a class="Sort-sortBy" href="?{% add_query_params request sort='drate' %}">Отзывам</a>
+              <a class="Sort-sortBy" href="?{% add_query_params request sort='drate' %}">{% trans "Отзывам" %}</a>
             {% endif %}
 
             {% if request.GET.sort == 'dnew' %}
               <a class="Sort-sortBy Sort-sortBy_inc" href="?{% add_query_params request sort='anew' %}">
-                Новизне
+                {% trans "Новизне" %}
               </a>
             {% else %}
               <a class="Sort-sortBy Sort-sortBy_inc" href="?{% add_query_params request sort='dnew' %}">
-                Новизне
+                {% trans "Новизне" %}
               </a>
             {% endif %}
 

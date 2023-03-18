@@ -61,33 +61,57 @@
                                             <div class="Order-info Order-info_delivery">
                                                 <div class="Order-infoType">{% trans "Тип доставки:" %}
                                                 </div>
-                                                <div class="Order-infoContent">{{ order.delivery }}
-                                                </div>
-                                            </div>
-                                            <div class="Order-info Order-info_pay">
-                                                <div class="Order-infoType">{% trans "Оплата:" %}
-                                                </div>
-                                                <div class="Order-infoContent">{{ order.type }}
+                                                <div class="Order-infoContent">
+                                                    {% if order.delivery == 'D' %}
+                                                        {% trans 'доставка' %}
+                                                    {% elif order.delivery == 'A' %}
+                                                        {% trans 'экспресс доставка' %}
+                                                    {% else %}
+                                                        None
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                             <div class="Order-info">
                                                 <div class="Order-infoType">{% trans "Общая стоимость:" %}
                                                 </div>
-                                                <div class="Order-infoContent"><span class="Order-price">{{ sum_price }}$</span>
+                                                <div class="Order-infoContent"><span class="Order-price">{{ order.total }}$</span>
                                                 </div>
                                             </div>
-                                            <div class="Order-info Order-info_status">
-                                                <div class="Order-infoType">{% trans "Статус:" %}
+                                            <div class="Order-info Order-info_delivery">
+                                                <div class="Order-infoType">{% trans "Тип оплаты" %}
                                                 </div>
-                                                <div class="Order-infoContent">{{ order.status }}
+                                                <div class="Order-infoContent">
+                                                    {% if order.payment == 'C' %}
+                                                        {% trans "онлайн картой" %}
+                                                    {% elif order.payment == 'F' %}
+                                                        {% trans 'онлайн со случайного чужого счета' %}
+                                                    {% else %}
+                                                        None
+                                                    {% endif %}
                                                 </div>
                                             </div>
+                                            <div class="Order-info Order-info_delivery">
+                                                <div class="Order-infoType">{% trans "Статус заказа" %}
+                                                </div>
+                                                <div class="Order-infoContent">
+                                                    {{ order.status }}
+                                                </div>
+                                            </div>
+                                            {% if order.status_payment == 'Оплата прошла успешно' %}
+                                            <div class="Order-info Order-info">
+                                                <div class="Order-infoType">{% trans "Оплата прошла:" %}
+                                                </div>
+                                                <div class="Order-infoContent">{{ order.status_payment }}
+                                                </div>
+                                            </div>
+                                            {% else %}
                                             <div class="Order-info Order-info_error">
                                                 <div class="Order-infoType">{% trans "Оплата не прошла:" %}
                                                 </div>
-                                                <div class="Order-infoContent">{% trans "Оплата не выполнена, т.к. вы подозреваетесь в нетолерантности" %}
+                                                <div class="Order-infoContent">{{ order.status_payment }}
                                                 </div>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

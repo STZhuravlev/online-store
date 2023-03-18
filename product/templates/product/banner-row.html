@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <div class="Section">
   <div class="wrap">
@@ -23,7 +24,7 @@
           </div>
         </a>
       {% empty %}
-        Sorry, no active banners.
+        {% trans "Извините, активных баннеров нет" %}.
       {% endfor %}
 
     </div>
