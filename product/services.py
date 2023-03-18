@@ -133,8 +133,6 @@ def apply_sorting_to_catalog(request: HttpRequest, queryset: QuerySet) -> QueryS
     elif sort_by == 'dpop':
         queryset = queryset.annotate(count=Count('offers__order_items__offer')).order_by('-count')
 
-    # queryset = queryset.values('id', 'name', 'images__image', 'category__name'). \
-    #     annotate(avg_price=Avg('offers__price'))
     queryset = queryset.annotate(avg_price=Avg('offers__price'))
 
     return queryset
@@ -161,43 +159,6 @@ def get_banners(qty: int = 3) -> List[Banner]:
         result = sample(banners, k=qty)
 
     return result
-
-
-class BannersView:
-    """Тест. Отображение баннеров"""
-    template_name = 'product/banners-view.html'
-
-    @staticmethod
-    def get_banners(qty: int = 3):
-        """ Возвращает список из qty активных баннеров. """
-        banners = Banner.objects.filter(is_active=True)
-        result = []
-        if banners.exists():
-            if 3 < qty < 1:
-                qty = 3
-            if banners.count() < qty:
-                qty = banners.count()
-            banners = list(banners)
-            result = sample(banners, k=qty)
-        return result
-
-    def get_context_data(self, qty: int = 3, **kwargs):
-        """ Добавляет в контекст список баннеров. Список кэшируется. """
-        context = super().get_context_data(**kwargs)
-        # заменить в ключе имя на емейл
-        offers_cache_key = f'offers:{self.request.user.username}'
-        # Получаем список баннеров и кэшируем его
-        banner_list = self.get_banners(qty=qty)
-        cached_data = cache.get_or_set(offers_cache_key, banner_list, 1 * 60)
-        context['banners'] = cached_data
-        return context
-
-
-class ImageView:
-    @staticmethod
-    def get_image(product_id):
-        context = ProductImage.objects.filter(product=product_id).all()
-        return context
 
 
 def get_favorite_categories(qty: int = 3,
@@ -252,10 +213,6 @@ def get_popular_products(qty: int = 8, cache_key: str = None,
     if cache_key is None:
         cache_key = "popular-products"
 
-    # queryset = Product.objects.select_related('category').prefetch_related('seller'). \
-    #     values('id', 'name', 'images__image', 'category__name'). \
-    #     annotate(count=Count('offers__order_items__offer')).\
-    #     annotate(avg_price=Avg('offers__price')).order_by('-count')[:qty]
     queryset = Product.objects.select_related('category').prefetch_related('seller').\
         annotate(count=Count('offers__order_items__offer')).\
         annotate(avg_price=Avg('offers__price')).order_by('-count')[:qty]
@@ -411,3 +368,40 @@ def upload_product_file(file, seller, file_name):  # noqa: C901
                     )
                     continue
     return
+
+
+class BannersView:
+    """Тест. Отображение баннеров"""
+    template_name = 'product/banners-view.html'
+
+    @staticmethod
+    def get_banners(qty: int = 3):
+        """ Возвращает список из qty активных баннеров. """
+        banners = Banner.objects.filter(is_active=True)
+        result = []
+        if banners.exists():
+            if 3 < qty < 1:
+                qty = 3
+            if banners.count() < qty:
+                qty = banners.count()
+            banners = list(banners)
+            result = sample(banners, k=qty)
+        return result
+
+    def get_context_data(self, qty: int = 3, **kwargs):
+        """ Добавляет в контекст список баннеров. Список кэшируется. """
+        context = super().get_context_data(**kwargs)
+        # заменить в ключе имя на емейл
+        offers_cache_key = f'offers:{self.request.user.username}'
+        # Получаем список баннеров и кэшируем его
+        banner_list = self.get_banners(qty=qty)
+        cached_data = cache.get_or_set(offers_cache_key, banner_list, 1 * 60)
+        context['banners'] = cached_data
+        return context
+
+
+class ImageView:
+    @staticmethod
+    def get_image(product_id):
+        context = ProductImage.objects.filter(product=product_id).all()
+        return context

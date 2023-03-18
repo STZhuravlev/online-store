@@ -58,6 +58,7 @@ class CartView(View):
 
     def get(self, request):
         cart = Cart(request)
+
         categories = get_category()
         context = {
             'cart': cart,

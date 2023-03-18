@@ -57,12 +57,14 @@
             <div class="Cards">
               {% for item in page_obj %}
                 <div class="Card">
-                  <a class="Card-picture" href="#">
-                    <img src="/media/{{ item.images__image }}" alt="card.jpg"/>
+                  <a class="Card-picture" href="{% url 'product-detail' item.id %}">
+                    <img src="/media/{{ item.images.first.image }}" alt="card.jpg"/>
                   </a>
                   <div class="Card-content">
                     <strong class="Card-title">
-                      <a href="#">{{ item.name|slice:":50" }}</a>
+                      <a href="{% url 'product-detail' item.id %}">
+                          {{ item.name|slice:":50" }}
+                      </a>
                     </strong>
                     <div class="Card-description">
                       <div class="Card-cost">
