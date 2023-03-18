@@ -97,34 +97,34 @@ class Cart:
             del self.cart[offer_id]
         self.save()
 
-    def due(self):
+    def total_discount(self):
         """
-        Вычисляет сумму корзины с учетом скидки.
+        Вычисляет суммарную скидку товаров в корзине.
         """
         total_discount = Decimal(0)
         for product in self.cart:
-            total_discount += self._get_best_discount(product)
+            total_discount += self.__get_best_discount(product)
 
-        # return self.get_total_price() - total_discount
         return total_discount
 
-    def total(self):
-        return self.get_total_price() - self.due()
+    def due(self):
+        """Вычисляет сумму корзины с учетом скидки."""
+        return self.get_total_price() - self.total_discount()
 
-    def _get_best_discount(self, offer_id: str) -> Decimal:
+    def __get_best_discount(self, offer_id: str) -> Decimal:
         """
             Вычисляет приоритетную скидку.
             :param offer_id: id товара (предложения).
             :return: Приоритетная скидка.
         """
-        all_discounts = self._get_discounts(offer_id)
+        all_discounts = self.__get_discounts(offer_id)
 
         if all_discounts:
             return max(all_discounts)
 
         return Decimal(0)
 
-    def _get_discounts(self, offer_id: str) -> List[Decimal]:
+    def __get_discounts(self, offer_id: str) -> List[Decimal]:
         """
             Возвращает список скидок на товар, для всех акций в которых
             он участвует.
@@ -138,7 +138,6 @@ class Cart:
 
         # Получаем список акций для этого продукта
         promo_list = promos_for_product(product_id)
-        # print(f"Список акций для товара {product_id}:", promo_list)
 
         # для каждой акции вычисляем скидку
         for promo in promo_list:
@@ -158,8 +157,5 @@ class Cart:
                 elif promo_code in (1, 3, 4):
                     discount = handler(self.cart[offer_id], promo)
             result.append(discount)
-
-            # price = float(self.cart[offer_id]['price'])
-            # print(f"Акция: {promo}, товар {offer}, цена {price}, скидка {discount}")
 
         return result
