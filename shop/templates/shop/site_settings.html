@@ -10,7 +10,7 @@
 {% endfor %}
 <form method="post">{% csrf_token %}
 {{ form.as_p }}
-    <button type="submit">Сохранить</button>
+    <button type="submit">{% trans "Сохранить" %}</button>
     </form>
 
 </body>

@@ -14,7 +14,8 @@ from orders.models import OrderItem
 from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+import os
 
 
 class SellerInfo(DetailView):
@@ -37,10 +38,9 @@ class SellerInfo(DetailView):
         return context
 
 
-class SiteSettingsView(UserPassesTestMixin, View):
+class SiteSettingsView(PermissionRequiredMixin, View):
 
-    def test_func(self):
-        return self.request.user.groups.filter(name='Администратор').exists()
+    permission_required = ('orders.add_order', )
 
     def get(self, request):
         site = SiteSettings(request)
@@ -97,3 +97,12 @@ class AccauntEditView(View):
         else:
             return render(request, 'shop/accaunt_edit.html',
                           {'accaunt_form': accaunt_form,  'categories': get_category()})
+
+
+class UrlsView(View):
+
+    def get(self, request):
+        path = os.path.join(os.path.dirname(__file__), 'urls.txt')
+        with open(path, 'r') as file:
+            data = file.readlines()
+            return render(request, 'shop/urls.html', {'data': data})

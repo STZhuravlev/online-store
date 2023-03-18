@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <div class="Header-slider">
     <div class="Slider Slider_main">
       <div class="Slider-box">
@@ -15,7 +16,7 @@
                     {{ banner.brief }}
                   </div>
                   <div class="Slider-footer">
-                    <a class="btn btn_primary" href="#">Get Started</a>
+                    <a class="btn btn_primary" href="#">{% trans "Начать" %}</a>
                   </div>
                 </div>
                 <div class="row-block">
@@ -27,7 +28,7 @@
             </div>
           </div>
         {% empty %}
-          Sorry, no active banners.
+          {% trans "Извините, активных баннеров нет" %}.
         {% endfor %}
 
       </div>

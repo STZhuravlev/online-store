@@ -1,7 +1,7 @@
 import os.path
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import (
     TestCase
@@ -137,8 +137,9 @@ class TestUploadFileView(SettingsTest):
 
     def setUp(self):
         self.user = get_user_model().objects.first()
-        self.group = Group(name='Продавец')
-        self.group.save()
+        self.perm = Permission.objects.get(content_type__app_label='product',
+                                           content_type__model='product', codename='add_product')
+        self.user.user_permissions.add(self.perm)
 
     def test_get_upload_file(self):
 
@@ -147,8 +148,6 @@ class TestUploadFileView(SettingsTest):
         self.assertEqual(response.status_code, 200)
 
     def test_post_upload_file(self):
-        self.user.groups.add(self.group)
-        self.user.save()
         self.client.login(email='test1@test.ru', password='test1234')
         file_json = SimpleUploadedFile(
             name='file_json.json',
