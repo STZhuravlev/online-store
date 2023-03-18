@@ -45,8 +45,7 @@ def get_related_products(obj, request: HttpRequest, cache_key: str = None,
         product_list = Product.objects.\
             select_related('category')
 
-    product_list = product_list.values('id', 'name', 'images__image', 'category__name').\
-        annotate(avg_price=Avg('offers__price')).order_by('id')
+    product_list = product_list.annotate(avg_price=Avg('offers__price')).order_by('id')
 
     cached_products = cache.get_or_set(cache_key, product_list, cache_time)
 
