@@ -1,5 +1,7 @@
 {% extends 'product/base.html' %}
 {% load i18n %}
+{% load static %}
+
 {% block content %}
 {% for history in history_list %}
     <div>
@@ -11,6 +13,7 @@
         <p>{% trans "Дата просмотра" %} - {{ history.view_at }}</p>
         <hr>
     </div>
+    {% endfor %}
     <div class="Middle Middle_top">
     <div class="Middle-top">
       <div class="wrap">
@@ -41,7 +44,7 @@
                   </li>
                   <li class="menu-item"><a class="menu-link" href="{% url 'accaunt_edit' %}">Профиль</a>
                   </li>
-                  <li class="menu-item"><a class="menu-link" href="historyorder.html">История заказов</a>
+                  <li class="menu-item"><a class="menu-link" href="{% url 'history' %}">История заказов</a>
                   </li>
                   <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="{% url 'history_view' %}">История просмотра</a>
                   </li>
@@ -52,26 +55,33 @@
         </div>
         <div class="Section-content">
           <div class="Cards">
-            <div class="Card"><a class="Card-picture" href="#"><img src="assets/img/content/home/card.jpg" alt="card.jpg"/></a>
+               {% if history_list %}
+                   {% for history in history_list %}
+                       {% for image in history.product.images.all %}
+            <div class="Card"><a class="Card-picture" href="#"><img src="{{ MEDIA_URL }}{{ image.image.url }}" alt="card.jpg"/></a>
+                {% endfor %}
               <div class="Card-content">
-                <strong class="Card-title"><a href="#">Corsair Carbide Series Arctic White Steel</a>
+                <strong class="Card-title"><a href="#">{{ history.product.name }}</a>
                 </strong>
                 <div class="Card-description">
                   <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
                   </div>
-                  <div class="Card-category">Games / xbox
+                  <div class="Card-category">{{ history.product.category }}
                   </div>
-                  <div class="Card-hover"><a class="Card-btn" href="#"><img src="assets/img/icons/card/bookmark.svg" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/cart.svg" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="assets/img/icons/card/change.svg" alt="change.svg"/></a>
+                        <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/bookmark.svg'%}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/></a>
                   </div>
                 </div>
               </div>
               <div class="Card-sale">-60%
               </div>
             </div>
+                    {% endfor %}
+           {% else %}
+              <p>История просмотра отсутствует</p>
           </div>
+            {% endif %}
         </div>
       </div>
     </div>
   </div>
-{% endfor %}
 {% endblock %}
