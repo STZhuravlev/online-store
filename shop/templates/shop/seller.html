@@ -50,7 +50,7 @@
             <div class="Section-content">
               <div class="row row_verticalCenter row_maxHalf">
                 <div class="row-block">
-                  <div class="pict">{% trans "Логотип" %}: <img src="../../{{ seller.logo.image }}" alt={% trans "Изображение продавца" %}>
+                  <div class="pict">{% trans "Логотип" %}: <img src="../../../media/{{ seller.logo.image }}" alt={% trans "Изображение продавца" %}>
                   </div>
                 </div>
                 <div class="row-block">
@@ -64,12 +64,12 @@
               </header>
               <div class="Cards">
               {% for offer in popular %}
-                <div class="Card"><a class="Card-picture" href="{% url 'offer-detail' offer.id %}"><img src="{{ offer.product.images.first }}" alt="card.jpg"/></a>
+                <div class="Card"><a class="Card-picture" href="{% url 'offer-detail' offer.id %}"><img src="../../../media/{{ offer.product.images.first.image }}" alt="card.jpg"/></a>
                   <div class="Card-content">
                     <strong class="Card-title"><a href="#">{{ offer.product.description }}</a>
                     </strong>
                     <div class="Card-description">
-                      <div class="Card-cost"><span class="Card-priceOld">${{ offer.price }}</span><span class="Card-price">${{ offer.price }}</span>
+                      <div class="Card-cost"><span class="Card-price">${{ offer.price }}</span>
                       </div>
                       <div class="Card-category">{{ offer.product.category }}
                       </div>

@@ -74,10 +74,15 @@
                                             {% for offer in cart %}
                                                 <div class="Cart-product">
                                                     <div class="Cart-block Cart-block_row">
-                                                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href=""><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>
-                                                        </div>
-                                                        <div class="Cart-block Cart-block_info"><a class="Cart-title" href="">{{ offer.offer.product.name }}</a>
-                                                            <div class="Cart-desc">{{ offer.offer.product.description }}
+{#                                                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href=""><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>#}
+{#                                                        </div>#}
+                                                        <div class="Cart-block Cart-block_info"><a class="Cart-title" href="">{{ offer.product.name }}</a>
+                                                            <div class="Cart-desc">
+                                                                {% for key, value in offer.items %}
+                                                                    {% if key == 'product' %}
+                                                                        {{ value }}
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             </div>
                                                         </div>
                                                         <div class="Cart-block Cart-block_price">
