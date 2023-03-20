@@ -86,22 +86,6 @@
             </form>
           </div>
         </div>
-{#        <div class="Section-columnSection">#}
-{#          <header class="Section-header">#}
-{#            <strong class="Section-title">Popular tags#}
-{#            </strong>#}
-{#          </header>#}
-{#          <div class="Section-columnContent">#}
-{#            <div class="buttons">#}
-{#              <a class="btn btn_default btn_sm" href="#">Video</a>#}
-{#              <a class="btn btn_default btn_sm" href="#">Development</a>#}
-{#              <a class="btn btn_default btn_sm" href="#">Gaming</a>#}
-{#              <a class="btn btn_default btn_sm" href="#">Asus</a>#}
-{#              <a class="btn btn_default btn_sm" href="#">Development</a>#}
-{#              <a class="btn btn_default btn_sm" href="#">Video</a>#}
-{#            </div>#}
-{#          </div>#}
-{#        </div>#}
       </div>
 
       <div class="Section-content">
@@ -165,18 +149,10 @@
                       {{ item.category.name }}
                   </div>
                   <div class="Card-hover">
-{#                    <a class="Card-btn" href="#">#}
-{#                      <img src="{% static "assets/img/icons/card/bookmark.svg" %}" alt="bookmark.svg"/>#}
-{#                    </a>#}
-{#                    <a class="Card-btn" href="#">#}
-{#                      <img src="{% static "assets/img/icons/card/cart.svg" %}" alt="cart.svg"/>#}
-{#                    </a>#}
                     {% include 'comparison/add.html' with type='product' id=item.id  %}
                   </div>
                 </div>
               </div>
-              {# insert if product is in promorion  #}
-              {#<div class="Card-sale">-60%</div>#}
             </div>
           {% empty %}
             {% trans "товары не найдены"|capfirst %}

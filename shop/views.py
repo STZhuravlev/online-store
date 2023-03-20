@@ -14,7 +14,7 @@ from orders.models import OrderItem
 from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 import os
 
 
@@ -38,10 +38,9 @@ class SellerInfo(DetailView):
         return context
 
 
-class SiteSettingsView(UserPassesTestMixin, View):
+class SiteSettingsView(PermissionRequiredMixin, View):
 
-    def test_func(self):
-        return self.request.user.groups.filter(name='Администратор').exists()
+    permission_required = ('orders.add_order', )
 
     def get(self, request):
         site = SiteSettings(request)

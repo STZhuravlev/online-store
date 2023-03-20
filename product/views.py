@@ -1,6 +1,6 @@
 from random import randint
 
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 import datetime
 from django.shortcuts import render, redirect  # noqa F401
@@ -38,10 +38,6 @@ from product.services import (
     upload_product_file,
 )
 from promotions.models import Promo2Product
-
-
-# Количество товаров из каталога, которые будут отображаться на странице
-CATALOG_PRODUCT_PER_PAGE = 6  # для отображения страницы в стандартном десктопном браузере
 
 
 class ProductDetailView(generic.DetailView, generic.CreateView):
@@ -138,6 +134,7 @@ class HistoryViewsView(generic.ListView):
         context = super().get_context_data(**kwargs)
         history_list = HistoryView.objects.all()[:5]
         context['history_list'] = history_list
+        context['categories'] = get_category()
         return context
 
 
@@ -181,7 +178,7 @@ class ProductCatalogView(generic.ListView):
     model = Product
     context_object_name = 'catalog'
     template_name = 'product/product-catalog.html'
-    paginate_by = CATALOG_PRODUCT_PER_PAGE
+    paginate_by = settings.CATALOG_PRODUCT_PER_PAGE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -194,19 +191,14 @@ class ProductCatalogView(generic.ListView):
         return context
 
     def get_queryset(self):
-        # category_id = self.request.GET.get('category', '')
         query_param = [f"{key}={value}" for key, value in self.request.GET.items() if key != 'page']
         if query_param:
             cache_key_2 = ''.join(query_param)
         else:
             cache_key_2 = 'blank'
-        # cache_key = f'products:{category_id}'
 
         # get queryset for selected category
         queryset = get_queryset_for_category(request=self.request)
-
-        # put queryset to cache
-        # cached_data = cache.get_or_set(cache_key, queryset, settings.CACHE_STORAGE_TIME)
 
         # apply filters parameters to products in catalog
         filtered_queryset = apply_filter_to_catalog(request=self.request,
@@ -221,25 +213,13 @@ class ProductCatalogView(generic.ListView):
         return cached_data
 
 
-# class IndexView(generic.TemplateView):
-#     template_name = 'product/index.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['banners'] = BannersView.get_banners()
-#         context['categories'] = get_category()
-#         return context
-
-
-class UploadProductFileView(UserPassesTestMixin, generic.FormView):
+class UploadProductFileView(PermissionRequiredMixin, generic.FormView):
 
     """Добавление продукта, автора и т.п. через файл формата JSON """
 
     template_name = 'product/upload_file.html'
+    permission_required = ('product.add_product', )
     form_class = UploadProductFileJsonForm
-
-    def test_func(self):
-        return self.request.user.groups.filter(name='Продавец').exists()
 
     def handle_no_permission(self):
         return HttpResponse('Нет доступа')
