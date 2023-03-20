@@ -3,17 +3,6 @@
 {% load static %}
 
 {% block content %}
-{% for history in history_list %}
-    <div>
-        <p>{% trans "Наименование товара" %} - {{ history.product }}</p>
-        <p>{% trans "Описание товара" %} - {{ history.product.description }}</p>
-        <p>{% trans "Свойства товара" %} - {{ history.product.property }}</p>
-        <p>{% trans "Категория товара" %} - {{ history.product.category }}</p>
-        <p>{% trans "Продавец" %} - {{ history.product.seller }}</p>
-        <p>{% trans "Дата просмотра" %} - {{ history.view_at }}</p>
-        <hr>
-    </div>
-    {% endfor %}
     <div class="Middle Middle_top">
     <div class="Middle-top">
       <div class="wrap">
@@ -57,16 +46,14 @@
           <div class="Cards">
                {% if history_list %}
                    {% for history in history_list %}
-                       {% for image in history.product.images.all %}
-            <div class="Card"><a class="Card-picture" href="#"><img src="{{ MEDIA_URL }}{{ image.image.url }}" alt="card.jpg"/></a>
-                {% endfor %}
+            <div class="Card"><a class="Card-picture" href="#"><img src="{{ MEDIA_URL }}{{ history.offer.product.images.first.image.url }}" alt="card.jpg"/></a>
               <div class="Card-content">
-                <strong class="Card-title"><a href="#">{{ history.product.name }}</a>
+                <strong class="Card-title"><a href="#">{{ history.offer.product.name }}</a>
                 </strong>
                 <div class="Card-description">
-                  <div class="Card-cost"><span class="Card-priceOld">$115.00</span><span class="Card-price">$85.00</span>
+                  <div class="Card-cost"><span class="Card-price">{{ history.offer.price }}</span>
                   </div>
-                  <div class="Card-category">{{ history.product.category }}
+                  <div class="Card-category">{{ history.offer.product.category }}
                   </div>
                         <div class="Card-hover"><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/bookmark.svg'%}" alt="bookmark.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/cart.svg' %}" alt="cart.svg"/></a><a class="Card-btn" href="#"><img src="{% static 'assets/img/icons/card/change.svg' %}" alt="change.svg"/></a>
                   </div>

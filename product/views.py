@@ -104,6 +104,13 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context['all_property'] = ProductProperty.objects.filter(
             product=Offer.objects.get(id=self.kwargs['pk']).product
         )
+        histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
+        if histiry_view_list:
+            history_old = HistoryView.objects.get(offer=Offer.objects.get(id=self.kwargs['pk']))
+            history_old.save(update_fields=['view_at'])
+        else:
+            history_new = HistoryView(offer=self.object, user=self.request.user)
+            history_new.save()
         return context
 
     def form_valid(self, form, **kwargs):

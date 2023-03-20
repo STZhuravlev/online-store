@@ -37,7 +37,7 @@
                             <div class="Order Order_anons">
                                 <div class="Order-personal">
                                     <div class="row">
-                                        <div class="row-block"><a class="Order-title" href="{% url 'history-detail' pk=order.id %}">Заказ&#32;<span class="Order-numberOrder">№{{ order.id }}</span>&#32;от&#32;<span class="Order-dateOrder">{{ order.date|date:'j E Y' }}</span></a>
+                                        <div class="row-block"><a class="Order-title" href="{% url 'history-detail' pk=order.id %}">Заказ&#32;<span class="Order-numberOrder">№{{ order.id }}</span>&#32;от&#32;<span class="Order-dateOrder">{{ order.created|date:'j E Y' }}</span></a>
                                         </div>
                                         <div class="row-block">
                                             <div class="Order-info Order-info_delivery">
