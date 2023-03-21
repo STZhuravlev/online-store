@@ -42,9 +42,6 @@ class DiscountInCartTest(TestCase):
         request = factory.get('/cart/cart')
         request.session = session
         self.cart = Cart(request)
-        # offers = Offer.objects.all()
-        # for offer in offers:
-        #     self.cart.add(offer, quantity=1)
 
     def test_cart_create(self):
         """Проверка создания корзины."""
@@ -142,8 +139,8 @@ class DiscountInCartTest(TestCase):
                 promo_discount = (self.cart.cart[str(offer.id)]["quantity"] // (promo.quantity + 1)) * \
                     offer.price
                 for_due = self.cart.get_total_price() - discount
-            self.assertEqual(discount, promo_discount)
-            self.assertEqual(due, for_due)
+                self.assertEqual(discount, promo_discount)
+                self.assertEqual(due, for_due)
 
     def test_discount_on_plus_one_2(self):
         """Проверка расчета скидки на акцию 2+1."""
@@ -164,8 +161,162 @@ class DiscountInCartTest(TestCase):
                 promo_discount = (self.cart.cart[str(offer.id)]["quantity"] // (promo.quantity + 1)) * \
                     offer.price
                 for_due = self.cart.get_total_price() - discount
-            self.assertEqual(discount, promo_discount)
-            self.assertEqual(due, for_due)
+                self.assertEqual(discount, promo_discount)
+                self.assertEqual(due, for_due)
+
+    def test_discount_on_amount(self):
+        """Проверка расчета скидки на N единиц товара."""
+        offer = Offer.objects.select_related('product').get(product__name='apple')
+        # активируем акцию
+        promo = Promo.objects.get(name='amount discount')
+        promo.is_active = True
+        promo.save()
+        for i in range(1, 12):
+            with self.subTest(i=i):
+                # добавляем 1 товар в корзину
+                self.cart.add(offer, quantity=1)
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                if qty >= promo.quantity:
+                    promo_discount = qty * promo.discount * offer.price / 100
+                else:
+                    promo_discount = Decimal(0)
+                for_due = self.cart.get_total_price() - discount
+                self.assertEqual(discount, promo_discount)
+                self.assertEqual(due, for_due)
+
+    def test_discount_on_amount_2(self):
+        """Проверка расчета скидки на N единиц товара, при фиксированной скидке."""
+        offer = Offer.objects.select_related('product').get(product__name='apple')
+        # активируем акцию
+        promo = Promo.objects.get(name='amount fix discount')
+        promo.is_active = True
+        promo.save()
+        for i in range(1, 12):
+            with self.subTest(i=i):
+                # добавляем 1 товар в корзину
+                self.cart.add(offer, quantity=1)
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                if qty >= promo.quantity:
+                    promo_discount = promo.fix_discount
+                else:
+                    promo_discount = Decimal(0)
+                for_due = self.cart.get_total_price() - discount
+                self.assertEqual(discount, promo_discount, promo_discount)
+                self.assertEqual(due, for_due)
+
+    def test_priority_discount_on_amount(self):
+        """Проверка расчета приоритетной скидки на N единиц товара."""
+        offer = Offer.objects.select_related('product').get(product__name='apple')
+        # активируем акции
+        promo_1 = Promo.objects.get(name='amount fix discount')
+        promo_1.is_active = True
+        promo_1.save()
+        promo_2 = Promo.objects.get(name='amount discount')
+        promo_2.is_active = True
+        promo_2.save()
+        # при данных условиях акций при покупке менее штук 19 товаров
+        # скидка составит 100 р, а более 21 цена * кол-во * %
+        for i in range(1, 5):
+            with self.subTest(i=i):
+                # добавляем товары в корзину
+                if i == 1:
+                    self.cart.add(offer, quantity=10)
+                    promo_discount = promo_1.fix_discount
+                elif i == 2:
+                    self.cart.add(offer, quantity=10)
+                    promo_discount = promo_1.fix_discount
+                elif i > 2:
+                    self.cart.add(offer, quantity=1)
+                    qty = self.cart.cart[str(offer.id)]["quantity"]
+                    promo_discount = qty * promo_2.discount * offer.price / 100
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                for_due = self.cart.get_total_price() - discount
+                self.assertEqual(discount, promo_discount, promo_discount)
+                self.assertEqual(due, for_due)
+
+    def test_priority_discount_in_diffrent_promos(self):
+        """Проверка расчета приоритетной скидки по двум типам акций:
+        % на товар и % на покупку N единиц товара."""
+        offer = Offer.objects.select_related('product').get(product__name='apple')
+        # активируем акции
+        promo_1 = Promo.objects.get(name='product discount')
+        promo_1.is_active = True
+        promo_1.save()
+        promo_2 = Promo.objects.get(name='amount discount')
+        promo_2.is_active = True
+        promo_2.quantity = 5
+        promo_2.save()
+        # при покупке 5 и более товаров должна действовать скидка
+        # 10%? менее 5 - 5%
+        for i in range(1, 7):
+            with self.subTest(i=i):
+                # добавляем товары в корзину
+                self.cart.add(offer, quantity=1)
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                if qty < promo_2.quantity:
+                    promo_discount = qty * promo_1.discount * offer.price / 100
+                else:
+                    promo_discount = qty * promo_2.discount * offer.price / 100
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                for_due = self.cart.get_total_price() - discount
+                self.assertEqual(discount, promo_discount, promo_discount)
+                self.assertEqual(due, for_due)
+
+    def test_discount_on_cart(self):
+        """Проверка расчета скидки на все товары в корзине."""
+        offers = Offer.objects.select_related('product').all().order_by('id')
+        melon = Offer.objects.select_related('product').get(product__name='melon')
+        # активируем акцию
+        promo = Promo.objects.get(name='cart')
+        promo.is_active = True
+        promo.save()
+        # проверка 3х условий: меньше 5 наименований, сумма меньше, скидки нет
+        for i in range(1, 5):
+            with self.subTest(i=i):
+                # 4 товара, сумма меньше 1000
+                if i == 1:
+                    # добавляем 4 товара в корзину
+                    for offer in offers[1:]:
+                        self.cart.add(offer, quantity=1)
+                        promo_discount = Decimal(0)
+
+                # 4 товара, сумма больше 1000
+                elif i == 2:
+                    # добавляем 2 дыни в корзину
+                    self.cart.add(melon, quantity=2)
+                    promo_discount = Decimal(0)
+
+                # 5 товаров, сумма меньше 1000
+                elif i == 3:
+                    # добавляем товары в корзину
+                    self.cart.remove(melon)
+                    self.cart.add(melon)
+                    banana = offers[0]
+                    self.cart.add(banana)
+                    promo_discount = Decimal(0)
+
+                # 5 товаров, сумма меньше 1000
+                elif i == 4:
+                    # добавляем товары в корзину
+                    self.cart.add(melon, quantity=2)
+                    promo_discount = self.cart.get_total_price() * promo.discount / 100
+
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                for_due = self.cart.get_total_price() - discount
+                self.assertEqual(discount, promo_discount, promo_discount)
+                self.assertEqual(due, for_due)
 
 
 def create_category():
@@ -247,7 +398,7 @@ def create_promotions():
     promo_type_4 = PromoType.objects.create(name='promo type 4', code=4)
     promo_type_5 = PromoType.objects.create(name='promo type 5', code=5)
 
-    # акция на товар категорию товара code=10
+    # акция на товар категорию товара code=1
     promo = Promo.objects.create(name='product discount',
                                  promo_type=promo_type_1,
                                  description='description',
@@ -260,7 +411,7 @@ def create_promotions():
     for product in products:
         promo2product.product.add(product)
 
-    # акция на товар категорию товара code=10
+    # акция на товар категорию товара code=1
     promo = Promo.objects.create(name='product fix discount',
                                  promo_type=promo_type_1,
                                  description='description',
@@ -308,6 +459,11 @@ def create_promotions():
                                  discount=10,
                                  quantity=10)
 
+    promo2product = Promo2Product.objects.create(promo=promo)
+    products = Product.objects.filter(name='apple')
+    for product in products:
+        promo2product.product.add(product)
+
     # акция на N единиц товара code=4
     promo = Promo.objects.create(name='amount fix discount',
                                  promo_type=promo_type_4,
@@ -317,12 +473,17 @@ def create_promotions():
                                  fix_discount=100,
                                  quantity=10)
 
+    promo2product = Promo2Product.objects.create(promo=promo)
+    products = Product.objects.filter(name='apple')
+    for product in products:
+        promo2product.product.add(product)
+
     # акция на всю корзину code=5
-    promo = Promo.objects.create(name='cart',
-                                 promo_type=promo_type_5,
-                                 description='description',
-                                 finished=timezone.now(),
-                                 is_active=False,
-                                 discount=10,
-                                 quantity=5,
-                                 amount=Decimal(1000))
+    Promo.objects.create(name='cart',
+                         promo_type=promo_type_5,
+                         description='description',
+                         finished=timezone.now(),
+                         is_active=False,
+                         discount=15,
+                         quantity=5,
+                         amount=Decimal(1000))
