@@ -5,7 +5,7 @@ from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login
-from product.models import Offer
+from product.models import Offer, ProductImage
 from .models import OrderItem, Order
 from users.models import CustomUser
 from product.services import get_category
@@ -42,6 +42,7 @@ class HistoryOrderDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = get_category()
+        context['drawing'] = ProductImage.objects.all()
         context['offers'] = OrderItem.objects.filter(order=kwargs['object'])
         return context
 

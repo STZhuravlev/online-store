@@ -37,6 +37,7 @@ from product.services import (
     get_limited_edition,
     upload_product_file,
 )
+from promotions.models import Promo2Product
 
 
 class ProductDetailView(generic.DetailView, generic.CreateView):
@@ -97,6 +98,7 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context = super().get_context_data(**kwargs)
         context['offers'] = Offer.objects.filter(id=self.kwargs['pk'])
         context['categories'] = get_category()
+        context['drawing'] = ImageView.get_image(product_id=Offer.objects.get(id=self.kwargs['pk']).product_id)
         context['product_image'] = ProductImage.objects.filter(
             product=Offer.objects.get(id=self.kwargs['pk']).product
         ).first()
@@ -111,6 +113,15 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         else:
             history_new = HistoryView(offer=self.object, user=self.request.user)
             history_new.save()
+        promo_list = Promo2Product.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
+        price = Offer.objects.get(id=self.kwargs['pk']).price
+        for elem in promo_list:
+            if elem.promo.discount:
+                price = price / 100 * (100 - elem.promo.discount)
+            if elem.promo.fix_discount:
+                price -= elem.promo.fix_discount
+        context['promo'] = price
+        context['promotion'] = promo_list
         return context
 
     def form_valid(self, form, **kwargs):
