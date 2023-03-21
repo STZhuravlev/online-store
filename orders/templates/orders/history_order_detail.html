@@ -104,23 +104,27 @@
                             </div>
                             <h3>{% trans "Товары в заказе" %}</h3>
                             <div class="Cart Cart_order">
-                                {% for offer in offers %}
+                                {% for offer_item in offers %}
                                     <div class="Cart-product">
                                         <div class="Cart-block Cart-block_row">
-                                            <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="{% url 'offer-detail' offer.offer.id %}"><img class="Cart-img" src="assets/img/content/home/card.jpg" alt="card.jpg" /></a>
-                                            </div>
-                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="{% url 'offer-detail' offer.offer.id %}">{{ offer.offer.product.name }}</a>
-                                                <div class="Cart-desc">{{ offer.offer.product.description }}
+                                            {% for i in drawing %}
+                                                {% if offer_item.offer.product == i.product %}
+                                                <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="{% url 'offer-detail' offer_item.offer.id %}"><img class="pict pict_right" style="width: 200px" src="/media/{{ i.image }}" alt="bigGoods.png" /></a>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <div class="Cart-block Cart-block_info"><a class="Cart-title" href="{% url 'offer-detail' offer_item.offer.id %}">{{ offer_item.offer.product.name }}</a>
+                                                <div class="Cart-desc">{{ offer_item.offer.product.description }}
                                                 </div>
                                             </div>
                                             <div class="Cart-block Cart-block_price">
-                                                <div class="Cart-price">{{ offer.price }}
+                                                <div class="Cart-price">{{ offer_item.price }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="Cart-block Cart-block_row">
 
-                                            <div class="Cart-block Cart-block_amount">{{ offer.quantity }} шт.
+                                            <div class="Cart-block Cart-block_amount">{{ offer_item.quantity }} шт.
                                             </div>
                                         </div>
                                     </div>
