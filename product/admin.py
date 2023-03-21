@@ -142,7 +142,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 class HistoryViewAdmin(admin.ModelAdmin):
     """ТЕСТ истории просмотра"""
-    list_display = ['product', 'view_at']
+    list_display = ['offer', 'view_at']
 
     class Meta:
         verbose_name = _('история просмотров')
