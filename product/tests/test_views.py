@@ -101,6 +101,8 @@ class FeedbackViewTest(SettingsTest):
 
         """Проверка существования детальной страницы товара"""
 
+        self.client.login(email='test1@test.ru', password='test1234')
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         print(f'[TEST][INFO] - get status_code {response.status_code}')

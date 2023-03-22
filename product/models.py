@@ -145,7 +145,7 @@ class HistoryView(models.Model):
     """История просмотра товаров"""
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='views_user')
     view_at = models.DateTimeField(auto_now=True, verbose_name=_('время просмотра'))
-    product = models.ForeignKey(Product, verbose_name=_('продукт'), on_delete=models.CASCADE, related_name='views')
+    offer = models.ForeignKey(Offer, verbose_name=_('товар'), on_delete=models.CASCADE, related_name='views')
 
     class Meta:
         ordering = ('-view_at',)
@@ -153,7 +153,7 @@ class HistoryView(models.Model):
         verbose_name_plural = _("истории просмотров")
 
     def __str__(self):
-        return self.product.name
+        return self.offer.product.name
 
 
 class Feedback(models.Model):

@@ -18,8 +18,12 @@
                                 <ul class="menu menu_vt">
                                     <li class="menu-item"><a class="menu-link" href="{% url 'accaunt' %}">{% trans "Личный кабинет" %}</a>
                                     </li>
+                                    <li class="menu-item"><a class="menu-link" href="{% url 'accaunt_edit' %}">{% trans "Профиль" %}</a>
+                                    </li>
                                     <li class="menu-item_ACTIVE menu-item"><a class="menu-link" href="{% url 'history' %}">{% trans "История заказов" %}</a>
                                     </li>
+                                    <li class="menu-item"><a class="menu-link" href="{% url 'history_view' %}">История просмотра</a>
+                  </li>
 
                                 </ul>
                             </div>
@@ -28,11 +32,12 @@
                 </div>
                 <div class="Section-content">
                     <div class="Orders">
+                                 {% if orders %}
                         {% for order in orders %}
                             <div class="Order Order_anons">
                                 <div class="Order-personal">
                                     <div class="row">
-                                        <div class="row-block"><a class="Order-title" href="{% url 'history-detail' pk=order.id %}">Заказ&#32;<span class="Order-numberOrder">№{{ order.id }}</span>&#32;от&#32;<span class="Order-dateOrder">{{ order.date|date:'j E Y' }}</span></a>
+                                        <div class="row-block"><a class="Order-title" href="{% url 'history-detail' pk=order.id %}">Заказ&#32;<span class="Order-numberOrder">№{{ order.id }}</span>&#32;от&#32;<span class="Order-dateOrder">{{ order.created|date:'j E Y' }}</span></a>
                                         </div>
                                         <div class="row-block">
                                             <div class="Order-info Order-info_delivery">
@@ -112,7 +117,10 @@
                                 </div>
                             </div>
                         {% endfor %}
+                                     {% else %}
+                                     <p>История заказов отсутствует</p>
                     </div>
+                 {% endif %}
                 </div>
             </div>
         </div>

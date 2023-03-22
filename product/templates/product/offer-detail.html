@@ -30,12 +30,14 @@
     <div class="Section">
       <div class="wrap">
         <div class="Product">
+
           <div class="ProductCard">
             <div class="ProductCard-look">
-              <div class="ProductCard-photo">
-                <div class="ProductCard">
-                </div><img src="{{ product_image }}" alt="product.png"/>
-              </div>
+                <div class="ProductCard-photo">
+                    <img src="{{ drawing.first.image.url }}" alt="bigGoods.png" />
+                </div>
+                <div class="ProductCard-picts">{% for item in drawing %}<a class="ProductCard-pict" href="{{ item.image.url }}"><x src="{{ item.image.url }}" alt="bigGoods.png" /></a>{% endfor %}>
+                </div>
             </div>
             <div class="ProductCard-desc">
               <div class="ProductCard-header">
@@ -43,10 +45,15 @@
                 </h2>
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
-                    <div class="ProductCard-price">{{ offer.price }}$
-                    </div>
-                    <div class="ProductCard-priceOld">{{ offer.price }}$
-                    </div>
+                      {% if promotion %}
+                        <div class="ProductCard-price">{{ promo }}$
+                        </div>
+                        <div class="ProductCard-priceOld">{{ offer.price }}$
+                        </div>
+                      {% else %}
+                        <div class="ProductCard-price">{{ offer.price }}$
+                        </div>
+                      {% endif %}
                   </div>
                 </div>
               </div>
@@ -83,7 +90,7 @@
                 <h2>{{ offer.product }}
                 </h2>
                 <p>{{ offer.product.description }}</p>
-                <p></p><img class="pict pict_right" src="assets/img/content/home/bigGoods.png" alt="bigGoods.png"/>
+                </p><img class="pict pict_right" style="width: 200px" src="{{drawing.first.image.url}}" alt="bigGoods.png" />
                 <div class="clearfix">
                 </div>
                 <div class="table">
