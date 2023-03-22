@@ -10,7 +10,7 @@ from django.views.generic import DetailView, View, ListView
 from product.services import get_category
 from product.models import Offer
 from .models import Seller
-from orders.models import OrderItem
+from orders.models import OrderItem, Order
 from .service import SiteSettings
 from .forms import SiteSettingsForm
 from django.shortcuts import render, redirect
@@ -67,7 +67,9 @@ class AccauntView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         histories = HistoryView.objects.filter(user=self.request.user)[:3]
+        orders = Order.objects.filter(email=self.request.user).first()
         context['histories'] = histories
+        context['orders'] = orders
         context['categories'] = get_category()
         return context
 

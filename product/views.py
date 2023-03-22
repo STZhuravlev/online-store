@@ -106,6 +106,13 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context['all_property'] = ProductProperty.objects.filter(
             product=Offer.objects.get(id=self.kwargs['pk']).product
         )
+        histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
+        if histiry_view_list:
+            history_old = HistoryView.objects.get(offer=Offer.objects.get(id=self.kwargs['pk']))
+            history_old.save(update_fields=['view_at'])
+        else:
+            history_new = HistoryView(offer=self.object, user=self.request.user)
+            history_new.save()
         promo_list = Promo2Product.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         price = Offer.objects.get(id=self.kwargs['pk']).price
         for elem in promo_list:
