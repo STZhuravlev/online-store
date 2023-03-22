@@ -1,6 +1,8 @@
 from decimal import Decimal
+from typing import Optional
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase, tag, RequestFactory
 from django.conf import settings
 from django.utils import timezone
@@ -51,64 +53,46 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета скидки на товар, если задана фиксированная сумма скидки."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акцию
-        promo = Promo.objects.get(name='product fix discount')
-        promo.is_active = True
-        promo.save()
-        # добавляем 1 товар в корзину
-        self.cart.add(offer, quantity=1)
-        # вычисляем скидку и сумму к оплате
-        discount = self.cart.total_discount()
-        due = self.cart.due()
-        for_due = self.cart.get_total_price() - discount
-        self.assertEqual(discount, promo.fix_discount)
-        self.assertEqual(due, for_due)
-
-        # добавляем еще 2 товара в корзину
-        self.cart.add(offer, quantity=2)
-        # вычисляем скидку и сумму к оплате
-        discount = self.cart.total_discount()
-        due = self.cart.due()
-        for_due = self.cart.get_total_price() - discount
-        self.assertEqual(discount, promo.fix_discount * 3)
-        self.assertEqual(due, for_due)
+        promo = promo_activate(name='product fix discount')
+        # вычисление скидки при 1 и 2 штуках товара
+        for i in range(2):
+            with self.subTest(i=i+1):
+                # добавляем товары в корзину
+                self.cart.add(offer, quantity=1)
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                for_due = self.cart.get_total_price() - discount
+                promo_discount = promo.fix_discount * (i + 1)
+                self.assertEqual(discount, promo_discount)
+                self.assertEqual(due, for_due)
 
     def test_discount_on_product_2(self):
         """Проверка расчета скидки на товар, если задана скидка в процентах."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акцию
-        promo = Promo.objects.get(name='product discount')
-        promo.is_active = True
-        promo.save()
-        # добавляем 1 товар в корзину
-        self.cart.add(offer, quantity=1)
-        # вычисляем скидку и сумму к оплате
-        discount = self.cart.total_discount()
-        promo_discount = offer.price * promo.discount / 100
-        due = self.cart.due()
-        for_due = self.cart.get_total_price() - discount
-        self.assertEqual(discount, promo_discount)
-        self.assertEqual(due, for_due)
-
-        # добавляем еще 2 товара в корзину
-        self.cart.add(offer, quantity=2)
-        # вычисляем скидку и сумму к оплате
-        discount = self.cart.total_discount()
-        promo_discount = offer.price * promo.discount / 100
-        due = self.cart.due()
-        for_due = self.cart.get_total_price() - discount
-        self.assertEqual(discount, promo_discount * 3)
-        self.assertEqual(due, for_due)
+        promo = promo_activate(name='product discount')
+        # вычисление скидки при 1 и 2 штуках товара
+        for i in range(2):
+            with self.subTest(i=i + 1):
+                # добавляем товары в корзину
+                self.cart.add(offer, quantity=1)
+                # вычисляем скидку и сумму к оплате
+                discount = self.cart.total_discount()
+                due = self.cart.due()
+                for_due = self.cart.get_total_price() - discount
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                promo_discount = offer.price * promo.discount / 100 * qty
+                self.assertEqual(discount, promo_discount)
+                self.assertEqual(due, for_due)
 
     def test_discount_on_product_3(self):
         """Проверка расчета приоритетной скидки на товар."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акцию
-        promo_1 = Promo.objects.get(name='product discount')
-        promo_1.is_active = True
-        promo_1.save()
-        promo_2 = Promo.objects.get(name='product fix discount')
-        promo_2.is_active = True
-        promo_2.save()
+        promo_1 = promo_activate(name='product discount')
+        promo_2 = promo_activate(name='product fix discount')
+
         # добавляем 1 товар в корзину
         self.cart.add(offer, quantity=1)
         # вычисляем скидку и сумму к оплате
@@ -126,9 +110,7 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета скидки на акцию 1+1."""
         offer = Offer.objects.select_related('product').get(product__name='melon')
         # активируем акцию
-        promo = Promo.objects.get(name='promo 1+1')
-        promo.is_active = True
-        promo.save()
+        promo = promo_activate(name='promo 1+1')
         for i in range(1, 5):
             with self.subTest(i=i):
                 # добавляем 1 товар в корзину
@@ -136,8 +118,8 @@ class DiscountInCartTest(TestCase):
                 # вычисляем скидку и сумму к оплате
                 discount = self.cart.total_discount()
                 due = self.cart.due()
-                promo_discount = (self.cart.cart[str(offer.id)]["quantity"] // (promo.quantity + 1)) * \
-                    offer.price
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                promo_discount = (qty // (promo.quantity + 1)) * offer.price
                 for_due = self.cart.get_total_price() - discount
                 self.assertEqual(discount, promo_discount)
                 self.assertEqual(due, for_due)
@@ -146,11 +128,10 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета скидки на акцию 2+1."""
         offer = Offer.objects.select_related('product').get(product__name='melon')
         # активируем акцию
-        promo = Promo.objects.get(name='promo 2+1')
+        promo = promo_activate(name='promo 2+1')
         # добавляем 1 товар в корзину
         self.cart.add(offer, quantity=1)
-        promo.is_active = True
-        promo.save()
+
         for i in range(1, 6):
             with self.subTest(i=i):
                 # добавляем 1 товар в корзину
@@ -158,8 +139,8 @@ class DiscountInCartTest(TestCase):
                 # вычисляем скидку и сумму к оплате
                 discount = self.cart.total_discount()
                 due = self.cart.due()
-                promo_discount = (self.cart.cart[str(offer.id)]["quantity"] // (promo.quantity + 1)) * \
-                    offer.price
+                qty = self.cart.cart[str(offer.id)]["quantity"]
+                promo_discount = (qty // (promo.quantity + 1)) * offer.price
                 for_due = self.cart.get_total_price() - discount
                 self.assertEqual(discount, promo_discount)
                 self.assertEqual(due, for_due)
@@ -168,9 +149,8 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета скидки на N единиц товара."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акцию
-        promo = Promo.objects.get(name='amount discount')
-        promo.is_active = True
-        promo.save()
+        promo = promo_activate(name='amount discount')
+
         for i in range(1, 12):
             with self.subTest(i=i):
                 # добавляем 1 товар в корзину
@@ -191,9 +171,8 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета скидки на N единиц товара, при фиксированной скидке."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акцию
-        promo = Promo.objects.get(name='amount fix discount')
-        promo.is_active = True
-        promo.save()
+        promo = promo_activate(name='amount fix discount')
+
         for i in range(1, 12):
             with self.subTest(i=i):
                 # добавляем 1 товар в корзину
@@ -214,12 +193,9 @@ class DiscountInCartTest(TestCase):
         """Проверка расчета приоритетной скидки на N единиц товара."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акции
-        promo_1 = Promo.objects.get(name='amount fix discount')
-        promo_1.is_active = True
-        promo_1.save()
-        promo_2 = Promo.objects.get(name='amount discount')
-        promo_2.is_active = True
-        promo_2.save()
+        promo_1 = promo_activate(name='amount fix discount')
+        promo_2 = promo_activate(name='amount discount')
+
         # при данных условиях акций при покупке менее штук 19 товаров
         # скидка составит 100 р, а более 21 цена * кол-во * %
         for i in range(1, 5):
@@ -247,13 +223,11 @@ class DiscountInCartTest(TestCase):
         % на товар и % на покупку N единиц товара."""
         offer = Offer.objects.select_related('product').get(product__name='apple')
         # активируем акции
-        promo_1 = Promo.objects.get(name='product discount')
-        promo_1.is_active = True
-        promo_1.save()
-        promo_2 = Promo.objects.get(name='amount discount')
-        promo_2.is_active = True
+        promo_1 = promo_activate(name='product discount')
+        promo_2 = promo_activate(name='amount discount')
         promo_2.quantity = 5
         promo_2.save()
+
         # при покупке 5 и более товаров должна действовать скидка
         # 10%? менее 5 - 5%
         for i in range(1, 7):
@@ -277,9 +251,7 @@ class DiscountInCartTest(TestCase):
         offers = Offer.objects.select_related('product').all().order_by('id')
         melon = Offer.objects.select_related('product').get(product__name='melon')
         # активируем акцию
-        promo = Promo.objects.get(name='cart')
-        promo.is_active = True
-        promo.save()
+        promo = promo_activate(name='cart')
         # проверка 3х условий: меньше 5 наименований, сумма меньше, скидки нет
         for i in range(1, 5):
             with self.subTest(i=i):
@@ -331,9 +303,6 @@ def create_sellers():
                                                   phone="9787470001")
     Seller.objects.create(user=user_1, name='Shop1', description='test1',
                           address='test', number=1234567890)
-    # user_2 = get_user_model().objects.create_user(password='test1234tests',
-    #                                               email='test1@mail.ru',
-    #                                               phone="9787470002")
 
 
 def create_products():
@@ -390,10 +359,24 @@ def create_offers():
     Offer.objects.bulk_create(offers)
 
 
+def promo_activate(name: str) -> Optional[Promo]:
+    """
+    Активирует акцию с именем name.
+    :param name: Имя акции.
+    :return:
+    """
+    try:
+        promo = Promo.objects.get(name=name)
+        promo.is_active = True
+        promo.save()
+        return promo
+    except ObjectDoesNotExist:
+        return None
+
+
 def create_promotions():
     """Создает акции."""
     promo_type_1 = PromoType.objects.create(name='promo type 1', code=1)
-    # promo_type_2 = PromoType.objects.create(name='promo type 2', code=2)
     promo_type_3 = PromoType.objects.create(name='promo type 3', code=3)
     promo_type_4 = PromoType.objects.create(name='promo type 4', code=4)
     promo_type_5 = PromoType.objects.create(name='promo type 5', code=5)
