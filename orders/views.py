@@ -203,7 +203,8 @@ def order_create_payment(request):
                                          address=cache.get('address'),
                                          payment=cache.get('payment'),
                                          card_number=form.cleaned_data.get('card_number'),
-                                         total=cache.get('total'))
+                                         total=cache.get('total'),
+                                         comment=cache.get('comment'))
             for item in cart.cart:
                 OrderItem.objects.create(order=order,
                                          offer=Offer.objects.get(id=int(item)),
