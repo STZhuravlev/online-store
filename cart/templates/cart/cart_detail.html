@@ -45,19 +45,19 @@
               <div class="Cart-block Cart-block_amount" >
                 <div class="Cart-amount">
                   <div class="Cart-block_amount" >
-                    <button class="Cart-btn custom_button "  formaction="{% url 'cart:remove-quantity' id=product.id %}" type="submit">{% csrf_token %}-
+                    <button class="Cart-btn custom_button "  formaction="{% url 'cart:remove-quantity' id=item.product.id %}" type="submit">{% csrf_token %}-
                     </button>
                  {{ item.quantity }}
 {#                      <input class="Amount-input form-input" name="amount" type="number" value="1"/>#}
 
 {#                      {%  include 'cart/add_quantity.html' with id=product.id %}#}
 
-                    <button class="Cart-btn  custom_button" formaction="{% url 'cart:add-quantity' id=product.id %}" type="submit">{% csrf_token %}+
+                    <button class="Cart-btn  custom_button" formaction="{% url 'cart:add-quantity' id=item.product.id %}" type="submit">{% csrf_token %}+
                     </button>
                   </div>
                 </div>
               </div>
-              <div class="Cart-block Cart-block_delete"><button class="Cart-delete" formaction="{% url 'cart:cart-remove' id=product.id %}"  type="submit" > {% csrf_token %}<img src="{% static 'assets/img/icons/card/delete.svg'%}"  alt="delete.svg"/></button>
+              <div class="Cart-block Cart-block_delete"><button class="Cart-delete" formaction="{% url 'cart:cart-remove' id=item.product.id %}"  type="submit" > {% csrf_token %}<img src="{% static 'assets/img/icons/card/delete.svg'%}"  alt="delete.svg"/></button>
 
 {#                  <a class="Cart-delete" href=""><img src="{% static 'img/icons/card/delete.svg'%}"  alt="delete.svg"/></a>#}
               </div>

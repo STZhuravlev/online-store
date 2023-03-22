@@ -16,7 +16,8 @@
                     {{ banner.brief }}
                   </div>
                   <div class="Slider-footer">
-                    <a class="btn btn_primary" href="#">{% trans "Начать" %}</a>
+                    <a class="btn btn_primary" href="{%  url 'product-detail' banner.product.id %}">
+                        {% trans "Начать" %}</a>
                   </div>
                 </div>
                 <div class="row-block">
