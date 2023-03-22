@@ -57,13 +57,17 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             prefetch_related(
             Prefetch('property', queryset=ProductProperty.objects.select_related(
                 'product', 'property').filter(product=self.kwargs['pk'])))
-        histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
+        # histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
+        offer = Offer.objects.get(product_id=self.kwargs['pk'])
+        histiry_view_list = HistoryView.objects.filter(offer=offer)
         context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
         if histiry_view_list:
-            history_old = HistoryView.objects.get(product=Product.objects.get(id=self.kwargs['pk']))
+            # history_old = HistoryView.objects.get(product=Product.objects.get(id=self.kwargs['pk']))
+            history_old = HistoryView.objects.get(offer=offer)
             history_old.save(update_fields=['view_at'])
         else:
-            history_new = HistoryView(product=self.object, user=self.request.user)
+            # history_new = HistoryView(product=self.object, user=self.request.user)
+            history_new = HistoryView(offer=offer, user=self.request.user)
             history_new.save()
         return context
 
