@@ -127,7 +127,7 @@
                     {% for history in histories %}
                                     <div class="Card"><a class="Card-picture" href="#"><img src="{{ MEDIA_URL }}{{ history.offer.product.images.first.image.url }}" alt="card.jpg"/></a>
                       <div class="Card-content">
-                      <strong class="Card-title"><a href="#">{{ history.offer.product.name }}</a>
+                      <strong class="Card-title"><a href="{% url 'offer-detail' pk=history.offer.product.id %}">{{ history.offer.product.name }}</a>
                       </strong>
                       <div class="Card-description">
                         <div class="Card-cost"><span class="Card-price">{{ history.offer.price }}</span>

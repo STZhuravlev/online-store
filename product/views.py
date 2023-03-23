@@ -57,14 +57,7 @@ class ProductDetailView(generic.DetailView, generic.CreateView):
             prefetch_related(
             Prefetch('property', queryset=ProductProperty.objects.select_related(
                 'product', 'property').filter(product=self.kwargs['pk'])))
-        histiry_view_list = HistoryView.objects.filter(product=Product.objects.get(id=self.kwargs['pk']))
         context['offer_seller'] = Offer.objects.all().filter(product=self.object.id)
-        if histiry_view_list:
-            history_old = HistoryView.objects.get(product=Product.objects.get(id=self.kwargs['pk']))
-            history_old.save(update_fields=['view_at'])
-        else:
-            history_new = HistoryView(product=self.object, user=self.request.user)
-            history_new.save()
         return context
 
 
@@ -106,13 +99,16 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
         context['all_property'] = ProductProperty.objects.filter(
             product=Offer.objects.get(id=self.kwargs['pk']).product
         )
-        histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']))
-        if histiry_view_list:
-            history_old = HistoryView.objects.get(offer=Offer.objects.get(id=self.kwargs['pk']))
-            history_old.save(update_fields=['view_at'])
-        else:
-            history_new = HistoryView(offer=self.object, user=self.request.user)
-            history_new.save()
+        if self.request.user.is_authenticated:
+            histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']),
+                                                           user=self.request.user)
+            print(self.request.user)
+            if histiry_view_list:
+                history_old = HistoryView.objects.get(offer=Offer.objects.get(id=self.kwargs['pk']))
+                history_old.save(update_fields=['view_at'])
+            else:
+                history_new = HistoryView(offer=self.object, user=self.request.user)
+                history_new.save()
         promo_list = Promo2Product.objects.filter(product=Offer.objects.get(id=self.kwargs['pk']).product)
         price = Offer.objects.get(id=self.kwargs['pk']).price
         for elem in promo_list:
