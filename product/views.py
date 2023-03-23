@@ -100,7 +100,8 @@ class FeedbackDetailView(generic.DetailView, generic.CreateView):
             product=Offer.objects.get(id=self.kwargs['pk']).product
         )
         if self.request.user.is_authenticated:
-            histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']), user=self.request.user)
+            histiry_view_list = HistoryView.objects.filter(offer=Offer.objects.get(id=self.kwargs['pk']),
+                                                           user=self.request.user)
             print(self.request.user)
             if histiry_view_list:
                 history_old = HistoryView.objects.get(offer=Offer.objects.get(id=self.kwargs['pk']))
